@@ -21,6 +21,10 @@ package Tiny_Tensors.Float_Vectors is
    function "abs" (V : Vector) return Float renames Length;
    --  Return |V|
 
+   function Normalize (V : Vector) return Vector
+     with Pre => Length_2 (V) /= 0.0;
+   --  Return V / |V|
+
    function "+" (Left, Right : Vector) return Vector;
    function "-" (Left : Vector) return Vector;
    function "-" (Left, Right : Vector) return Vector;
@@ -52,6 +56,8 @@ private
 
    function Length (V : Vector) return Float is
      (Tiny_Tensors.Float_Sqrt (Length_2 (V)));
+
+   function Normalize (V : Vector) return Vector is (1.0 / Length (V) * V);
 
    function "+" (Left, Right : Vector) return Vector is
      [for J in 1 .. 3 => Left (J) + Right (J)];

@@ -12,7 +12,8 @@ package body Testsuite.Vectors is
    -- Basic_Vector_Operations --
    -----------------------------
 
-   procedure Basic_Vector_Operations (T : in out Trendy_Test.Operation'Class) is
+   procedure Basic_Vector_Operations
+     (T : in out Trendy_Test.Operation'Class) is
    begin
       T.Register;
 
@@ -44,6 +45,9 @@ package body Testsuite.Vectors is
 
          --  Test magnitude
          T.Assert (abs (Length (V1) - 3.74166) < 0.001);
+
+         --  Test Normalize
+         T.Assert (abs (Length (Normalize (V1)) - 1.0) < 0.001);
 
          --  Test element access
          T.Assert (V1 (1) = 1.0);
