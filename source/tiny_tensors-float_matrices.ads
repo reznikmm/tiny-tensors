@@ -23,6 +23,9 @@ pragma Pure;
 
    function "-" (Left, Right : Matrix) return Matrix;
 
+   function "*" (Left, Right : Matrix) return Matrix;
+   --  Return matrix multiplication
+
    function "*" (L : Matrix; R : FV.Vector) return FV.Vector;
    --  Return matrix-vector multiplication
 
@@ -80,6 +83,13 @@ private
    function "-" (Left, Right : Matrix) return Matrix is
      [for K in 1 .. 3 =>
         [for J in 1 .. 3 => Left (K, J) - Right (K, J)]];
+
+   function "*" (Left, Right : Matrix) return Matrix is
+     [for K in 1 .. 3 =>
+        [for J in 1 .. 3 =>
+           (Left (K, 1) * Right (1, J)) +
+           (Left (K, 2) * Right (2, J)) +
+           (Left (K, 3) * Right (3, J))]];
 
    function "*" (L : Matrix; R : FV.Vector) return FV.Vector is
      [L (1, 1) * R (1) + L (1, 2) * R (2) + L (1, 3) * R (3),

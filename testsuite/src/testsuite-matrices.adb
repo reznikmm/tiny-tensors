@@ -109,6 +109,7 @@ package body Testsuite.Matrices is
                                  [4.0, 5.0, 6.0],
                                  [7.0, 8.0, 9.0]];
          S : Symmetric_Matrix;
+         C : constant Matrix := Transpose (M) * M;  -- For verification
       begin
          --  Test MT_x_M operation (M^T * M)
          S := MT_x_M (M);
@@ -129,6 +130,13 @@ package body Testsuite.Matrices is
          T.Assert (S (A_22) = 93.0);
          T.Assert (S (A_23) = 108.0);
          T.Assert (S (A_33) = 126.0);
+
+         T.Assert (S (A_11) = C (1, 1));
+         T.Assert (S (A_12) = C (1, 2));
+         T.Assert (S (A_13) = C (1, 3));
+         T.Assert (S (A_22) = C (2, 2));
+         T.Assert (S (A_23) = C (2, 3));
+         T.Assert (S (A_33) = C (3, 3));
       end;
 
       declare
