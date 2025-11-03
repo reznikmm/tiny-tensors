@@ -1,0 +1,29 @@
+name = "testsuite"
+description = "Tests for tiny-tensors"
+version = "0.1.0-dev"
+
+authors = ["Max Reznik"]
+maintainers = ["Max Reznik <reznikmm@gmail.com>"]
+maintainers-logins = ["reznikmm"]
+licenses = "Apache-2.0 WITH LLVM-exception"
+website = ""
+tags = []
+
+executables = ["testsuite-driver"]
+
+[build-switches]
+development.Ada_Version = "Ada2022"
+development.optimization = ["-O0"]
+development.contracts = "Yes"
+development.style_checks = ["-gnaty", "-gnaty-B"]
+"*".debug_info = "Yes"
+
+[build-profiles]
+"*" = "development"
+
+[[depends-on]]
+trendy_test = "~0.0.4"
+tiny_tensors = "*"
+
+[[pins]]
+tiny_tensors = { path='..' }
