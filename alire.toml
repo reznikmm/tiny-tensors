@@ -10,3 +10,14 @@ website = "https://github.com/reznikmm/tiny-tensors"
 tags = ["eigen"]
 
 project-files = ["gnat/tiny_tensors.gpr"]
+
+[build-switches]
+development.Ada_Version = "Ada2022"
+development.optimization = ["-O0"]
+development.contracts = "Yes"
+development.style_checks = ["-gnaty", "-gnaty-B"]
+"*".debug_info = "Yes"
+
+[[actions]]
+type = "test"
+command = ["alr", "-C", "testsuite", "run"]
