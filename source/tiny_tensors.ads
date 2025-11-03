@@ -6,4 +6,7 @@
 package Tiny_Tensors is
    pragma Pure;
 
+   subtype Index_1_3 is Positive range 1 .. 3;
+   --  Component index for 3D vecors and matrices
+
 end Tiny_Tensors;

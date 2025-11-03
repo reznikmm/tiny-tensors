@@ -3,7 +3,6 @@
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 ----------------------------------------------------------------
 
-pragma Wide_Character_Encoding (UTF8);
 pragma Ada_2022;
 
 with Tiny_Tensors.Float_Vectors;
@@ -39,15 +38,34 @@ pragma Pure;
    --  Orthonormal matrix represented as 3x3 matrix with elements
    --  in -1.0 .. 1.0 range.
 
-   type Symmetric_Matrix is record
-     M_11 : Float;
-     M_12 : Float;
-     M_13 : Float;
-     M_22 : Float;
-     M_23 : Float;
-     M_33 : Float;
-   end record;
+   type Symmetric_Matrix_Index is (A_11, A_12, A_13, A_22, A_23, A_33);
+   --  Index for compact form representation of symmetric matrix.
+
+   function To_Index (Row, Column : Index_1_3) return Symmetric_Matrix_Index is
+     (case Row is
+        when 1 =>
+           (case Column is when 1 => A_11, when 2 => A_12, when 3 => A_13),
+        when 2 =>
+           (case Column is when 1 => A_12, when 2 => A_22, when 3 => A_23),
+        when 3 =>
+           (case Column is when 1 => A_13, when 2 => A_23, when 3 => A_33))
+      with Static;
+   --
+   --  Convert row and column indexes to symmetric matrix index type.
+
+   function "&" (Row, Column : Index_1_3) return Symmetric_Matrix_Index
+     renames To_Index;
+
+   type Symmetric_Matrix is array (Symmetric_Matrix_Index) of Float;
    --  Symmetric matrix represented in compact form
+
+   type Vector_Array is array (Positive range <>) of Vector;
+
+   function LT_x_R (Left, Right : Vector_Array) return Matrix;
+   --  Return Left transpose times Right: Lᵀ x R
+
+   function MT_x_M (M : Matrix) return Symmetric_Matrix;
+   --  Return Mᵀ x M in compact form
 
 private
 
@@ -71,5 +89,13 @@ private
    function "*" (Left : Float; Right : Matrix) return Matrix is
      [for K in 1 .. 3 =>
         [for J in 1 .. 3 => Left * Right (K, J)]];
+
+   function MT_x_M (M : Matrix) return Symmetric_Matrix is
+     [A_11 => M (1, 1) * M (1, 1) + M (2, 1) * M (2, 1) + M (3, 1) * M (3, 1),
+      A_12 => M (1, 1) * M (1, 2) + M (2, 1) * M (2, 2) + M (3, 1) * M (3, 2),
+      A_13 => M (1, 1) * M (1, 3) + M (2, 1) * M (2, 3) + M (3, 1) * M (3, 3),
+      A_22 => M (1, 2) * M (1, 2) + M (2, 2) * M (2, 2) + M (3, 2) * M (3, 2),
+      A_23 => M (1, 2) * M (1, 3) + M (2, 2) * M (2, 3) + M (3, 2) * M (3, 3),
+      A_33 => M (1, 3) * M (1, 3) + M (2, 3) * M (2, 3) + M (3, 3) * M (3, 3)];
 
 end Tiny_Tensors.Float_Matrices;
