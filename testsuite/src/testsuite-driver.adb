@@ -5,9 +5,12 @@
 
 with Trendy_Test.Reports;
 with Testsuite.Vectors;
+with Testsuite.Matrices;
 procedure Testsuite.Driver is
+   use type Trendy_Test.Test_Group;
+
    All_Tests : constant Trendy_Test.Test_Group :=
-     Testsuite.Vectors.All_Tests;
+     Testsuite.Vectors.All_Tests & Testsuite.Matrices.All_Tests;
 begin
    Trendy_Test.Register (All_Tests);
    Trendy_Test.Reports.Print_Basic_Report (Trendy_Test.Run);

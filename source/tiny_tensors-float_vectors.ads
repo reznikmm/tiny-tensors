@@ -2,9 +2,11 @@
 --
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 ----------------------------------------------------------------
+
 pragma Ada_2022;
 
 with Tiny_Tensors.Float_Sqrt;
+
 package Tiny_Tensors.Float_Vectors is
    pragma Pure;
 

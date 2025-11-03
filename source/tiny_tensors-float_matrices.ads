@@ -11,7 +11,7 @@ package Tiny_Tensors.Float_Matrices is
 pragma Pure;
 
    type Matrix is array (1 .. 3, 1 .. 3) of Float;
-   subtype Vector is Tiny_Tensors.Float_Vectors.Vector;
+   package FV renames Tiny_Tensors.Float_Vectors;
 
    function Transpose (Left : Matrix) return Matrix;
    --  Return transpose of M
@@ -23,7 +23,7 @@ pragma Pure;
 
    function "-" (Left, Right : Matrix) return Matrix;
 
-   function "*" (L : Matrix; R : Vector) return Vector;
+   function "*" (L : Matrix; R : FV.Vector) return FV.Vector;
    --  Return matrix-vector multiplication
 
    function "*" (Left : Float; Right : Matrix) return Matrix;
@@ -59,7 +59,7 @@ pragma Pure;
    type Symmetric_Matrix is array (Symmetric_Matrix_Index) of Float;
    --  Symmetric matrix represented in compact form
 
-   type Vector_Array is array (Positive range <>) of Vector;
+   type Vector_Array is array (Positive range <>) of FV.Vector;
 
    function LT_x_R (Left, Right : Vector_Array) return Matrix;
    --  Return Left transpose times Right: Lᵀ x R
@@ -81,7 +81,7 @@ private
      [for K in 1 .. 3 =>
         [for J in 1 .. 3 => Left (K, J) - Right (K, J)]];
 
-   function "*" (L : Matrix; R : Vector) return Vector is
+   function "*" (L : Matrix; R : FV.Vector) return FV.Vector is
      [L (1, 1) * R (1) + L (1, 2) * R (2) + L (1, 3) * R (3),
       L (2, 1) * R (1) + L (2, 2) * R (2) + L (2, 3) * R (3),
       L (3, 1) * R (1) + L (3, 2) * R (2) + L (3, 3) * R (3)];
