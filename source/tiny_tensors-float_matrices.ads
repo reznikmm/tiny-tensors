@@ -8,7 +8,7 @@ pragma Ada_2022;
 with Tiny_Tensors.Float_Vectors;
 
 package Tiny_Tensors.Float_Matrices is
-pragma Pure;
+   pragma Pure;
 
    type Matrix is array (1 .. 3, 1 .. 3) of Float;
    package FV renames Tiny_Tensors.Float_Vectors;
