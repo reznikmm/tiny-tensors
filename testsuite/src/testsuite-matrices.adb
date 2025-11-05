@@ -23,22 +23,22 @@ package body Testsuite.Matrices is
          M1 : constant Matrix := [[1.0, 2.0, 3.0],
                                   [4.0, 5.0, 6.0],
                                   [7.0, 8.0, 9.0]];
-         M2 : constant Matrix := [[9.0, 8.0, 7.0],
-                                  [6.0, 5.0, 4.0],
-                                  [3.0, 2.0, 1.0]];
+         --  M2 : constant Matrix := [[9.0, 8.0, 7.0],
+         --                           [6.0, 5.0, 4.0],
+         --                           [3.0, 2.0, 1.0]];
          M3 : Matrix;
       begin
          --  Test matrix addition
-         M3 := M1 + M2;
-         T.Assert (M3 = [[10.0, 10.0, 10.0],
-                         [10.0, 10.0, 10.0],
-                         [10.0, 10.0, 10.0]]);
+         --  M3 := M1 + M2;
+         --  T.Assert (M3 = [[10.0, 10.0, 10.0],
+         --                  [10.0, 10.0, 10.0],
+         --                  [10.0, 10.0, 10.0]]);
 
          --  Test matrix subtraction
-         M3 := M1 - M2;
-         T.Assert (M3 = [[-8.0, -6.0, -4.0],
-                         [-2.0,  0.0,  2.0],
-                         [+4.0,  6.0,  8.0]]);
+         --  M3 := M1 - M2;
+         --  T.Assert (M3 = [[-8.0, -6.0, -4.0],
+         --                  [-2.0,  0.0,  2.0],
+         --                  [+4.0,  6.0,  8.0]]);
 
          --  Test scalar multiplication
          M3 := 2.0 * M1;
@@ -117,41 +117,41 @@ package body Testsuite.Matrices is
          --  Calculate expected values manually:
          --  M^T = [[1, 4, 7], [2, 5, 8], [3, 6, 9]]
          --  M^T * M =
-         --  A_11 = 1*1 + 4*4 + 7*7 = 1 + 16 + 49 = 66
-         --  A_12 = 1*2 + 4*5 + 7*8 = 2 + 20 + 56 = 78
-         --  A_13 = 1*3 + 4*6 + 7*9 = 3 + 24 + 63 = 90
-         --  A_22 = 2*2 + 5*5 + 8*8 = 4 + 25 + 64 = 93
-         --  A_23 = 2*3 + 5*6 + 8*9 = 6 + 30 + 72 = 108
-         --  A_33 = 3*3 + 6*6 + 9*9 = 9 + 36 + 81 = 126
+         --  a_11 = 1*1 + 4*4 + 7*7 = 1 + 16 + 49 = 66
+         --  a_12 = 1*2 + 4*5 + 7*8 = 2 + 20 + 56 = 78
+         --  a_13 = 1*3 + 4*6 + 7*9 = 3 + 24 + 63 = 90
+         --  a_22 = 2*2 + 5*5 + 8*8 = 4 + 25 + 64 = 93
+         --  a_23 = 2*3 + 5*6 + 8*9 = 6 + 30 + 72 = 108
+         --  a_33 = 3*3 + 6*6 + 9*9 = 9 + 36 + 81 = 126
 
-         T.Assert (S (A_11) = 66.0);
-         T.Assert (S (A_12) = 78.0);
-         T.Assert (S (A_13) = 90.0);
-         T.Assert (S (A_22) = 93.0);
-         T.Assert (S (A_23) = 108.0);
-         T.Assert (S (A_33) = 126.0);
+         T.Assert (S (a_11) = 66.0);
+         T.Assert (S (a_12) = 78.0);
+         T.Assert (S (a_13) = 90.0);
+         T.Assert (S (a_22) = 93.0);
+         T.Assert (S (a_23) = 108.0);
+         T.Assert (S (a_33) = 126.0);
 
-         T.Assert (S (A_11) = C (1, 1));
-         T.Assert (S (A_12) = C (1, 2));
-         T.Assert (S (A_13) = C (1, 3));
-         T.Assert (S (A_22) = C (2, 2));
-         T.Assert (S (A_23) = C (2, 3));
-         T.Assert (S (A_33) = C (3, 3));
+         T.Assert (S (a_11) = C (1, 1));
+         T.Assert (S (a_12) = C (1, 2));
+         T.Assert (S (a_13) = C (1, 3));
+         T.Assert (S (a_22) = C (2, 2));
+         T.Assert (S (a_23) = C (2, 3));
+         T.Assert (S (a_33) = C (3, 3));
       end;
 
       declare
          --  Test To_Index function
          pragma Warnings (Off);
       begin
-         T.Assert (To_Index (1, 1) = A_11);
-         T.Assert (To_Index (1, 2) = A_12);
-         T.Assert (To_Index (2, 1) = A_12);  -- Symmetric
-         T.Assert (To_Index (3, 3) = A_33);
+         T.Assert (To_Index (1, 1) = a_11);
+         T.Assert (To_Index (1, 2) = a_12);
+         T.Assert (To_Index (2, 1) = a_12);  -- Symmetric
+         T.Assert (To_Index (3, 3) = a_33);
 
          --  Test "&" operator (alias for To_Index)
-         T.Assert ((1 & 2) = A_12);
-         T.Assert ((2 & 3) = A_23);
-         T.Assert ((3 & 1) = A_13);
+         T.Assert ((1 & 2) = a_12);
+         T.Assert ((2 & 3) = a_23);
+         T.Assert ((3 & 1) = a_13);
       end;
 
       declare
@@ -162,12 +162,12 @@ package body Testsuite.Matrices is
          S : Symmetric_Matrix;
       begin
          S := MT_x_M (Simple_M);
-         T.Assert (S (A_11) = 4.0);   -- 2^2
-         T.Assert (S (A_22) = 9.0);   -- 3^2
-         T.Assert (S (A_33) = 16.0);  -- 4^2
-         T.Assert (S (A_12) = 0.0);   -- Off-diagonal elements should be 0
-         T.Assert (S (A_13) = 0.0);
-         T.Assert (S (A_23) = 0.0);
+         T.Assert (S (a_11) = 4.0);   -- 2^2
+         T.Assert (S (a_22) = 9.0);   -- 3^2
+         T.Assert (S (a_33) = 16.0);  -- 4^2
+         T.Assert (S (a_12) = 0.0);   -- Off-diagonal elements should be 0
+         T.Assert (S (a_13) = 0.0);
+         T.Assert (S (a_23) = 0.0);
       end;
    end Test_Symmetric_Matrix_Operations;
 

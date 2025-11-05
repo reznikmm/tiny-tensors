@@ -24,9 +24,9 @@ package body Testsuite.Eigen_Systems is
       declare
          --  Simple symmetric matrix
          M : constant Symmetric_Matrix :=
-           [A_11 => 4.0, A_12 => 1.0, A_13 => 0.0,
-            A_22 => 1.0, A_23 => 0.0,
-            A_33 => 1.0];
+           [a_11 => 4.0, a_12 => 1.0, a_13 => 0.0,
+            a_22 => 1.0, a_23 => 0.0,
+            a_33 => 1.0];
          Values  : Diagonal_Matrix;
          Vectors : Vector_Array_3;
       begin
@@ -65,9 +65,9 @@ package body Testsuite.Eigen_Systems is
       declare
          --  Diagonal matrix: eigenvalues should be the diagonal elements
          M : constant Symmetric_Matrix :=
-           [A_11 => 5.0, A_12 => 0.0, A_13 => 0.0,
-            A_22 => 3.0, A_23 => 0.0,
-            A_33 => 1.0];
+           [a_11 => 5.0, a_12 => 0.0, a_13 => 0.0,
+            a_22 => 3.0, a_23 => 0.0,
+            a_33 => 1.0];
          Values  : Diagonal_Matrix;
          Vectors : Vector_Array_3;
       begin
@@ -105,9 +105,9 @@ package body Testsuite.Eigen_Systems is
       declare
          --  Identity matrix: all eigenvalues should be 1.0
          M : constant Symmetric_Matrix :=
-           [A_11 => 1.0, A_12 => 0.0, A_13 => 0.0,
-            A_22 => 1.0, A_23 => 0.0,
-            A_33 => 1.0];
+           [a_11 => 1.0, a_12 => 0.0, a_13 => 0.0,
+            a_22 => 1.0, a_23 => 0.0,
+            a_33 => 1.0];
          Values  : Diagonal_Matrix;
          Vectors : Vector_Array_3;
       begin

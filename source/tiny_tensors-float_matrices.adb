@@ -11,7 +11,8 @@ package body Tiny_Tensors.Float_Matrices is
    -- LT_x_R --
    ------------
 
-   function LT_x_R (Left, Right : Vector_Array) return Matrix is
+   function LT_x_R
+     (Left, Right : Float_Vector_Arrays.Vector_Array) return Matrix is
    begin
       return Result : Matrix := [others => [others => 0.0]] do
          for I in Index_1_3 loop
