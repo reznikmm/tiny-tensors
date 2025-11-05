@@ -14,7 +14,7 @@ package body Tiny_Tensors.Float_Eigen_System is
    procedure Get_Eigen_System
      (Matrix  : Tiny_Tensors.Float_Matrices.Symmetric_Matrix;
       Values  : out Tiny_Tensors.Float_Matrices.Diagonal_Matrix;
-      Vectors : out Vector_Array_3)
+      Vectors : out Tiny_Tensors.Float_Matrices.Vector_Array_3)
    is
       use type Tiny_Tensors.Float_Matrices.Symmetric_Matrix_Index;
 
