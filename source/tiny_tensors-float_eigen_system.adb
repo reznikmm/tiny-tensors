@@ -31,9 +31,9 @@ package body Tiny_Tensors.Float_Eigen_System is
       Values := Tiny_Tensors.Float_Matrices.Diagonal_Matrix (Value);
 
       Vectors :=
-        [[Output (1, 1), Output (1, 2), Output (1, 3)],
-         [Output (2, 1), Output (2, 2), Output (2, 3)],
-         [Output (3, 1), Output (3, 2), Output (3, 3)]];
+        [[Output (1, 1), Output (2, 1), Output (3, 1)],
+         [Output (1, 2), Output (2, 2), Output (3, 2)],
+         [Output (1, 3), Output (2, 3), Output (3, 3)]];
    end Get_Eigen_System;
 
 end Tiny_Tensors.Float_Eigen_System;

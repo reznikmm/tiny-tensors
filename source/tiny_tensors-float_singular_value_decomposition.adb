@@ -59,7 +59,7 @@ begin
 
    Sort (1, 3);
 
-   V := To_Orthonormal (From_Rows (Vectors));
+   V := To_Orthonormal (From_Columns (Vectors));
 
    S := [for J in 1 .. 3 => SQRT (Values (J))];
 

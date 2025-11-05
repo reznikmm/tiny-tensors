@@ -47,6 +47,16 @@ package body Testsuite.Eigen_Systems is
          --  order
          T.Assert (Values (1) >= Values (2));
          T.Assert (Values (2) >= Values (3));
+
+         --  Verify that M * v = λ * v
+         for J in 1 .. 3 loop
+            declare
+               Left  : constant Vector := M * Vectors (J);
+               Right : constant Vector := Values (J) * Vectors (J);
+            begin
+               T.Assert (Length (Left - Right) < 0.001);
+            end;
+         end loop;
       end;
    end Basic_Eigen_System_Operations;
 
@@ -58,7 +68,7 @@ package body Testsuite.Eigen_Systems is
      (T : in out Trendy_Test.Operation'Class)
    is
       function Abs_Max_Item (V : Vector) return Float is
-        (Float'Max (Float'Max (abs (V (1)), abs (V (2))), abs (V (3))));
+        (Float'Max (Float'Max (abs V (1), abs V (2)), abs V (3)));
    begin
       T.Register;
 
@@ -90,6 +100,16 @@ package body Testsuite.Eigen_Systems is
             T.Assert (abs (V2_Max - 1.0) < 0.001);
             T.Assert (abs (V3_Max - 1.0) < 0.001);
          end;
+
+         --  Verify that M * v = λ * v
+         for J in 1 .. 3 loop
+            declare
+               Left  : constant Vector := M * Vectors (J);
+               Right : constant Vector := Values (J) * Vectors (J);
+            begin
+               T.Assert (Length (Left - Right) < 0.001);
+            end;
+         end loop;
       end;
    end Test_Diagonal_Matrix_Eigen_System;
 
