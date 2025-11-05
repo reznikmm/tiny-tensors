@@ -92,6 +92,9 @@ package Tiny_Tensors.Float_Matrices is
    function Determinant (M : Symmetric_Matrix) return Float;
    --  Return determinant of symmetric matrix
 
+   function "*" (L : Symmetric_Matrix; R : FV.Vector) return FV.Vector;
+   --  Return matrix-vector multiplication
+
    function "*"
      (Left : Float; Right : Symmetric_Matrix) return Symmetric_Matrix;
    --  Return scalar multiplication
@@ -164,6 +167,11 @@ private
      [L (1, 1) * R (1) + L (1, 2) * R (2) + L (1, 3) * R (3),
       L (2, 1) * R (1) + L (2, 2) * R (2) + L (2, 3) * R (3),
       L (3, 1) * R (1) + L (3, 2) * R (2) + L (3, 3) * R (3)];
+
+   function "*" (L : Symmetric_Matrix; R : FV.Vector) return FV.Vector is
+     [L (1 & 1) * R (1) + L (1 & 2) * R (2) + L (1 & 3) * R (3),
+      L (2 & 1) * R (1) + L (2 & 2) * R (2) + L (2 & 3) * R (3),
+      L (3 & 1) * R (1) + L (3 & 2) * R (2) + L (3 & 3) * R (3)];
 
    function "*" (Left : Float; Right : Matrix) return Matrix is
      [for J in 1 .. 3 =>
