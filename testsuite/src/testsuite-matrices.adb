@@ -171,4 +171,100 @@ package body Testsuite.Matrices is
       end;
    end Test_Symmetric_Matrix_Operations;
 
+   ----------------------
+   -- Test_Determinant --
+   ----------------------
+
+   procedure Test_Determinant
+     (T : in out Trendy_Test.Operation'Class) is
+   begin
+      T.Register;
+
+      declare
+         --  Test determinant of identity matrix
+         Identity : constant Matrix := [[1.0, 0.0, 0.0],
+                                        [0.0, 1.0, 0.0],
+                                        [0.0, 0.0, 1.0]];
+         Det : Float;
+      begin
+         Det := Determinant (Identity);
+         T.Assert (abs (Det - 1.0) < 0.001);
+      end;
+
+      declare
+         --  Test determinant of simple diagonal matrix
+         Diag : constant Matrix := [[2.0, 0.0, 0.0],
+                                    [0.0, 3.0, 0.0],
+                                    [0.0, 0.0, 4.0]];
+         Det : Float;
+      begin
+         Det := Determinant (Diag);
+         T.Assert (abs (Det - 24.0) < 0.001);  -- 2 * 3 * 4 = 24
+      end;
+
+      declare
+         --  Test determinant of general matrix
+         M : constant Matrix := [[1.0, 2.0, 3.0],
+                                 [4.0, 5.0, 6.0],
+                                 [7.0, 8.0, 9.0]];
+         Det : Float;
+      begin
+         Det := Determinant (M);
+         T.Assert (abs (Det) < 0.001);  -- This matrix is singular (det = 0)
+      end;
+
+      declare
+         --  Test determinant of another matrix with known result
+         M : constant Matrix := [[1.0, 2.0, 3.0],
+                                 [0.0, 1.0, 4.0],
+                                 [5.0, 6.0, 0.0]];
+         Det : Float;
+      begin
+         --  Calculate manually: 1*(1*0 - 4*6) - 2*(0*0 - 4*5) + 3*(0*6 - 1*5)
+         --  = 1*(-24) - 2*(-20) + 3*(-5) = -24 + 40 - 15 = 1
+         Det := Determinant (M);
+         T.Assert (abs (Det - 1.0) < 0.001);
+      end;
+
+      declare
+         --  Test determinant of symmetric matrix
+         S : constant Symmetric_Matrix :=
+           (a_11 => 4.0, a_12 => 1.0, a_13 => 2.0,
+            a_22 => 3.0, a_23 => 1.0, a_33 => 5.0);
+         Det : Float;
+         M_from_S : constant Matrix := From_Symmetric (S);
+         Det_from_Matrix : Float;
+      begin
+         Det := Determinant (S);
+         Det_from_Matrix := Determinant (M_from_S);
+         --  Both should give the same result
+         T.Assert (abs (Det - Det_from_Matrix) < 0.001);
+         --  Manual calculation: 4*(3*5 - 1*1) - 1*(1*5 - 1*2) + 2*(1*1 - 3*2)
+         --  = 4*14 - 1*3 + 2*(-5) = 56 - 3 - 10 = 43
+         T.Assert (abs (Det - 43.0) < 0.001);
+      end;
+
+      declare
+         --  Test determinant of matrix with zero row
+         Zero_Row : constant Matrix := [[1.0, 2.0, 3.0],
+                                        [0.0, 0.0, 0.0],
+                                        [7.0, 8.0, 9.0]];
+         Det : Float;
+      begin
+         Det := Determinant (Zero_Row);
+         T.Assert (abs (Det) < 0.001);  -- Should be 0
+      end;
+
+      declare
+         --  Test determinant of triangular matrix
+         Upper_Triangular : constant Matrix := [[2.0, 1.0, 3.0],
+                                                [0.0, 4.0, 2.0],
+                                                [0.0, 0.0, 5.0]];
+         Det : Float;
+      begin
+         Det := Determinant (Upper_Triangular);
+         T.Assert (abs (Det - 40.0) < 0.001);  -- 2 * 4 * 5 = 40
+      end;
+   end Test_Determinant;
+
 end Testsuite.Matrices;
