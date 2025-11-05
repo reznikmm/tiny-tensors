@@ -43,6 +43,9 @@ package Tiny_Tensors.Float_Matrices is
    --  function M̄ (M : Matrix) return Matrix renames Transpose;
    --  function Mᵀ (M : Matrix) return Matrix renames Transpose;
 
+   function Determinant (Left : Matrix) return Float;
+   --  Return determinant of matrix
+
    function "+" (Left, Right : Matrix) return Matrix;
 
    function "-" (Left, Right : Matrix) return Matrix;
@@ -86,6 +89,13 @@ package Tiny_Tensors.Float_Matrices is
    function From_Symmetric (Left : Symmetric_Matrix) return Matrix;
    --  Convert Symmetric_Matrix to Matrix
 
+   function Determinant (M : Symmetric_Matrix) return Float;
+   --  Return determinant of symmetric matrix
+
+   function "*"
+     (Left : Float; Right : Symmetric_Matrix) return Symmetric_Matrix;
+   --  Return scalar multiplication
+
    subtype Unit_Interval is Float range -1.0 .. 1.0;
 
    type Orthonormal_Matrix is array (1 .. 3, 1 .. 3) of Unit_Interval;
@@ -116,6 +126,16 @@ package Tiny_Tensors.Float_Matrices is
    --  Return matrix multiplication
 
 private
+
+   function Determinant (Left : Matrix) return Float is
+     (Left (1, 1) * (Left (2, 2) * Left (3, 3) - Left (2, 3) * Left (3, 2)) -
+      Left (1, 2) * (Left (2, 1) * Left (3, 3) - Left (2, 3) * Left (3, 1)) +
+      Left (1, 3) * (Left (2, 1) * Left (3, 2) - Left (2, 2) * Left (3, 1)));
+
+   function Determinant (M : Symmetric_Matrix) return Float is
+     (M (1 & 1) * (M (2 & 2) * M (3 & 3) - M (2 & 3) * M (3 & 2)) -
+      M (1 & 2) * (M (2 & 1) * M (3 & 3) - M (2 & 3) * M (3 & 1)) +
+      M (1 & 3) * (M (2 & 1) * M (3 & 2) - M (2 & 2) * M (3 & 1)));
 
    function Transpose (Left : Matrix) return Matrix is
      [for J in 1 .. 3 =>
@@ -159,6 +179,10 @@ private
    function "*"
     (Left : Orthonormal_Matrix; Right : Diagonal_Matrix) return Matrix is
       (From_Orthonormal (Left) * Right);
+
+   function "*"
+     (Left : Float; Right : Symmetric_Matrix) return Symmetric_Matrix is
+       [for J in Right'Range => Left * Right (J)];
 
    function From_Diagonal (Left : Diagonal_Matrix) return Matrix is
      [[Left (1), 0.0, 0.0],
