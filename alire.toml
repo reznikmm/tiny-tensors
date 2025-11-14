@@ -12,7 +12,7 @@ tags = ["eigen"]
 project-files = ["gnat/tiny_tensors.gpr"]
 
 [build-switches]
-development.Ada_Version = "Ada2022"
+"*".Ada_Version = "Ada2022"
 development.optimization = ["-O0"]
 development.contracts = "Yes"
 development.style_checks = ["-gnaty", "-gnaty-B"]

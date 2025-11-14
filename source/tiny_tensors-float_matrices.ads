@@ -53,6 +53,9 @@ package Tiny_Tensors.Float_Matrices is
    function "*" (Left, Right : Matrix) return Matrix;
    --  Return matrix multiplication
 
+   function "*" (L, R : FV.Vector) return Matrix;
+   --  Outer product of two vectors.
+
    function "*" (L : Matrix; R : FV.Vector) return FV.Vector;
    --  Return matrix-vector multiplication
 
@@ -108,6 +111,9 @@ package Tiny_Tensors.Float_Matrices is
    function From_Orthonormal (Left : Orthonormal_Matrix) return Matrix;
    --  Convert Orthonormal_Matrix to Matrix
 
+   function Determinant (M : Orthonormal_Matrix) return Float;
+   --  Return determinant of orthonormal matrix. Return -1 or 1
+
    function Transpose (Left : Orthonormal_Matrix) return Orthonormal_Matrix;
 
    function LT_x_R
@@ -128,6 +134,12 @@ package Tiny_Tensors.Float_Matrices is
    function "*" (Left : Matrix; Right : Orthonormal_Matrix) return Matrix;
    --  Return matrix multiplication
 
+   function "*" (Left, Right : Orthonormal_Matrix) return Orthonormal_Matrix;
+   --  Return matrix multiplication
+
+   function "*" (L : Orthonormal_Matrix; R : FV.Vector) return FV.Vector;
+   --  Return matrix-vector multiplication
+
 private
 
    function Determinant (Left : Matrix) return Float is
@@ -139,6 +151,9 @@ private
      (M (1 & 1) * (M (2 & 2) * M (3 & 3) - M (2 & 3) * M (3 & 2)) -
       M (1 & 2) * (M (2 & 1) * M (3 & 3) - M (2 & 3) * M (3 & 1)) +
       M (1 & 3) * (M (2 & 1) * M (3 & 2) - M (2 & 2) * M (3 & 1)));
+
+   function Determinant (M : Orthonormal_Matrix) return Float is
+     (Determinant (From_Orthonormal (M)));
 
    function Transpose (Left : Matrix) return Matrix is
      [for J in 1 .. 3 =>
@@ -162,6 +177,10 @@ private
            (Left (J, 1) * Right (1, K)) +
            (Left (J, 2) * Right (2, K)) +
            (Left (J, 3) * Right (3, K))]];
+
+   function "*" (L, R : FV.Vector) return Matrix is
+     [for J in 1 .. 3 =>
+        [for K in 1 .. 3 => L (J) * R (K)]];
 
    function "*" (L : Matrix; R : FV.Vector) return FV.Vector is
      [L (1, 1) * R (1) + L (1, 2) * R (2) + L (1, 3) * R (3),
@@ -187,6 +206,9 @@ private
    function "*"
     (Left : Orthonormal_Matrix; Right : Diagonal_Matrix) return Matrix is
       (From_Orthonormal (Left) * Right);
+
+   function "*" (L : Orthonormal_Matrix; R : FV.Vector) return FV.Vector is
+     (From_Orthonormal (L) * R);
 
    function "*"
      (Left : Float; Right : Symmetric_Matrix) return Symmetric_Matrix is
