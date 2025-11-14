@@ -7,6 +7,19 @@ pragma Ada_2022;
 
 package body Tiny_Tensors.Float_Matrices is
 
+   ---------
+   -- "*" --
+   ---------
+
+   function "*" (Left, Right : Orthonormal_Matrix) return Orthonormal_Matrix is
+      Result : constant Matrix :=
+        From_Orthonormal (Left) * From_Orthonormal (Right);
+   begin
+      return
+        [for J in 1 .. 3 =>
+           [for K in 1 .. 3 => Result (J, K)]];
+   end "*";
+
    ------------
    -- LT_x_R --
    ------------
@@ -15,10 +28,10 @@ package body Tiny_Tensors.Float_Matrices is
      (Left, Right : Float_Vector_Arrays.Vector_Array) return Matrix is
    begin
       return Result : Matrix := [others => [others => 0.0]] do
-         for I in Index_1_3 loop
-            for J in Index_1_3 loop
-               for K in Left'Range loop
-                  Result (I, J) := @ + Left (K) (J) * Right (K) (I);
+         for J in Index_1_3 loop
+            for K in Index_1_3 loop
+               for I in Left'Range loop
+                  Result (J, K) := @ + Left (I) (J) * Right (I) (K);
                end loop;
             end loop;
          end loop;
