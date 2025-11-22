@@ -117,7 +117,7 @@ package Tiny_Tensors.Float_Matrices is
    function Transpose (Left : Orthonormal_Matrix) return Orthonormal_Matrix;
 
    function LT_x_R
-    (Left, Right : Float_Vector_Arrays.Vector_Array) return Matrix
+    (Left, Right : Float_Vector_Arrays.Vector_Array) return Symmetric_Matrix
       with Pre => Left'Length = Right'Length;
    --  Return Left transpose times Right: Lᵀ x R
 

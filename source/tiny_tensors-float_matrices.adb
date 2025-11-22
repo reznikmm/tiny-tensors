@@ -25,13 +25,14 @@ package body Tiny_Tensors.Float_Matrices is
    ------------
 
    function LT_x_R
-     (Left, Right : Float_Vector_Arrays.Vector_Array) return Matrix is
+     (Left, Right : Float_Vector_Arrays.Vector_Array)
+       return Symmetric_Matrix is
    begin
-      return Result : Matrix := [others => [others => 0.0]] do
+      return Result : Symmetric_Matrix := [others => 0.0] do
          for J in Index_1_3 loop
-            for K in Index_1_3 loop
+            for K in J .. 3 loop
                for I in Left'Range loop
-                  Result (J, K) := @ + Left (I) (J) * Right (I) (K);
+                  Result (J & K) := @ + Left (I) (J) * Right (I) (K);
                end loop;
             end loop;
          end loop;
