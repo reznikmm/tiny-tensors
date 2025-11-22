@@ -5,6 +5,7 @@
 
 with Tiny_Tensors.Float_Matrices;
 with Tiny_Tensors.Float_Vectors;
+with Tiny_Tensors.Float_Vector_Arrays;
 
 package body Testsuite.Matrices is
    use Tiny_Tensors.Float_Matrices;
@@ -266,5 +267,149 @@ package body Testsuite.Matrices is
          T.Assert (abs (Det - 40.0) < 0.001);  -- 2 * 4 * 5 = 40
       end;
    end Test_Determinant;
+
+   ---------------------------
+   -- Test_LT_x_R_Operations --
+   ---------------------------
+
+   procedure Test_LT_x_R_Operations
+     (T : in out Trendy_Test.Operation'Class) is
+   begin
+      T.Register;
+
+      declare
+         use Tiny_Tensors.Float_Vector_Arrays;
+
+         --  Test with simple orthogonal vectors
+         V1 : constant Vector := [1.0, 0.0, 0.0];
+         V2 : constant Vector := [0.0, 1.0, 0.0];
+         V3 : constant Vector := [0.0, 0.0, 1.0];
+
+         Left : constant Vector_Array := [V1, V2, V3];
+         Right : constant Vector_Array := [V1, V2, V3];
+         Result : Symmetric_Matrix;
+      begin
+         Result := LT_x_R (Left, Right);
+
+         --  Left^T * Right should be identity (in symmetric form)
+         T.Assert (abs (Result (a_11) - 1.0) < 0.001);
+         T.Assert (abs (Result (a_22) - 1.0) < 0.001);
+         T.Assert (abs (Result (a_33) - 1.0) < 0.001);
+         T.Assert (abs (Result (a_12)) < 0.001);
+         T.Assert (abs (Result (a_13)) < 0.001);
+         T.Assert (abs (Result (a_23)) < 0.001);
+      end;
+
+      declare
+         use Tiny_Tensors.Float_Vector_Arrays;
+
+         --  Test with arbitrary vectors
+         V1 : constant Vector := [1.0, 2.0, 3.0];
+         V2 : constant Vector := [4.0, 5.0, 6.0];
+
+         Left : constant Vector_Array := [V1, V2];
+         Right : constant Vector_Array := [V1, V2];
+         Result : Symmetric_Matrix;
+
+         --  Manual calculation of L^T * R:
+         --  [1 4] * [1 4] = [1*1 + 4*4   1*4 + 4*5] = [17  24]
+         --  [2 5]   [2 5]   [2*1 + 5*4   2*4 + 5*5]   [22  33]
+         --  [3 6]   [3 6]   [3*1 + 6*4   3*4 + 6*5]   [27  42]
+         --
+         --  But we want L^T * R where L and R are row vectors:
+         --  L = [V1; V2] = [[1,2,3]; [4,5,6]]
+         --  L^T * R = [[1,4]; [2,5]; [3,6]] * [[1,2,3]; [4,5,6]]
+         --          = [[1*1+4*4, 1*2+4*5, 1*3+4*6],
+         --             [2*1+5*4, 2*2+5*5, 2*3+5*6],
+         --             [3*1+6*4, 3*2+6*5, 3*3+6*6]]
+         --          = [[17, 22, 27],
+         --             [22, 29, 36],
+         --             [27, 36, 45]]
+      begin
+         Result := LT_x_R (Left, Right);
+
+         T.Assert (abs (Result (a_11) - 17.0) < 0.001);
+         T.Assert (abs (Result (a_12) - 22.0) < 0.001);
+         T.Assert (abs (Result (a_13) - 27.0) < 0.001);
+         T.Assert (abs (Result (a_22) - 29.0) < 0.001);
+         T.Assert (abs (Result (a_23) - 36.0) < 0.001);
+         T.Assert (abs (Result (a_33) - 45.0) < 0.001);
+      end;
+
+      declare
+         use Tiny_Tensors.Float_Vector_Arrays;
+
+         --  Test with single vector
+         V : constant Vector := [2.0, 3.0, 4.0];
+         Left : constant Vector_Array := [V];
+         Right : constant Vector_Array := [V];
+         Result : Symmetric_Matrix;
+
+         --  L^T * R = [[2]; [3]; [4]] * [[2, 3, 4]]
+         --          = [[4, 6, 8],
+         --             [6, 9, 12],
+         --             [8, 12, 16]]
+      begin
+         Result := LT_x_R (Left, Right);
+
+         T.Assert (abs (Result (a_11) - 4.0) < 0.001);
+         T.Assert (abs (Result (a_12) - 6.0) < 0.001);
+         T.Assert (abs (Result (a_13) - 8.0) < 0.001);
+         T.Assert (abs (Result (a_22) - 9.0) < 0.001);
+         T.Assert (abs (Result (a_23) - 12.0) < 0.001);
+         T.Assert (abs (Result (a_33) - 16.0) < 0.001);
+      end;
+
+      declare
+         use Tiny_Tensors.Float_Vector_Arrays;
+
+         --  Test with different Left and Right
+         V1 : constant Vector := [1.0, 0.0, 0.0];
+         V2 : constant Vector := [0.0, 2.0, 0.0];
+
+         Left : constant Vector_Array := [V1];
+         Right : constant Vector_Array := [V2];
+         Result : Symmetric_Matrix;
+
+         --  L^T * R = [[1]; [0]; [0]] * [[0, 2, 0]]
+         --          = [[0, 2, 0],
+         --             [0, 0, 0],
+         --             [0, 0, 0]]
+      begin
+         Result := LT_x_R (Left, Right);
+
+         T.Assert (abs (Result (a_11)) < 0.001);
+         T.Assert (abs (Result (a_12) - 2.0) < 0.001);
+         T.Assert (abs (Result (a_13)) < 0.001);
+         T.Assert (abs (Result (a_22)) < 0.001);
+         T.Assert (abs (Result (a_23)) < 0.001);
+         T.Assert (abs (Result (a_33)) < 0.001);
+      end;
+
+      declare
+         use Tiny_Tensors.Float_Vector_Arrays;
+
+         --  Test with three vectors to verify consistency with MT_x_M
+         V1 : constant Vector := [1.0, 2.0, 3.0];
+         V2 : constant Vector := [4.0, 5.0, 6.0];
+         V3 : constant Vector := [7.0, 8.0, 9.0];
+
+         Vecs : constant Vector_Array := [V1, V2, V3];
+         Result : Symmetric_Matrix;
+         M : constant Matrix := From_Rows (Vector_Array_3 (Vecs));
+         Expected : Symmetric_Matrix;
+      begin
+         --  LT_x_R where Left = Right should be equivalent to MT_x_M
+         Result := LT_x_R (Vecs, Vecs);
+         Expected := MT_x_M (M);
+
+         T.Assert (abs (Result (a_11) - Expected (a_11)) < 0.001);
+         T.Assert (abs (Result (a_12) - Expected (a_12)) < 0.001);
+         T.Assert (abs (Result (a_13) - Expected (a_13)) < 0.001);
+         T.Assert (abs (Result (a_22) - Expected (a_22)) < 0.001);
+         T.Assert (abs (Result (a_23) - Expected (a_23)) < 0.001);
+         T.Assert (abs (Result (a_33) - Expected (a_33)) < 0.001);
+      end;
+   end Test_LT_x_R_Operations;
 
 end Testsuite.Matrices;
