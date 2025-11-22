@@ -124,6 +124,9 @@ package Tiny_Tensors.Float_Matrices is
    function MT_x_M (M : Matrix) return Symmetric_Matrix;
    --  Return Mᵀ x M in compact form
 
+   function MT_x_M (M : Symmetric_Matrix) return Symmetric_Matrix;
+   --  Return Mᵀ x M in compact form
+
    function "*" (Left : Matrix; Right : Diagonal_Matrix) return Matrix;
    --  Return matrix multiplication
 
@@ -132,6 +135,10 @@ package Tiny_Tensors.Float_Matrices is
    --  Return matrix multiplication
 
    function "*" (Left : Matrix; Right : Orthonormal_Matrix) return Matrix;
+   --  Return matrix multiplication
+
+   function "*"
+     (Left : Symmetric_Matrix; Right : Orthonormal_Matrix) return Matrix;
    --  Return matrix multiplication
 
    function "*" (Left, Right : Orthonormal_Matrix) return Orthonormal_Matrix;
@@ -211,6 +218,14 @@ private
      (From_Orthonormal (L) * R);
 
    function "*"
+     (Left : Symmetric_Matrix; Right : Orthonormal_Matrix) return Matrix is
+       [for I in 1 .. 3 =>
+          [for J in 1 .. 3 =>
+             Left (I & 1) * Right (1, J) +
+             Left (I & 2) * Right (2, J) +
+             Left (I & 3) * Right (3, J)]];
+
+   function "*"
      (Left : Float; Right : Symmetric_Matrix) return Symmetric_Matrix is
        [for J in Right'Range => Left * Right (J)];
 
@@ -235,5 +250,13 @@ private
       a_22 => M (1, 2) * M (1, 2) + M (2, 2) * M (2, 2) + M (3, 2) * M (3, 2),
       a_23 => M (1, 2) * M (1, 3) + M (2, 2) * M (2, 3) + M (3, 2) * M (3, 3),
       a_33 => M (1, 3) * M (1, 3) + M (2, 3) * M (2, 3) + M (3, 3) * M (3, 3)];
+
+   function MT_x_M (M : Symmetric_Matrix) return Symmetric_Matrix is
+     [M (1 & 1) * M (1 & 1) + M (1 & 2) * M (1 & 2) + M (1 & 3) * M (1 & 3),
+      M (1 & 1) * M (2 & 1) + M (1 & 2) * M (2 & 2) + M (1 & 3) * M (2 & 3),
+      M (1 & 1) * M (3 & 1) + M (1 & 2) * M (3 & 2) + M (1 & 3) * M (3 & 3),
+      M (2 & 1) * M (2 & 1) + M (2 & 2) * M (2 & 2) + M (2 & 3) * M (2 & 3),
+      M (2 & 1) * M (3 & 1) + M (2 & 2) * M (3 & 2) + M (2 & 3) * M (3 & 3),
+      M (3 & 1) * M (3 & 1) + M (3 & 2) * M (3 & 2) + M (3 & 3) * M (3 & 3)];
 
 end Tiny_Tensors.Float_Matrices;

@@ -10,68 +10,127 @@ with Tiny_Tensors.Float_Vector_Arrays;
 with Tiny_Tensors.Float_Vectors;
 with Tiny_Tensors.Float_Sqrt;
 
-procedure Tiny_Tensors.Float_Singular_Value_Decomposition
-  (Input : Tiny_Tensors.Float_Matrices.Matrix;
-   U     : out Tiny_Tensors.Float_Matrices.Orthonormal_Matrix;
-   S     : out Tiny_Tensors.Float_Matrices.Diagonal_Matrix;
-   V     : out Tiny_Tensors.Float_Matrices.Orthonormal_Matrix)
-is
-   use Tiny_Tensors.Float_Matrices;
-   use Tiny_Tensors.Float_Vector_Arrays;
+package body Tiny_Tensors.Float_Singular_Value_Decomposition is
 
-   function SQRT (X : Float) return Float is
-     (if X < 0.0 then 0.0 else Tiny_Tensors.Float_Sqrt (X));
+   procedure Real_SVD
+     (BT_B  : Float_Matrices.Symmetric_Matrix;
+      S     : out Tiny_Tensors.Float_Matrices.Diagonal_Matrix;
+      V     : out Tiny_Tensors.Float_Matrices.Orthonormal_Matrix);
+   --  Perform singular value decomposition of 3x3 matrix B⟙*B.
 
-   function To_Orthonormal (Left : Matrix) return Orthonormal_Matrix is
-     [for J in 1 .. 3 =>
-        [for K in 1 .. 3 => Left (J, K)]];
+   function To_Orthonormal
+     (Left : Tiny_Tensors.Float_Matrices.Matrix)
+       return Tiny_Tensors.Float_Matrices.Orthonormal_Matrix
+         is [for J in 1 .. 3 => [for K in 1 .. 3 => Left (J, K)]];
 
-   BT_B    : constant Float_Matrices.Symmetric_Matrix :=
-     Float_Matrices.MT_x_M (Input);
+   --------------
+   -- Real_SVD --
+   --------------
 
-   Values  : Tiny_Tensors.Float_Matrices.Diagonal_Matrix;
-   Vectors : Tiny_Tensors.Float_Matrices.Vector_Array_3;
+   procedure Real_SVD
+     (BT_B  : Float_Matrices.Symmetric_Matrix;
+      S     : out Tiny_Tensors.Float_Matrices.Diagonal_Matrix;
+      V     : out Tiny_Tensors.Float_Matrices.Orthonormal_Matrix)
+   is
+      use Tiny_Tensors.Float_Matrices;
+      use Tiny_Tensors.Float_Vector_Arrays;
 
-   procedure Swap (Left, Right : Positive);
+      function SQRT (X : Float) return Float
+      is (if X < 0.0 then 0.0 else Tiny_Tensors.Float_Sqrt (X));
 
-   function More (Left, Right : Positive) return Boolean is
-     (Values (Left) > Values (Right) or
-       (Values (Left) = Values (Right) and Left > Right));
+      Values  : Tiny_Tensors.Float_Matrices.Diagonal_Matrix;
+      Vectors : Tiny_Tensors.Float_Matrices.Vector_Array_3;
 
-   ----------
-   -- Swap --
-   ----------
+      procedure Swap (Left, Right : Positive);
 
-   procedure Swap (Left, Right : Positive) is
-      Tmp_V : Float := Values (Left);
-      Tmp_M : Float_Vectors.Vector := Vectors (Left);
+      function More (Left, Right : Positive) return Boolean
+      is (Values (Left) > Values (Right)
+          or (Values (Left) = Values (Right) and Left > Right));
+
+      ----------
+      -- Swap --
+      ----------
+
+      procedure Swap (Left, Right : Positive) is
+         Tmp_V : Float := Values (Left);
+         Tmp_M : Float_Vectors.Vector := Vectors (Left);
+      begin
+         Values (Left) := Values (Right);
+         Values (Right) := Tmp_V;
+         Vectors (Left) := Vectors (Right);
+         Vectors (Right) := Tmp_M;
+      end Swap;
+
+      procedure Sort is new
+        Ada.Containers.Generic_Anonymous_Array_Sort (Positive, More, Swap);
    begin
-      Values (Left) := Values (Right);
-      Values (Right) := Tmp_V;
-      Vectors (Left) := Vectors (Right);
-      Vectors (Right) := Tmp_M;
-   end Swap;
+      Float_Eigen_System.Get_Eigen_System (BT_B, Values, Vectors);
 
-   procedure Sort is new
-     Ada.Containers.Generic_Anonymous_Array_Sort (Positive, More, Swap);
-begin
-   Float_Eigen_System.Get_Eigen_System (BT_B, Values, Vectors);
+      Sort (1, 3);
 
-   Sort (1, 3);
+      V := To_Orthonormal (From_Columns (Vectors));
 
-   V := To_Orthonormal (From_Columns (Vectors));
+      S := [for J in 1 .. 3 => SQRT (Values (J))];
+   end Real_SVD;
 
-   S := [for J in 1 .. 3 => SQRT (Values (J))];
+   ---------
+   -- SVD --
+   ---------
 
-   declare
-      Inv : constant Diagonal_Matrix :=
-        [for J in 1 .. 3 => (if S (J) = 0.0 then 0.0 else 1.0 / S (J))];
-
-      T : constant Matrix := Input * V * Inv;
-
-      Norm : constant Matrix := From_Rows (Normalize (Rows (T)));
+   procedure SVD
+     (Input : Tiny_Tensors.Float_Matrices.Matrix;
+      U     : out Tiny_Tensors.Float_Matrices.Orthonormal_Matrix;
+      S     : out Tiny_Tensors.Float_Matrices.Diagonal_Matrix;
+      V     : out Tiny_Tensors.Float_Matrices.Orthonormal_Matrix)
+   is
+      BT_B : constant Float_Matrices.Symmetric_Matrix :=
+        Float_Matrices.MT_x_M (Input);
    begin
-      U := To_Orthonormal (Norm);
-   end;
+      Real_SVD (BT_B => BT_B, S => S, V => V);
+
+      declare
+         use Tiny_Tensors.Float_Matrices;
+         use Tiny_Tensors.Float_Vector_Arrays;
+
+         Inv : constant Diagonal_Matrix :=
+           [for J in 1 .. 3 => (if S (J) = 0.0 then 0.0 else 1.0 / S (J))];
+
+         T : constant Matrix := Input * V * Inv;
+
+         Norm : constant Matrix := From_Rows (Normalize (Rows (T)));
+      begin
+         U := To_Orthonormal (Norm);
+      end;
+   end SVD;
+
+   ---------
+   -- SVD --
+   ---------
+
+   procedure SVD
+     (Input : Tiny_Tensors.Float_Matrices.Symmetric_Matrix;
+      U     : out Tiny_Tensors.Float_Matrices.Orthonormal_Matrix;
+      S     : out Tiny_Tensors.Float_Matrices.Diagonal_Matrix;
+      V     : out Tiny_Tensors.Float_Matrices.Orthonormal_Matrix)
+   is
+      BT_B : constant Float_Matrices.Symmetric_Matrix :=
+        Float_Matrices.MT_x_M (Input);
+   begin
+      Real_SVD (BT_B => BT_B, S => S, V => V);
+
+      declare
+         use Tiny_Tensors.Float_Matrices;
+         use Tiny_Tensors.Float_Vector_Arrays;
+
+         Inv : constant Diagonal_Matrix :=
+           [for J in 1 .. 3 => (if S (J) = 0.0 then 0.0 else 1.0 / S (J))];
+
+         T : constant Matrix := Input * V * Inv;
+
+         Norm : constant Matrix := From_Rows (Normalize (Rows (T)));
+      begin
+         U := To_Orthonormal (Norm);
+      end;
+   end SVD;
 
 end Tiny_Tensors.Float_Singular_Value_Decomposition;

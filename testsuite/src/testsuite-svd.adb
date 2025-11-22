@@ -14,7 +14,7 @@ package body Testsuite.SVD is
      U     : out Orthonormal_Matrix;
      S     : out Diagonal_Matrix;
      VT    : out Orthonormal_Matrix)
-       renames Tiny_Tensors.Float_Singular_Value_Decomposition;
+       renames Tiny_Tensors.Float_Singular_Value_Decomposition.SVD;
 
    Tolerance : constant := 1.0e-6;
 
