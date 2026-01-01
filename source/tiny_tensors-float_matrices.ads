@@ -53,14 +53,17 @@ package Tiny_Tensors.Float_Matrices is
    function "*" (Left, Right : Matrix) return Matrix;
    --  Return matrix multiplication
 
-   function "*" (L, R : FV.Vector) return Matrix;
-   --  Outer product of two vectors.
+   function "*" (Left, Right : FV.Vector) return Matrix;
+   --  Outer product of two vectors. AKA dyadic product xȳ.
 
    function "*" (L : Matrix; R : FV.Vector) return FV.Vector;
    --  Return matrix-vector multiplication
 
    function "*" (Left : Float; Right : Matrix) return Matrix;
    --  Return scalar multiplication
+
+   function Skew (Vector : FV.Vector) return Matrix;
+   --  Return skew-symmetric form of Vector. So, A*B = Skew(A)*B
 
    type Diagonal_Matrix is array (1 .. 3) of Float;
    --  Diagonal matrix represented as vector of diagonal elements
@@ -85,6 +88,8 @@ package Tiny_Tensors.Float_Matrices is
 
    function "&" (Row, Column : Index_1_3) return Symmetric_Matrix_Index
      renames To_Index;
+   --
+   --  A shortcut to use like this: M (1 & 3) = M (a_13)
 
    type Symmetric_Matrix is array (Symmetric_Matrix_Index) of Float;
    --  Symmetric matrix represented in compact form
@@ -162,6 +167,11 @@ private
    function Determinant (M : Orthonormal_Matrix) return Float is
      (Determinant (From_Orthonormal (M)));
 
+   function Skew (Vector : FV.Vector) return Matrix is
+     [[0.0,         -Vector (3), +Vector (2)],
+      [+Vector (3), 0.0,         -Vector (1)],
+      [-Vector (2), +Vector (1), 0.0]];
+
    function Transpose (Left : Matrix) return Matrix is
      [for J in 1 .. 3 =>
         [for K in 1 .. 3 => Left (K, J)]];
@@ -185,9 +195,9 @@ private
            (Left (J, 2) * Right (2, K)) +
            (Left (J, 3) * Right (3, K))]];
 
-   function "*" (L, R : FV.Vector) return Matrix is
+   function "*" (Left, Right : FV.Vector) return Matrix is
      [for J in 1 .. 3 =>
-        [for K in 1 .. 3 => L (J) * R (K)]];
+        [for K in 1 .. 3 => Left (J) * Right (K)]];
 
    function "*" (L : Matrix; R : FV.Vector) return FV.Vector is
      [L (1, 1) * R (1) + L (1, 2) * R (2) + L (1, 3) * R (3),

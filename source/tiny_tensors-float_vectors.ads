@@ -37,11 +37,12 @@ package Tiny_Tensors.Float_Vectors is
 
    function "*" (Left, Right : Vector) return Float;
    --
-   --  Return dot product. x·y = |x||y| cos(θ)
+   --  Return dot product. x·y = |x||y| cos(θ) = x̄y
 
    function "*" (Left, Right : Vector) return Vector;
    --
-   --  Return cross product. |xy| = Area of parallelogram bounded by x, y
+   --  Return cross product. |xy| = Area of parallelogram bounded by x, y.
+   --  Xy, where X is the Skew symmetric matrix of x.
 
    function Triple_Product (A, B, C : Vector) return Vector;
    --

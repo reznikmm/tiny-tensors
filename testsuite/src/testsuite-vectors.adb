@@ -3,6 +3,7 @@
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 ----------------------------------------------------------------
 
+with Tiny_Tensors.Float_Matrices;
 with Tiny_Tensors.Float_Vectors;
 
 package body Testsuite.Vectors is
@@ -42,6 +43,14 @@ package body Testsuite.Vectors is
          --  Test cross product
          V3 := V1 * V2;
          T.Assert (V3 = [-3.0, 6.0, -3.0]);
+
+         --  Test cross product using Skew symmetric matrix
+         declare
+            use Tiny_Tensors.Float_Matrices;
+         begin
+            V3 := Skew (V1) * V2;
+            T.Assert (V3 = [-3.0, 6.0, -3.0]);
+         end;
 
          --  Test magnitude
          T.Assert (abs (Length (V1) - 3.74166) < 0.001);
