@@ -65,11 +65,22 @@ package Tiny_Tensors.Float_Matrices is
    function Skew (Vector : FV.Vector) return Matrix;
    --  Return skew-symmetric form of Vector. So, A*B = Skew(A)*B
 
+   ---------------------
+   -- Diagonal_Matrix --
+   ---------------------
+
    type Diagonal_Matrix is array (1 .. 3) of Float;
    --  Diagonal matrix represented as vector of diagonal elements
 
    function From_Diagonal (Left : Diagonal_Matrix) return Matrix;
    --  Convert Diagonal_Matrix to Matrix
+
+   function "*" (Left : Matrix; Right : Diagonal_Matrix) return Matrix;
+   --  Return matrix multiplication
+
+   ----------------------
+   -- Symmetric_Matrix --
+   ----------------------
 
    type Symmetric_Matrix_Index is (a_11, a_12, a_13, a_22, a_23, a_33);
    --  Index for compact form representation of symmetric matrix.
@@ -107,6 +118,22 @@ package Tiny_Tensors.Float_Matrices is
      (Left : Float; Right : Symmetric_Matrix) return Symmetric_Matrix;
    --  Return scalar multiplication
 
+   function LT_x_R
+     (Left, Right : Float_Vector_Arrays.Vector_Array) return Symmetric_Matrix
+       with Pre => Left'Length = Right'Length;
+   --
+   --  Return Left transpose times Right: Lᵀ x R
+
+   function MT_x_M (M : Matrix) return Symmetric_Matrix;
+   --  Return Mᵀ x M in compact form
+
+   function MT_x_M (M : Symmetric_Matrix) return Symmetric_Matrix;
+   --  Return Mᵀ x M in compact form
+
+   ------------------------
+   -- Orthonormal_Matrix --
+   ------------------------
+
    subtype Unit_Interval is Float range -1.0 .. 1.0;
 
    type Orthonormal_Matrix is array (1 .. 3, 1 .. 3) of Unit_Interval;
@@ -121,22 +148,8 @@ package Tiny_Tensors.Float_Matrices is
 
    function Transpose (Left : Orthonormal_Matrix) return Orthonormal_Matrix;
 
-   function LT_x_R
-    (Left, Right : Float_Vector_Arrays.Vector_Array) return Symmetric_Matrix
-      with Pre => Left'Length = Right'Length;
-   --  Return Left transpose times Right: Lᵀ x R
-
-   function MT_x_M (M : Matrix) return Symmetric_Matrix;
-   --  Return Mᵀ x M in compact form
-
-   function MT_x_M (M : Symmetric_Matrix) return Symmetric_Matrix;
-   --  Return Mᵀ x M in compact form
-
-   function "*" (Left : Matrix; Right : Diagonal_Matrix) return Matrix;
-   --  Return matrix multiplication
-
    function "*"
-    (Left : Orthonormal_Matrix; Right : Diagonal_Matrix) return Matrix;
+     (Left : Orthonormal_Matrix; Right : Diagonal_Matrix) return Matrix;
    --  Return matrix multiplication
 
    function "*" (Left : Matrix; Right : Orthonormal_Matrix) return Matrix;
@@ -154,39 +167,34 @@ package Tiny_Tensors.Float_Matrices is
 
 private
 
-   function Determinant (Left : Matrix) return Float is
-     (Left (1, 1) * (Left (2, 2) * Left (3, 3) - Left (2, 3) * Left (3, 2)) -
-      Left (1, 2) * (Left (2, 1) * Left (3, 3) - Left (2, 3) * Left (3, 1)) +
-      Left (1, 3) * (Left (2, 1) * Left (3, 2) - Left (2, 2) * Left (3, 1)));
+   function "*" (L : Matrix; R : FV.Vector) return FV.Vector is
+     [L (1, 1) * R (1) + L (1, 2) * R (2) + L (1, 3) * R (3),
+      L (2, 1) * R (1) + L (2, 2) * R (2) + L (2, 3) * R (3),
+      L (3, 1) * R (1) + L (3, 2) * R (2) + L (3, 3) * R (3)];
 
-   function Determinant (M : Symmetric_Matrix) return Float is
-     (M (1 & 1) * (M (2 & 2) * M (3 & 3) - M (2 & 3) * M (3 & 2)) -
-      M (1 & 2) * (M (2 & 1) * M (3 & 3) - M (2 & 3) * M (3 & 1)) +
-      M (1 & 3) * (M (2 & 1) * M (3 & 2) - M (2 & 2) * M (3 & 1)));
+   function "*" (L : Orthonormal_Matrix; R : FV.Vector) return FV.Vector is
+     (From_Orthonormal (L) * R);
 
-   function Determinant (M : Orthonormal_Matrix) return Float is
-     (Determinant (From_Orthonormal (M)));
+   function "*" (L : Symmetric_Matrix; R : FV.Vector) return FV.Vector is
+     [L (1 & 1) * R (1) + L (1 & 2) * R (2) + L (1 & 3) * R (3),
+      L (2 & 1) * R (1) + L (2 & 2) * R (2) + L (2 & 3) * R (3),
+      L (3 & 1) * R (1) + L (3 & 2) * R (2) + L (3 & 3) * R (3)];
 
-   function Skew (Vector : FV.Vector) return Matrix is
-     [[0.0,         -Vector (3), +Vector (2)],
-      [+Vector (3), 0.0,         -Vector (1)],
-      [-Vector (2), +Vector (1), 0.0]];
-
-   function Transpose (Left : Matrix) return Matrix is
+   function "*" (Left, Right : FV.Vector) return Matrix is
      [for J in 1 .. 3 =>
-        [for K in 1 .. 3 => Left (K, J)]];
+        [for K in 1 .. 3 => Left (J) * Right (K)]];
 
-   function Transpose (Left : Orthonormal_Matrix) return Orthonormal_Matrix is
+   function "*" (Left : Float; Right : Matrix) return Matrix is
      [for J in 1 .. 3 =>
-        [for K in 1 .. 3 => Left (K, J)]];
+        [for K in 1 .. 3 => Left * Right (J, K)]];
 
-   function "+" (Left, Right : Matrix) return Matrix is
-     [for J in 1 .. 3 =>
-        [for K in 1 .. 3 => Left (J, K) + Right (J, K)]];
+   function "*"
+     (Left : Float; Right : Symmetric_Matrix) return Symmetric_Matrix is
+       [for J in Right'Range => Left * Right (J)];
 
-   function "-" (Left, Right : Matrix) return Matrix is
+   function "*" (Left : Matrix; Right : Diagonal_Matrix) return Matrix is
      [for J in 1 .. 3 =>
-        [for K in 1 .. 3 => Left (J, K) - Right (J, K)]];
+        [for K in 1 .. 3 => Left (J, K) * Right (K)]];
 
    function "*" (Left, Right : Matrix) return Matrix is
      [for J in 1 .. 3 =>
@@ -195,37 +203,12 @@ private
            (Left (J, 2) * Right (2, K)) +
            (Left (J, 3) * Right (3, K))]];
 
-   function "*" (Left, Right : FV.Vector) return Matrix is
-     [for J in 1 .. 3 =>
-        [for K in 1 .. 3 => Left (J) * Right (K)]];
-
-   function "*" (L : Matrix; R : FV.Vector) return FV.Vector is
-     [L (1, 1) * R (1) + L (1, 2) * R (2) + L (1, 3) * R (3),
-      L (2, 1) * R (1) + L (2, 2) * R (2) + L (2, 3) * R (3),
-      L (3, 1) * R (1) + L (3, 2) * R (2) + L (3, 3) * R (3)];
-
-   function "*" (L : Symmetric_Matrix; R : FV.Vector) return FV.Vector is
-     [L (1 & 1) * R (1) + L (1 & 2) * R (2) + L (1 & 3) * R (3),
-      L (2 & 1) * R (1) + L (2 & 2) * R (2) + L (2 & 3) * R (3),
-      L (3 & 1) * R (1) + L (3 & 2) * R (2) + L (3 & 3) * R (3)];
-
-   function "*" (Left : Float; Right : Matrix) return Matrix is
-     [for J in 1 .. 3 =>
-        [for K in 1 .. 3 => Left * Right (J, K)]];
-
-   function "*" (Left : Matrix; Right : Diagonal_Matrix) return Matrix is
-     [for J in 1 .. 3 =>
-        [for K in 1 .. 3 => Left (J, K) * Right (K)]];
-
    function "*" (Left : Matrix; Right : Orthonormal_Matrix) return Matrix is
      (Left * From_Orthonormal (Right));
 
    function "*"
     (Left : Orthonormal_Matrix; Right : Diagonal_Matrix) return Matrix is
       (From_Orthonormal (Left) * Right);
-
-   function "*" (L : Orthonormal_Matrix; R : FV.Vector) return FV.Vector is
-     (From_Orthonormal (L) * R);
 
    function "*"
      (Left : Symmetric_Matrix; Right : Orthonormal_Matrix) return Matrix is
@@ -235,23 +218,40 @@ private
              Left (I & 2) * Right (2, J) +
              Left (I & 3) * Right (3, J)]];
 
-   function "*"
-     (Left : Float; Right : Symmetric_Matrix) return Symmetric_Matrix is
-       [for J in Right'Range => Left * Right (J)];
+   function "+" (Left, Right : Matrix) return Matrix is
+     [for J in 1 .. 3 =>
+        [for K in 1 .. 3 => Left (J, K) + Right (J, K)]];
+
+   function "-" (Left, Right : Matrix) return Matrix is
+     [for J in 1 .. 3 =>
+        [for K in 1 .. 3 => Left (J, K) - Right (J, K)]];
+
+   function Determinant (Left : Matrix) return Float is
+     (Left (1, 1) * (Left (2, 2) * Left (3, 3) - Left (2, 3) * Left (3, 2)) -
+      Left (1, 2) * (Left (2, 1) * Left (3, 3) - Left (2, 3) * Left (3, 1)) +
+      Left (1, 3) * (Left (2, 1) * Left (3, 2) - Left (2, 2) * Left (3, 1)));
+
+   function Determinant (M : Orthonormal_Matrix) return Float is
+     (Determinant (From_Orthonormal (M)));
+
+   function Determinant (M : Symmetric_Matrix) return Float is
+     (M (1 & 1) * (M (2 & 2) * M (3 & 3) - M (2 & 3) * M (3 & 2)) -
+      M (1 & 2) * (M (2 & 1) * M (3 & 3) - M (2 & 3) * M (3 & 1)) +
+      M (1 & 3) * (M (2 & 1) * M (3 & 2) - M (2 & 2) * M (3 & 1)));
 
    function From_Diagonal (Left : Diagonal_Matrix) return Matrix is
      [[Left (1), 0.0, 0.0],
       [0.0, Left (2), 0.0],
       [0.0, 0.0, Left (3)]];
 
+   function From_Orthonormal (Left : Orthonormal_Matrix) return Matrix is
+     [for J in 1 .. 3 =>
+        [for K in 1 .. 3 => Left (J, K)]];
+
    function From_Symmetric (Left : Symmetric_Matrix) return Matrix is
      [[Left (a_11), Left (a_12), Left (a_13)],
       [Left (a_12), Left (a_22), Left (a_23)],
       [Left (a_13), Left (a_23), Left (a_33)]];
-
-   function From_Orthonormal (Left : Orthonormal_Matrix) return Matrix is
-     [for J in 1 .. 3 =>
-        [for K in 1 .. 3 => Left (J, K)]];
 
    function MT_x_M (M : Matrix) return Symmetric_Matrix is
      [a_11 => M (1, 1) * M (1, 1) + M (2, 1) * M (2, 1) + M (3, 1) * M (3, 1),
@@ -268,5 +268,18 @@ private
       M (2 & 1) * M (2 & 1) + M (2 & 2) * M (2 & 2) + M (2 & 3) * M (2 & 3),
       M (2 & 1) * M (3 & 1) + M (2 & 2) * M (3 & 2) + M (2 & 3) * M (3 & 3),
       M (3 & 1) * M (3 & 1) + M (3 & 2) * M (3 & 2) + M (3 & 3) * M (3 & 3)];
+
+   function Skew (Vector : FV.Vector) return Matrix is
+     [[0.0,         -Vector (3), +Vector (2)],
+      [+Vector (3), 0.0,         -Vector (1)],
+      [-Vector (2), +Vector (1), 0.0]];
+
+   function Transpose (Left : Matrix) return Matrix is
+     [for J in 1 .. 3 =>
+        [for K in 1 .. 3 => Left (K, J)]];
+
+   function Transpose (Left : Orthonormal_Matrix) return Orthonormal_Matrix is
+     [for J in 1 .. 3 =>
+        [for K in 1 .. 3 => Left (K, J)]];
 
 end Tiny_Tensors.Float_Matrices;
