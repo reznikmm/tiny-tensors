@@ -286,10 +286,9 @@ package body Testsuite.Matrices is
          V3 : constant Vector := [0.0, 0.0, 1.0];
 
          Left : constant Vector_Array := [V1, V2, V3];
-         Right : constant Vector_Array := [V1, V2, V3];
          Result : Symmetric_Matrix;
       begin
-         Result := LT_x_R (Left, Right);
+         Result := LT_x_L (Left);
 
          --  Left^T * Right should be identity (in symmetric form)
          T.Assert (abs (Result (a_11) - 1.0) < 0.001);
@@ -308,7 +307,6 @@ package body Testsuite.Matrices is
          V2 : constant Vector := [4.0, 5.0, 6.0];
 
          Left : constant Vector_Array := [V1, V2];
-         Right : constant Vector_Array := [V1, V2];
          Result : Symmetric_Matrix;
 
          --  Manual calculation of L^T * R:
@@ -326,7 +324,7 @@ package body Testsuite.Matrices is
          --             [22, 29, 36],
          --             [27, 36, 45]]
       begin
-         Result := LT_x_R (Left, Right);
+         Result := LT_x_L (Left);
 
          T.Assert (abs (Result (a_11) - 17.0) < 0.001);
          T.Assert (abs (Result (a_12) - 22.0) < 0.001);
@@ -342,7 +340,6 @@ package body Testsuite.Matrices is
          --  Test with single vector
          V : constant Vector := [2.0, 3.0, 4.0];
          Left : constant Vector_Array := [V];
-         Right : constant Vector_Array := [V];
          Result : Symmetric_Matrix;
 
          --  L^T * R = [[2]; [3]; [4]] * [[2, 3, 4]]
@@ -350,7 +347,7 @@ package body Testsuite.Matrices is
          --             [6, 9, 12],
          --             [8, 12, 16]]
       begin
-         Result := LT_x_R (Left, Right);
+         Result := LT_x_L (Left);
 
          T.Assert (abs (Result (a_11) - 4.0) < 0.001);
          T.Assert (abs (Result (a_12) - 6.0) < 0.001);
@@ -364,26 +361,26 @@ package body Testsuite.Matrices is
          use Tiny_Tensors.Float_Vector_Arrays;
 
          --  Test with different Left and Right
-         V1 : constant Vector := [1.0, 0.0, 0.0];
-         V2 : constant Vector := [0.0, 2.0, 0.0];
+         V1 : constant Vector := [1.0, 2.0, 3.0];
+         V2 : constant Vector := [4.0, 5.0, 6.0];
+         V3 : constant Vector := [7.0, 8.0, 9.0];
 
-         Left : constant Vector_Array := [V1];
-         Right : constant Vector_Array := [V2];
-         Result : Symmetric_Matrix;
+         Left : constant Vector_Array := [V1, V2];
+         Right : constant Vector_Array := [V2, V3];
+         Result : Matrix;
 
-         --  L^T * R = [[1]; [0]; [0]] * [[0, 2, 0]]
-         --          = [[0, 2, 0],
-         --             [0, 0, 0],
-         --             [0, 0, 0]]
       begin
          Result := LT_x_R (Left, Right);
 
-         T.Assert (abs (Result (a_11)) < 0.001);
-         T.Assert (abs (Result (a_12) - 2.0) < 0.001);
-         T.Assert (abs (Result (a_13)) < 0.001);
-         T.Assert (abs (Result (a_22)) < 0.001);
-         T.Assert (abs (Result (a_23)) < 0.001);
-         T.Assert (abs (Result (a_33)) < 0.001);
+         T.Assert (abs (Result (1, 1) - 32.0) < 0.001);
+         T.Assert (abs (Result (1, 2) - 37.0) < 0.001);
+         T.Assert (abs (Result (1, 3) - 42.0) < 0.001);
+         T.Assert (abs (Result (2, 1) - 43.0) < 0.001);
+         T.Assert (abs (Result (2, 2) - 50.0) < 0.001);
+         T.Assert (abs (Result (2, 3) - 57.0) < 0.001);
+         T.Assert (abs (Result (3, 1) - 54.0) < 0.001);
+         T.Assert (abs (Result (3, 2) - 63.0) < 0.001);
+         T.Assert (abs (Result (3, 3) - 72.0) < 0.001);
       end;
 
       declare
@@ -400,7 +397,7 @@ package body Testsuite.Matrices is
          Expected : Symmetric_Matrix;
       begin
          --  LT_x_R where Left = Right should be equivalent to MT_x_M
-         Result := LT_x_R (Vecs, Vecs);
+         Result := LT_x_L (Vecs);
          Expected := MT_x_M (M);
 
          T.Assert (abs (Result (a_11) - Expected (a_11)) < 0.001);

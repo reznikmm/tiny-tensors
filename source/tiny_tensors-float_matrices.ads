@@ -119,10 +119,15 @@ package Tiny_Tensors.Float_Matrices is
    --  Return scalar multiplication
 
    function LT_x_R
-     (Left, Right : Float_Vector_Arrays.Vector_Array) return Symmetric_Matrix
+     (Left, Right : Float_Vector_Arrays.Vector_Array) return Matrix
        with Pre => Left'Length = Right'Length;
    --
    --  Return Left transpose times Right: Lᵀ x R
+
+   function LT_x_L
+     (Left : Float_Vector_Arrays.Vector_Array) return Symmetric_Matrix;
+   --
+   --  Return Left transpose times Left: Lᵀ x L
 
    function MT_x_M (M : Matrix) return Symmetric_Matrix;
    --  Return Mᵀ x M in compact form
