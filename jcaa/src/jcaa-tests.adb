@@ -35,6 +35,28 @@ package body JCAA.Tests is
 
    end Noop;
 
+   ----------
+   -- Real --
+   ----------
+
+   procedure Real (T : in out Trendy_Test.Operation'Class) is
+      State : JCAA.Calibrations.Calibration_State
+        (JCAA.Samples.Sample_Vector'Length);
+   begin
+      T.Register (Parallelize => False);
+
+      declare
+         Accl : JCAA.Samples.Sample_Vector;
+         Mag  : JCAA.Samples.Sample_Vector;
+      begin
+         JCAA.Samples.Real (Accl, Mag);
+         JCAA.Calibrations.Initialize (State, Accl, Mag);
+         JCAA.Calibrations.Run (State, Accl, Mag);
+
+         T.Assert (abs (JCAA.Calibrations.Rotation (State) - Identity) < 0.01);
+      end;
+   end Real;
+
    -----------
    -- Shift --
    -----------

@@ -45,7 +45,7 @@ private
       Vm : Vector;  --  mag offset
       Fm : Vector_Array (1 .. Size);  --  True m(k)
       R  : Matrix;  --  rotation mag->accl
-      D  : Float;  --  det (R)
+      D  : Float;  --  sin (Inclination)
    end record;
 
    function Rotation (State : Calibration_State) return Matrix is (State.R);
