@@ -7,8 +7,10 @@ package JCAA.Tests is
 private
 
    procedure Noop (T : in out Trendy_Test.Operation'Class);
+   procedure Shift (T : in out Trendy_Test.Operation'Class);
 
    All_Tests : constant Trendy_Test.Test_Group :=
-     [Noop'Access];
+     [  --  Noop'Access,
+      Shift'Access];
 
 end JCAA.Tests;

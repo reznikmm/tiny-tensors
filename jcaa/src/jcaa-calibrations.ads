@@ -11,6 +11,26 @@ package JCAA.Calibrations is
       Accl  : Tiny_Tensors.Float_Vector_Arrays.Vector_Array;
       Mag   : Tiny_Tensors.Float_Vector_Arrays.Vector_Array);
 
+   procedure Shift
+     (State : in out Calibration_State;
+      Accl  : Tiny_Tensors.Float_Vectors.Vector :=
+        Tiny_Tensors.Float_Vectors.Zero;
+      Mag   : Tiny_Tensors.Float_Vectors.Vector :=
+        Tiny_Tensors.Float_Vectors.Zero);
+
+   procedure Run
+     (State : in out Calibration_State;
+      Accl  : Tiny_Tensors.Float_Vector_Arrays.Vector_Array;
+      Mag   : Tiny_Tensors.Float_Vector_Arrays.Vector_Array);
+
+   function Rotation
+     (State : Calibration_State) return Tiny_Tensors.Float_Matrices.Matrix;
+
+   function Bias_Accl
+     (State : Calibration_State) return Tiny_Tensors.Float_Vectors.Vector;
+
+   function Bias_Mag
+     (State : Calibration_State) return Tiny_Tensors.Float_Vectors.Vector;
 private
 
    use Tiny_Tensors.Float_Matrices;
@@ -27,5 +47,11 @@ private
       R  : Matrix;  --  rotation mag->accl
       D  : Float;  --  det (R)
    end record;
+
+   function Rotation (State : Calibration_State) return Matrix is (State.R);
+
+   function Bias_Accl (State : Calibration_State) return Vector is (State.Va);
+
+   function Bias_Mag (State : Calibration_State) return Vector is (State.Vm);
 
 end JCAA.Calibrations;
