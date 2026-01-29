@@ -17,7 +17,8 @@ package body Tiny_Tensors.Float_Matrices is
    begin
       return
         [for J in 1 .. 3 =>
-           [for K in 1 .. 3 => Result (J, K)]];
+           [for K in 1 .. 3 =>
+              Float'Max (-1.0, Float'Min (1.0, Result (J, K)))]];
    end "*";
 
    ------------

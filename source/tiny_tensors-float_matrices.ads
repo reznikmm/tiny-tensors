@@ -7,11 +7,13 @@ pragma Ada_2022;
 
 with Tiny_Tensors.Float_Vectors;
 with Tiny_Tensors.Float_Vector_Arrays;
+with Tiny_Tensors.Float_Sqrt;
 
 package Tiny_Tensors.Float_Matrices is
    pragma Pure;
 
    type Matrix is array (1 .. 3, 1 .. 3) of Float;
+
    package FV renames Tiny_Tensors.Float_Vectors;
 
    subtype Vector_Array_3 is Float_Vector_Arrays.Vector_Array (1 .. 3);
@@ -65,6 +67,9 @@ package Tiny_Tensors.Float_Matrices is
    function Skew (Vector : FV.Vector) return Matrix;
    --  Return skew-symmetric form of Vector. So, A*B = Skew(A)*B
 
+   function Frobenius_Norm (M : Matrix) return Float;
+   function Frobenius_Norm_2 (M : Matrix) return Float;
+
    ---------------------
    -- Diagonal_Matrix --
    ---------------------
@@ -77,6 +82,12 @@ package Tiny_Tensors.Float_Matrices is
 
    function "*" (Left : Matrix; Right : Diagonal_Matrix) return Matrix;
    --  Return matrix multiplication
+
+   function Zero return Matrix is
+     (From_Diagonal ([1 .. 3 => 0.0]));
+
+   function Identity return Matrix is
+     (From_Diagonal ([1 .. 3 => 1.0]));
 
    ----------------------
    -- Symmetric_Matrix --
@@ -117,6 +128,10 @@ package Tiny_Tensors.Float_Matrices is
    function "*"
      (Left : Float; Right : Symmetric_Matrix) return Symmetric_Matrix;
    --  Return scalar multiplication
+
+   function "-"
+     (Left  : Symmetric_Matrix;
+      Right : Diagonal_Matrix) return Symmetric_Matrix;
 
    function LT_x_R
      (Left, Right : Float_Vector_Arrays.Vector_Array) return Matrix
@@ -231,6 +246,16 @@ private
      [for J in 1 .. 3 =>
         [for K in 1 .. 3 => Left (J, K) - Right (J, K)]];
 
+   function "-"
+     (Left  : Symmetric_Matrix;
+      Right : Diagonal_Matrix) return Symmetric_Matrix is
+       [a_11 => Left (1 & 1) - Right (1),
+        a_12 => Left (1 & 2),
+        a_13 => Left (1 & 3),
+        a_22 => Left (2 & 2) - Right (2),
+        a_23 => Left (2 & 3),
+        a_33 => Left (3 & 3) - Right (3)];
+
    function Determinant (Left : Matrix) return Float is
      (Left (1, 1) * (Left (2, 2) * Left (3, 3) - Left (2, 3) * Left (3, 2)) -
       Left (1, 2) * (Left (2, 1) * Left (3, 3) - Left (2, 3) * Left (3, 1)) +
@@ -286,5 +311,11 @@ private
    function Transpose (Left : Orthonormal_Matrix) return Orthonormal_Matrix is
      [for J in 1 .. 3 =>
         [for K in 1 .. 3 => Left (K, J)]];
+
+   function Frobenius_Norm_2 (M : Matrix) return Float is
+     ([for Item of M => Item**2]'Reduce ("+", 0.0));
+
+   function Frobenius_Norm (M : Matrix) return Float is
+     (Tiny_Tensors.Float_Sqrt (Frobenius_Norm_2 (M)));
 
 end Tiny_Tensors.Float_Matrices;

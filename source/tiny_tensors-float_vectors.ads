@@ -12,6 +12,8 @@ package Tiny_Tensors.Float_Vectors is
 
    type Vector is array (1 .. 3) of Float;
 
+   function Zero return Vector is [1 .. 3 => 0.0];
+
    function Unit_Vector (Axis : Index_1_3) return Vector;
    --  Return unit vector along given axis
 
