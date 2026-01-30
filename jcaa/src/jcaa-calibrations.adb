@@ -1,6 +1,6 @@
 with Ada.Numerics.Real_Arrays;
-with Ada.Float_Text_IO;
-with Ada.Text_IO;
+--  with Ada.Float_Text_IO;
+--  with Ada.Text_IO;
 
 with Conic_Fit.Sphere;
 
@@ -22,8 +22,6 @@ package body JCAA.Calibrations is
    λan : constant := 1.0;
    λmn : constant := 1.0;
    λr  : constant := 10.0;
-
-   procedure Assign (Left : out Calibration_State; Right : Calibration_State);
 
    ------------
    -- Adjust --
@@ -108,7 +106,7 @@ package body JCAA.Calibrations is
       begin
          for J in 1 .. 3 loop
             for K in 1 .. 3 loop
-               Assign (S, State);
+               S := State;
                S.R (J, K) := @ - d;
                FL := FJ (S);
                S.R (J, K) := @ + 2 * d;
@@ -124,7 +122,6 @@ package body JCAA.Calibrations is
             end loop;
          end loop;
       end Check_dJ_dR;
-
 
       function Adj (Left : Matrix) return Matrix is
          use Ada.Numerics.Real_Arrays;
@@ -152,7 +149,7 @@ package body JCAA.Calibrations is
             --  Ada.Float_Text_IO.Put
             --    (Length_2 (A.Fa (J) - A.Ha * Accl (J) + A.Va), 2, 3, 0);
             --
-            --  Ada.Float_Text_IO.Put ((Length_2 (A.Fa (J)) - 1.0)**2, 2, 3, 0);
+         --  Ada.Float_Text_IO.Put ((Length_2 (A.Fa (J)) - 1.0)**2, 2, 3, 0);
 
             Sm := @ + Length_2 (A.Fm (J) - A.Hm * Mag (J) + A.Vm)
               + λmn * (Length_2 (A.Fm (J)) - 1.0)**2;
@@ -160,7 +157,7 @@ package body JCAA.Calibrations is
             --  Ada.Float_Text_IO.Put
             --    (Length_2 (A.Fm (J) - A.Hm * Mag (J) + A.Vm), 2, 3, 0);
             --
-            --  Ada.Float_Text_IO.Put ((Length_2 (A.Fm (J)) - 1.0)**2, 2, 3, 0);
+         --  Ada.Float_Text_IO.Put ((Length_2 (A.Fm (J)) - 1.0)**2, 2, 3, 0);
 
             Sal := @ + (A.D - Dot (A.Fa (J), A.R * A.Fm (J)))**2;
 
@@ -247,7 +244,7 @@ package body JCAA.Calibrations is
             Count := @ + 1;
 
             for J in reverse 1 .. 40 loop
-               Assign (Next, State - λ * dJ);
+               Next := State - λ * dJ;
 
                --  Ada.Text_IO.Put ("Lambda:");
                --  Ada.Float_Text_IO.Put (λ, 2, 3, 0);
@@ -260,32 +257,16 @@ package body JCAA.Calibrations is
             end loop;
 
             if Value < Min then
-               Assign (State, Next);
+               State := Next;
                Min := Value;
             else
                exit;
             end if;
          end;
       end loop;
+
+      pragma Assert (Count > 0);
    end Run;
-
-   ------------
-   -- Assign --
-   ------------
-
-   procedure Assign
-     (Left  : out Calibration_State;
-      Right : Calibration_State) is
-   begin
-      Left.Ha := Right.Ha;
-      Left.Va := Right.Va;
-      Left.Fa := Right.Fa;
-      Left.Hm := Right.Hm;
-      Left.Vm := Right.Vm;
-      Left.Fm := Right.Fm;
-      Left.R  := Right.R;
-      Left.D  := Right.D;
-   end Assign;
 
    ---------------------
    -- Get_Inclination --

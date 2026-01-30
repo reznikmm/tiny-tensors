@@ -4,7 +4,7 @@ with Tiny_Tensors.Float_Vectors;
 
 package JCAA.Calibrations is
 
-   type Calibration_State (Size : Positive) is limited private;
+   type Calibration_State (Size : Positive) is private;
 
    procedure Initialize
      (State : out Calibration_State;
@@ -37,7 +37,7 @@ private
    use Tiny_Tensors.Float_Vector_Arrays;
    use Tiny_Tensors.Float_Vectors;
 
-   type Calibration_State (Size : Positive) is limited record
+   type Calibration_State (Size : Positive) is record
       Ha : Matrix;  --  accl Ta⁻¹
       Va : Vector;  --  accl offset
       Fa : Vector_Array (1 .. Size);  --  True a(k)

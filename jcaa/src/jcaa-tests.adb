@@ -39,7 +39,7 @@ package body JCAA.Tests is
    -- Real --
    ----------
 
-   procedure Real (T : in out Trendy_Test.Operation'Class) is
+   procedure BMM (T : in out Trendy_Test.Operation'Class) is
       State : JCAA.Calibrations.Calibration_State
         (JCAA.Samples.Sample_Vector'Length);
    begin
@@ -49,13 +49,13 @@ package body JCAA.Tests is
          Accl : JCAA.Samples.Sample_Vector;
          Mag  : JCAA.Samples.Sample_Vector;
       begin
-         JCAA.Samples.Real (Accl, Mag);
+         JCAA.Samples.G_BMM (Accl, Mag);
          JCAA.Calibrations.Initialize (State, Accl, Mag);
          JCAA.Calibrations.Run (State, Accl, Mag);
 
          T.Assert (abs (JCAA.Calibrations.Rotation (State) - Identity) < 0.01);
       end;
-   end Real;
+   end BMM;
 
    -----------
    -- Shift --
