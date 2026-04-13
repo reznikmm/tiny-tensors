@@ -1,3 +1,8 @@
+pragma Ada_2022;
+
+with Ada.Float_Text_IO;
+with Ada.Numerics;
+with Ada.Numerics.Elementary_Functions;
 with JCAA.Calibrations;
 with JCAA.Samples;
 with Tiny_Tensors.Float_Matrices;
@@ -49,9 +54,23 @@ package body JCAA.Tests is
          Accl : JCAA.Samples.Sample_Vector;
          Mag  : JCAA.Samples.Sample_Vector;
       begin
-         JCAA.Samples.G_BMM (Accl, Mag);
+         JCAA.Samples.G_AK (Accl, Mag);
          JCAA.Calibrations.Initialize (State, Accl, Mag);
          JCAA.Calibrations.Run (State, Accl, Mag);
+
+         for J in Accl'Range loop
+            declare
+               A : constant Vector :=
+                 JCAA.Calibrations.Fix_Accl (State, Accl (J));
+               M : constant Vector :=
+                 JCAA.Calibrations.Fix_Mag (State, Mag (J));
+               Dot : constant Float := Normalize (A) * Normalize (M);
+            begin
+               Ada.Float_Text_IO.Put
+                 (Ada.Numerics.Elementary_Functions.Arcsin (Dot)
+                  * 180.0 / Ada.Numerics.Pi, 4, 2, 0);
+            end;
+         end loop;
 
          T.Assert (abs (JCAA.Calibrations.Rotation (State) - Identity) < 0.01);
       end;

@@ -1,3 +1,5 @@
+pragma Ada_2022;
+
 with Trendy_Test;
 
 package JCAA.Tests is

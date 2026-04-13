@@ -31,6 +31,25 @@ package JCAA.Calibrations is
 
    function Bias_Mag
      (State : Calibration_State) return Tiny_Tensors.Float_Vectors.Vector;
+
+   function M_Accl
+     (State : Calibration_State) return Tiny_Tensors.Float_Matrices.Matrix;
+
+   function M_Mag
+     (State : Calibration_State) return Tiny_Tensors.Float_Matrices.Matrix;
+
+   function Fix_Accl
+     (State : Calibration_State;
+      Value : Tiny_Tensors.Float_Vectors.Vector)
+        return Tiny_Tensors.Float_Vectors.Vector;
+   --  Apply acceleromenter bias and matrix
+
+   function Fix_Mag
+     (State : Calibration_State;
+      Value : Tiny_Tensors.Float_Vectors.Vector)
+        return Tiny_Tensors.Float_Vectors.Vector;
+   --  Apply magnetometer bias, matrix and rotation
+
 private
 
    use Tiny_Tensors.Float_Matrices;
@@ -53,5 +72,21 @@ private
    function Bias_Accl (State : Calibration_State) return Vector is (State.Va);
 
    function Bias_Mag (State : Calibration_State) return Vector is (State.Vm);
+
+   function M_Accl (State : Calibration_State) return Matrix is (State.Ha);
+
+   function M_Mag (State : Calibration_State) return Matrix is (State.Hm);
+
+   function Fix_Accl
+     (State : Calibration_State;
+      Value : Tiny_Tensors.Float_Vectors.Vector)
+        return Tiny_Tensors.Float_Vectors.Vector is
+          (State.Ha * Value - State.Va);
+
+   function Fix_Mag
+     (State : Calibration_State;
+      Value : Tiny_Tensors.Float_Vectors.Vector)
+        return Tiny_Tensors.Float_Vectors.Vector is
+          (State.R * (State.Hm * Value - State.Vm));
 
 end JCAA.Calibrations;
