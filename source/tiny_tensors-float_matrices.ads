@@ -163,6 +163,15 @@ package Tiny_Tensors.Float_Matrices is
    function From_Orthonormal (Left : Orthonormal_Matrix) return Matrix;
    --  Convert Orthonormal_Matrix to Matrix
 
+   function From_Diagonal (Left : Diagonal_Matrix) return Orthonormal_Matrix;
+   --  Convert Diagonal_Matrix to Orthonormal_Matrix
+
+   function Zero return Orthonormal_Matrix is
+     (From_Diagonal ([1 .. 3 => 0.0]));
+
+   function Identity return Orthonormal_Matrix is
+     (From_Diagonal ([1 .. 3 => 1.0]));
+
    function Determinant (M : Orthonormal_Matrix) return Float;
    --  Return determinant of orthonormal matrix. Return -1 or 1
 
@@ -270,6 +279,11 @@ private
       M (1 & 3) * (M (2 & 1) * M (3 & 2) - M (2 & 2) * M (3 & 1)));
 
    function From_Diagonal (Left : Diagonal_Matrix) return Matrix is
+     [[Left (1), 0.0, 0.0],
+      [0.0, Left (2), 0.0],
+      [0.0, 0.0, Left (3)]];
+
+   function From_Diagonal (Left : Diagonal_Matrix) return Orthonormal_Matrix is
      [[Left (1), 0.0, 0.0],
       [0.0, Left (2), 0.0],
       [0.0, 0.0, Left (3)]];
