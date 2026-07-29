@@ -35,6 +35,7 @@ package Tiny_Tensors.Float_Vectors is
    function "-" (Left, Right : Vector) return Vector;
 
    function "*" (Left : Float; Right : Vector) return Vector;
+   function "*" (Left : Vector; Right : Float) return Vector;
    --  Return scalar multiplication
 
    function "*" (Left, Right : Vector) return Float;
@@ -83,6 +84,9 @@ private
 
    function "*" (Left : Float; Right : Vector) return Vector is
      [for J in 1 .. 3 => Left * Right (J)];
+
+   function "*" (Left : Vector; Right : Float) return Vector is
+     [for J in 1 .. 3 => Left (J) * Right];
 
    function "*" (Left, Right : Vector) return Float is
      (Left (1) * Right (1) + Left (2) * Right (2) + Left (3) * Right (3));
