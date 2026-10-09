@@ -6,15 +6,18 @@
 pragma Ada_2022;
 
 limited with Tiny_Tensors.Float_Diagonal_Matrices;
-limited with Tiny_Tensors.Float_Symmetric_Matrices;
 limited with Tiny_Tensors.Float_Orthonormal_Matrices;
-with Tiny_Tensors.Float_Vectors;
+limited with Tiny_Tensors.Float_Symmetric_Matrices;
 with Tiny_Tensors.Float_Vector_Arrays;
+with Tiny_Tensors.Float_Vectors;
 
 package Tiny_Tensors.Float_Matrices is
    pragma Pure;
 
    package FV renames Tiny_Tensors.Float_Vectors;
+   package DM renames Tiny_Tensors.Float_Diagonal_Matrices;
+   package OM renames Tiny_Tensors.Float_Orthonormal_Matrices;
+   package SM renames Tiny_Tensors.Float_Symmetric_Matrices;
 
    type Matrix is array (1 .. 3, 1 .. 3) of Float;
 
@@ -60,8 +63,20 @@ package Tiny_Tensors.Float_Matrices is
    --  Convert array of 3 vectors to matrix (each vector is a column)
 
    function "+" (Left, Right : Matrix) return Matrix;
+   function "+" (Left : Matrix; Right : DM.Diagonal_Matrix) return Matrix;
+   function "+" (Left : Matrix; Right : OM.Orthonormal_Matrix) return Matrix;
+   function "+" (Left : Matrix; Right : SM.Symmetric_Matrix) return Matrix;
+   function "+" (Left : DM.Diagonal_Matrix; Right : Matrix) return Matrix;
+   function "+" (Left : OM.Orthonormal_Matrix; Right : Matrix) return Matrix;
+   function "+" (Left : SM.Symmetric_Matrix; Right : Matrix) return Matrix;
 
    function "-" (Left, Right : Matrix) return Matrix;
+   function "-" (Left : Matrix; Right : DM.Diagonal_Matrix) return Matrix;
+   function "-" (Left : Matrix; Right : OM.Orthonormal_Matrix) return Matrix;
+   function "-" (Left : Matrix; Right : SM.Symmetric_Matrix) return Matrix;
+   function "-" (Left : DM.Diagonal_Matrix; Right : Matrix) return Matrix;
+   function "-" (Left : OM.Orthonormal_Matrix; Right : Matrix) return Matrix;
+   function "-" (Left : SM.Symmetric_Matrix; Right : Matrix) return Matrix;
 
    function "-" (Right : Matrix) return Matrix;
 
@@ -81,47 +96,19 @@ package Tiny_Tensors.Float_Matrices is
    function Skew (Vector : FV.Vector) return Matrix;
    --  Return skew-symmetric form of Vector. So, A*B = Skew(A)*B
 
-   function From_Diagonal
-     (M : Float_Diagonal_Matrices.Diagonal_Matrix) return Matrix;
+   function From_Diagonal (M : DM.Diagonal_Matrix) return Matrix;
    --  Convert Diagonal_Matrix to Matrix
 
-   function "*"
-     (Left : Matrix;
-      Right : Float_Diagonal_Matrices.Diagonal_Matrix) return Matrix;
+   function "*" (Left : Matrix; Right : DM.Diagonal_Matrix) return Matrix;
    --  Return matrix multiplication
 
-   function "+"
-     (Left : Matrix;
-      Right : Float_Diagonal_Matrices.Diagonal_Matrix) return Matrix;
-
-   function "-"
-     (Left : Matrix;
-      Right : Float_Diagonal_Matrices.Diagonal_Matrix) return Matrix;
-
-   function "-"
-     (Left : Float_Diagonal_Matrices.Diagonal_Matrix;
-      Right : Matrix) return Matrix;
-
-   function From_Symmetric
-     (M : Float_Symmetric_Matrices.Symmetric_Matrix) return Matrix;
+   function From_Symmetric (M : SM.Symmetric_Matrix) return Matrix;
    --  Convert Symmetric_Matrix to Matrix
 
-   function "*"
-     (Left : Matrix;
-      Right : Float_Symmetric_Matrices.Symmetric_Matrix) return Matrix;
+   function "*" (Left : Matrix; Right : SM.Symmetric_Matrix) return Matrix;
 
-   function "*"
-     (Left : Float_Symmetric_Matrices.Symmetric_Matrix;
-      Right : Matrix) return Matrix;
+   function "*" (Left : SM.Symmetric_Matrix; Right : Matrix) return Matrix;
    --  Return matrix multiplication
-
-   function "+"
-     (Left : Matrix;
-      Right : Float_Symmetric_Matrices.Symmetric_Matrix) return Matrix;
-
-   function "-"
-     (Left : Matrix;
-      Right : Float_Symmetric_Matrices.Symmetric_Matrix) return Matrix;
 
    function LT_x_R
      (Left, Right : Float_Vector_Arrays.Vector_Array) return Matrix
@@ -129,28 +116,21 @@ package Tiny_Tensors.Float_Matrices is
    --
    --  Return Left transpose times Right: Lᵀ x R
 
-   function From_Orthonormal
-     (M : Float_Orthonormal_Matrices.Orthonormal_Matrix) return Matrix;
+   function From_Orthonormal (M : OM.Orthonormal_Matrix) return Matrix;
    --  Convert Orthonormal_Matrix to Matrix
 
-   function "*"
-     (Left : Float_Orthonormal_Matrices.Orthonormal_Matrix;
-      Right : Matrix) return Matrix;
+   function "*" (Left : OM.Orthonormal_Matrix; Right : Matrix) return Matrix;
    --  Return matrix multiplication
 
    function "*"
-     (Left : Float_Orthonormal_Matrices.Orthonormal_Matrix;
-      Right : Float_Diagonal_Matrices.Diagonal_Matrix) return Matrix;
+     (Left : OM.Orthonormal_Matrix; Right : DM.Diagonal_Matrix) return Matrix;
+   --  Return matrix multiplication
+
+   function "*" (Left : Matrix; Right : OM.Orthonormal_Matrix) return Matrix;
    --  Return matrix multiplication
 
    function "*"
-     (Left : Matrix;
-      Right : Float_Orthonormal_Matrices.Orthonormal_Matrix) return Matrix;
-   --  Return matrix multiplication
-
-   function "*"
-     (Left : Float_Symmetric_Matrices.Symmetric_Matrix;
-      Right : Float_Orthonormal_Matrices.Orthonormal_Matrix) return Matrix;
+     (Left : SM.Symmetric_Matrix; Right : OM.Orthonormal_Matrix) return Matrix;
    --  Return matrix multiplication
 
 end Tiny_Tensors.Float_Matrices;

@@ -28,7 +28,7 @@ package body Tiny_Tensors.Float_Symmetric_Matrices is
 
    function "+"
      (Left  : Symmetric_Matrix;
-      Right : Float_Diagonal_Matrices.Diagonal_Matrix)
+      Right : DM.Diagonal_Matrix)
       return Symmetric_Matrix is
        [a_11 => Left (1 & 1) + Right (1),
         a_12 => Left (1 & 2),
@@ -37,9 +37,20 @@ package body Tiny_Tensors.Float_Symmetric_Matrices is
         a_23 => Left (2 & 3),
         a_33 => Left (3 & 3) + Right (3)];
 
+   function "+"
+     (Left  : DM.Diagonal_Matrix;
+      Right : Symmetric_Matrix)
+      return Symmetric_Matrix is
+       [a_11 => Left (1) + Right (1 & 1),
+        a_12 => Right (1 & 2),
+        a_13 => Right (1 & 3),
+        a_22 => Left (2) + Right (2 & 2),
+        a_23 => Right (2 & 3),
+        a_33 => Left (3) + Right (3 & 3)];
+
    function "-"
      (Left  : Symmetric_Matrix;
-      Right : Float_Diagonal_Matrices.Diagonal_Matrix)
+      Right : DM.Diagonal_Matrix)
       return Symmetric_Matrix is
        [a_11 => Left (1 & 1) - Right (1),
         a_12 => Left (1 & 2),
@@ -47,6 +58,18 @@ package body Tiny_Tensors.Float_Symmetric_Matrices is
         a_22 => Left (2 & 2) - Right (2),
         a_23 => Left (2 & 3),
         a_33 => Left (3 & 3) - Right (3)];
+
+   function "-"
+     (Left  : DM.Diagonal_Matrix;
+      Right : Symmetric_Matrix)
+      return Symmetric_Matrix is
+       [a_11 => Left (1) - Right (1 & 1),
+        a_12 => Right (1 & 2),
+        a_13 => Right (1 & 3),
+        a_22 => Left (2) - Right (2 & 2),
+        a_23 => Right (2 & 3),
+        a_33 => Left (3) - Right (3 & 3)];
+
 
    function "+" (Left, Right : Symmetric_Matrix) return Symmetric_Matrix is
      [a_11 => Left (1 & 1) + Right (1 & 1),
@@ -143,7 +166,7 @@ package body Tiny_Tensors.Float_Symmetric_Matrices is
        (Q_A_QT (A, From_Orthonormal (Q)));
 
    function Q_A_QT_Cell
-     (A : Float_Diagonal_Matrices.Diagonal_Matrix;
+     (A : DM.Diagonal_Matrix;
       Q : Float_Matrices.Matrix;
       J, K : Positive) return Float
    is
@@ -152,7 +175,7 @@ package body Tiny_Tensors.Float_Symmetric_Matrices is
       + Q (J, 3) * A (3) * Q (K, 3));
 
    function Q_A_QT
-     (A : Float_Diagonal_Matrices.Diagonal_Matrix;
+     (A : DM.Diagonal_Matrix;
       Q : Float_Matrices.Matrix) return Symmetric_Matrix is
      [a_11 => Q_A_QT_Cell (A, Q, J => 1, K => 1),
       a_12 => Q_A_QT_Cell (A, Q, J => 1, K => 1),

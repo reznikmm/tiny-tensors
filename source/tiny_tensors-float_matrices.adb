@@ -13,16 +13,15 @@ with Tiny_Tensors.Float_Sqrt;
 package body Tiny_Tensors.Float_Matrices is
    use Tiny_Tensors.Float_Diagonal_Matrices;
    use Tiny_Tensors.Float_Symmetric_Matrices;
-   use Tiny_Tensors.Float_Orthonormal_Matrices;
 
    function Zero return Matrix is
      (From_Diagonal (
-        Float_Diagonal_Matrices.Diagonal_Matrix'
+        DM.Diagonal_Matrix'
           ([1 .. 3 => 0.0])));
 
    function Identity return Matrix is
      (From_Diagonal (
-        Float_Diagonal_Matrices.Diagonal_Matrix'
+        DM.Diagonal_Matrix'
           ([1 .. 3 => 1.0])));
 
    function "*" (L : Matrix; R : FV.Vector) return FV.Vector is
@@ -32,11 +31,11 @@ package body Tiny_Tensors.Float_Matrices is
 
    function "*"
      (Left : Matrix;
-      Right : Float_Symmetric_Matrices.Symmetric_Matrix) return Matrix is
+      Right : Symmetric_Matrix) return Matrix is
      (Left * From_Symmetric (Right));
 
    function "*"
-     (Left : Float_Symmetric_Matrices.Symmetric_Matrix;
+     (Left : Symmetric_Matrix;
       Right : Matrix) return Matrix is
      (From_Symmetric (Left) * Right);
 
@@ -54,7 +53,7 @@ package body Tiny_Tensors.Float_Matrices is
 
    function "*"
      (Left : Matrix;
-      Right : Float_Diagonal_Matrices.Diagonal_Matrix) return Matrix is
+      Right : DM.Diagonal_Matrix) return Matrix is
      [for J in 1 .. 3 =>
         [for K in 1 .. 3 => Left (J, K) * Right (K)]];
 
@@ -77,11 +76,11 @@ package body Tiny_Tensors.Float_Matrices is
 
    function "*"
      (Left : Float_Orthonormal_Matrices.Orthonormal_Matrix;
-      Right : Float_Diagonal_Matrices.Diagonal_Matrix) return Matrix is
+      Right : DM.Diagonal_Matrix) return Matrix is
       (From_Orthonormal (Left) * Right);
 
    function "*"
-     (Left : Float_Symmetric_Matrices.Symmetric_Matrix;
+     (Left : Symmetric_Matrix;
       Right : Float_Orthonormal_Matrices.Orthonormal_Matrix) return Matrix is
        [for I in 1 .. 3 =>
           [for J in 1 .. 3 =>
@@ -94,36 +93,46 @@ package body Tiny_Tensors.Float_Matrices is
         [for K in 1 .. 3 => Left (J, K) + Right (J, K)]];
 
    function "-" (Left, Right : Matrix) return Matrix is
-     [for J in 1 .. 3 =>
-        [for K in 1 .. 3 => Left (J, K) - Right (J, K)]];
+     [for J in 1 .. 3 => [for K in 1 .. 3 => Left (J, K) - Right (J, K)]];
 
    function "-" (Right : Matrix) return Matrix is
      [for J in 1 .. 3 => [for K in 1 .. 3 => -Right (J, K)]];
 
-   function "+"
-     (Left : Matrix;
-      Right : Float_Symmetric_Matrices.Symmetric_Matrix) return Matrix is
-      (Left + From_Symmetric (Right));
+   function "+" (Left : Matrix; Right : Symmetric_Matrix) return Matrix is
+     (Left + From_Symmetric (Right));
 
-   function "-"
-     (Left : Matrix;
-      Right : Float_Symmetric_Matrices.Symmetric_Matrix) return Matrix is
-      (Left - From_Symmetric (Right));
+   function "+" (Left : SM.Symmetric_Matrix; Right : Matrix) return Matrix is
+     (From_Symmetric (Left) + Right);
 
-   function "+"
-     (Left : Matrix;
-      Right : Float_Diagonal_Matrices.Diagonal_Matrix) return Matrix is
-      (Left + From_Diagonal (Right));
+   function "-" (Left : Matrix; Right : Symmetric_Matrix) return Matrix is
+     (Left - From_Symmetric (Right));
 
-   function "-"
-     (Left : Matrix;
-      Right : Float_Diagonal_Matrices.Diagonal_Matrix) return Matrix is
-      (Left - From_Diagonal (Right));
+   function "-" (Left : SM.Symmetric_Matrix; Right : Matrix) return Matrix is
+     (From_Symmetric (Left) - Right);
 
-   function "-"
-     (Left : Float_Diagonal_Matrices.Diagonal_Matrix;
-      Right : Matrix) return Matrix is
-      (From_Diagonal (Left) - Right);
+   function "+" (Left : DM.Diagonal_Matrix; Right : Matrix) return Matrix is
+     (Float_Matrices.From_Diagonal (Left) + Right);
+
+   function "+" (Left : Matrix; Right : OM.Orthonormal_Matrix) return Matrix is
+     (Left + Float_Matrices.From_Orthonormal (Right));
+
+   function "+" (Left : OM.Orthonormal_Matrix; Right : Matrix) return Matrix is
+     (Float_Matrices.From_Orthonormal (Left) + Right);
+
+   function "+" (Left : Matrix; Right : DM.Diagonal_Matrix) return Matrix is
+     (Left + Float_Matrices.From_Diagonal (Right));
+
+   function "-" (Left : Matrix; Right : DM.Diagonal_Matrix) return Matrix is
+     (Left - Float_Matrices.From_Diagonal (Right));
+
+   function "-" (Left : DM.Diagonal_Matrix; Right : Matrix) return Matrix is
+     (Float_Matrices.From_Diagonal (Left) - Right);
+
+   function "-" (Left : Matrix; Right : OM.Orthonormal_Matrix) return Matrix is
+     (Left - Float_Matrices.From_Orthonormal (Right));
+
+   function "-" (Left : OM.Orthonormal_Matrix; Right : Matrix) return Matrix is
+     (Float_Matrices.From_Orthonormal (Left) - Right);
 
    function Det (M : Matrix) return Float is
      (M (1, 1) * (M (2, 2) * M (3, 3) - M (2, 3) * M (3, 2)) -
@@ -133,7 +142,7 @@ package body Tiny_Tensors.Float_Matrices is
    function Determinant (Operand : Matrix) return Float renames Det;
 
    function From_Diagonal
-     (M : Float_Diagonal_Matrices.Diagonal_Matrix) return Matrix is
+     (M : DM.Diagonal_Matrix) return Matrix is
      [[M (1), 0.0, 0.0],
       [0.0, M (2), 0.0],
       [0.0, 0.0, M (3)]];
@@ -144,7 +153,7 @@ package body Tiny_Tensors.Float_Matrices is
         [for K in 1 .. 3 => M (J, K)]];
 
    function From_Symmetric
-     (M : Float_Symmetric_Matrices.Symmetric_Matrix) return Matrix is
+     (M : Symmetric_Matrix) return Matrix is
      [[M (a_11), M (a_12), M (a_13)],
       [M (a_12), M (a_22), M (a_23)],
       [M (a_13), M (a_23), M (a_33)]];

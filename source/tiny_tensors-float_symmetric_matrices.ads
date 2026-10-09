@@ -16,6 +16,7 @@ package Tiny_Tensors.Float_Symmetric_Matrices is
    pragma Pure;
 
    package FV renames Tiny_Tensors.Float_Vectors;
+   package DM renames Tiny_Tensors.Float_Diagonal_Matrices;
 
    type Symmetric_Matrix_Index is (a_11, a_12, a_13, a_22, a_23, a_33);
    --  Index for compact form representation of symmetric matrix.
@@ -74,11 +75,19 @@ package Tiny_Tensors.Float_Symmetric_Matrices is
 
    function "+"
      (Left  : Symmetric_Matrix;
-      Right : Float_Diagonal_Matrices.Diagonal_Matrix) return Symmetric_Matrix;
+      Right : DM.Diagonal_Matrix) return Symmetric_Matrix;
+
+   function "+"
+     (Left  : DM.Diagonal_Matrix;
+      Right : Symmetric_Matrix) return Symmetric_Matrix;
 
    function "-"
      (Left  : Symmetric_Matrix;
-      Right : Float_Diagonal_Matrices.Diagonal_Matrix) return Symmetric_Matrix;
+      Right : DM.Diagonal_Matrix) return Symmetric_Matrix;
+
+   function "-"
+     (Left  : DM.Diagonal_Matrix;
+      Right : Symmetric_Matrix) return Symmetric_Matrix;
 
    function LT_x_L
      (Left : Float_Vector_Arrays.Vector_Array) return Symmetric_Matrix;
@@ -110,7 +119,7 @@ package Tiny_Tensors.Float_Symmetric_Matrices is
    --  Return QAQᵀ in compact form
 
    function Q_A_QT
-     (A : Float_Diagonal_Matrices.Diagonal_Matrix;
+     (A : DM.Diagonal_Matrix;
       Q : Float_Matrices.Matrix) return Symmetric_Matrix;
    --  Return QAQᵀ in compact form
 
