@@ -19,6 +19,8 @@ package Tiny_Tensors is
 
    function To_Radian (Value : Arc_Degree) return Radian;
 
+   subtype Just_Two  is Positive range 2 .. 2;
+
 private
 
    function To_Degree (Value : Radian) return Arc_Degree is

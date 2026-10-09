@@ -1,10 +1,11 @@
---  SPDX-FileCopyrightText: 2025 Max Reznik <reznikmm@gmail.com>
+--  SPDX-FileCopyrightText: 2025-2026 Max Reznik <reznikmm@gmail.com>
 --
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
-----------------------------------------------------------------
+---------------------------------------------------------------------
 
 pragma Ada_2022;
 
+limited with Tiny_Tensors.Float_Skew_Symmetric_Matrices;
 limited with Tiny_Tensors.Float_Matrices;
 limited with Tiny_Tensors.Float_Diagonal_Matrices;
 limited with Tiny_Tensors.Float_Orthonormal_Matrices;
@@ -17,6 +18,8 @@ package Tiny_Tensors.Float_Symmetric_Matrices is
 
    package FV renames Tiny_Tensors.Float_Vectors;
    package DM renames Tiny_Tensors.Float_Diagonal_Matrices;
+
+   package KM renames Tiny_Tensors.Float_Skew_Symmetric_Matrices;
 
    type Symmetric_Matrix_Index is (a_11, a_12, a_13, a_22, a_23, a_33);
    --  Index for compact form representation of symmetric matrix.
@@ -131,6 +134,18 @@ package Tiny_Tensors.Float_Symmetric_Matrices is
 
    function Inverse (Operand : Symmetric_Matrix) return Symmetric_Matrix
      with Pre => Determinant (Operand) /= 0.0;
+
+   function Adjugate (Operand : KM.Skew_Symmetric_Matrix)
+     return Symmetric_Matrix;
+   --  Return the outer product of the axial vector with itself.
+
+   function Gramian (Operand : KM.Skew_Symmetric_Matrix)
+     return Symmetric_Matrix;
+   --  Return Mᵀ x M in compact form, equal to -Square (Operand).
+
+   function Square (Operand : KM.Skew_Symmetric_Matrix)
+     return Symmetric_Matrix;
+   --  Return Operand * Operand in compact form.
 
 private
 

@@ -1,10 +1,11 @@
---  SPDX-FileCopyrightText: 2025 Max Reznik <reznikmm@gmail.com>
+--  SPDX-FileCopyrightText: 2025-2026 Max Reznik <reznikmm@gmail.com>
 --
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
-----------------------------------------------------------------
+---------------------------------------------------------------------
 
 pragma Ada_2022;
 
+with Tiny_Tensors.Float_Skew_Symmetric_Matrices;
 with Tiny_Tensors.Float_Matrices;
 with Tiny_Tensors.Float_Diagonal_Matrices;
 with Tiny_Tensors.Float_Orthonormal_Matrices;
@@ -212,5 +213,28 @@ package body Tiny_Tensors.Float_Symmetric_Matrices is
          end loop;
       end return;
    end LT_x_L;
+
+   function Adjugate (Operand : KM.Skew_Symmetric_Matrix)
+     return Symmetric_Matrix is
+       (V_x_VT (KM.To_Vector (Operand)));
+
+   function Gramian (Operand : KM.Skew_Symmetric_Matrix)
+     return Symmetric_Matrix is
+       (-Square (Operand));
+
+   function Square (Operand : KM.Skew_Symmetric_Matrix)
+     return Symmetric_Matrix
+   is
+     (declare
+        A : constant Float := Operand (KM.a_12);
+        B : constant Float := Operand (KM.a_13);
+        C : constant Float := Operand (KM.a_23);
+      begin
+        [a_11 => -(A * A + B * B),
+         a_12 => -B * C,
+         a_13 => A * C,
+         a_22 => -(A * A + C * C),
+         a_23 => -A * B,
+         a_33 => -(B * B + C * C)]);
 
 end Tiny_Tensors.Float_Symmetric_Matrices;

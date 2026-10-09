@@ -3,8 +3,6 @@
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 ----------------------------------------------------------------
 
-with Ada.Assertions;
-
 with Tiny_Tensors.Float_Diagonal_Matrices;
 with Tiny_Tensors.Float_Matrices;
 with Tiny_Tensors.Float_Symmetric_Matrices;

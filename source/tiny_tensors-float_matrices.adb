@@ -1,10 +1,11 @@
---  SPDX-FileCopyrightText: 2025 Max Reznik <reznikmm@gmail.com>
+--  SPDX-FileCopyrightText: 2025-2026 Max Reznik <reznikmm@gmail.com>
 --
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
-----------------------------------------------------------------
+---------------------------------------------------------------------
 
 pragma Ada_2022;
 
+with Tiny_Tensors.Float_Skew_Symmetric_Matrices;
 with Tiny_Tensors.Float_Diagonal_Matrices;
 with Tiny_Tensors.Float_Symmetric_Matrices;
 with Tiny_Tensors.Float_Orthonormal_Matrices;
@@ -230,5 +231,135 @@ package body Tiny_Tensors.Float_Matrices is
      (From_Diagonal (
         DM.Diagonal_Matrix'
           ([1 .. 3 => 0.0])));
+
+   function From_Skew_Symmetric
+     (M : KM.Skew_Symmetric_Matrix) return Matrix is
+       [[0.0, M (KM.a_12), M (KM.a_13)],
+        [-M (KM.a_12), 0.0, M (KM.a_23)],
+        [-M (KM.a_13), -M (KM.a_23), 0.0]];
+
+   function "+"
+     (Left : KM.Skew_Symmetric_Matrix;
+      Right : Matrix) return Matrix is
+       (From_Skew_Symmetric (Left) + Right);
+
+   function "+"
+     (Left : Matrix;
+      Right : KM.Skew_Symmetric_Matrix) return Matrix is
+       (Left + From_Skew_Symmetric (Right));
+
+   function "+"
+     (Left : KM.Skew_Symmetric_Matrix;
+      Right : DM.Diagonal_Matrix) return Matrix is
+       (From_Skew_Symmetric (Left) + From_Diagonal (Right));
+
+   function "+"
+     (Left : DM.Diagonal_Matrix;
+      Right : KM.Skew_Symmetric_Matrix) return Matrix is
+       (From_Diagonal (Left) + From_Skew_Symmetric (Right));
+
+   function "+"
+     (Left : KM.Skew_Symmetric_Matrix;
+      Right : SM.Symmetric_Matrix) return Matrix is
+       (From_Skew_Symmetric (Left) + From_Symmetric (Right));
+
+   function "+"
+     (Left : SM.Symmetric_Matrix;
+      Right : KM.Skew_Symmetric_Matrix) return Matrix is
+       (From_Symmetric (Left) + From_Skew_Symmetric (Right));
+
+   function "+"
+     (Left : KM.Skew_Symmetric_Matrix;
+      Right : OM.Orthonormal_Matrix) return Matrix is
+       (From_Skew_Symmetric (Left) + From_Orthonormal (Right));
+
+   function "+"
+     (Left : OM.Orthonormal_Matrix;
+      Right : KM.Skew_Symmetric_Matrix) return Matrix is
+       (From_Orthonormal (Left) + From_Skew_Symmetric (Right));
+
+   function "-"
+     (Left : KM.Skew_Symmetric_Matrix;
+      Right : Matrix) return Matrix is
+       (From_Skew_Symmetric (Left) - Right);
+
+   function "-"
+     (Left : Matrix;
+      Right : KM.Skew_Symmetric_Matrix) return Matrix is
+       (Left - From_Skew_Symmetric (Right));
+
+   function "-"
+     (Left : KM.Skew_Symmetric_Matrix;
+      Right : DM.Diagonal_Matrix) return Matrix is
+       (From_Skew_Symmetric (Left) - From_Diagonal (Right));
+
+   function "-"
+     (Left : DM.Diagonal_Matrix;
+      Right : KM.Skew_Symmetric_Matrix) return Matrix is
+       (From_Diagonal (Left) - From_Skew_Symmetric (Right));
+
+   function "-"
+     (Left : KM.Skew_Symmetric_Matrix;
+      Right : SM.Symmetric_Matrix) return Matrix is
+       (From_Skew_Symmetric (Left) - From_Symmetric (Right));
+
+   function "-"
+     (Left : SM.Symmetric_Matrix;
+      Right : KM.Skew_Symmetric_Matrix) return Matrix is
+       (From_Symmetric (Left) - From_Skew_Symmetric (Right));
+
+   function "-"
+     (Left : KM.Skew_Symmetric_Matrix;
+      Right : OM.Orthonormal_Matrix) return Matrix is
+       (From_Skew_Symmetric (Left) - From_Orthonormal (Right));
+
+   function "-"
+     (Left : OM.Orthonormal_Matrix;
+      Right : KM.Skew_Symmetric_Matrix) return Matrix is
+       (From_Orthonormal (Left) - From_Skew_Symmetric (Right));
+
+   function "*" (Left, Right : KM.Skew_Symmetric_Matrix)
+     return Matrix is
+       (From_Skew_Symmetric (Left) * From_Skew_Symmetric (Right));
+
+   function "*"
+     (Left : KM.Skew_Symmetric_Matrix;
+      Right : Matrix) return Matrix is
+       (From_Skew_Symmetric (Left) * Right);
+
+   function "*"
+     (Left : Matrix;
+      Right : KM.Skew_Symmetric_Matrix) return Matrix is
+       (Left * From_Skew_Symmetric (Right));
+
+   function "*"
+     (Left : KM.Skew_Symmetric_Matrix;
+      Right : DM.Diagonal_Matrix) return Matrix is
+       (From_Skew_Symmetric (Left) * From_Diagonal (Right));
+
+   function "*"
+     (Left : DM.Diagonal_Matrix;
+      Right : KM.Skew_Symmetric_Matrix) return Matrix is
+       (From_Diagonal (Left) * From_Skew_Symmetric (Right));
+
+   function "*"
+     (Left : KM.Skew_Symmetric_Matrix;
+      Right : SM.Symmetric_Matrix) return Matrix is
+       (From_Skew_Symmetric (Left) * From_Symmetric (Right));
+
+   function "*"
+     (Left : SM.Symmetric_Matrix;
+      Right : KM.Skew_Symmetric_Matrix) return Matrix is
+       (From_Symmetric (Left) * From_Skew_Symmetric (Right));
+
+   function "*"
+     (Left : KM.Skew_Symmetric_Matrix;
+      Right : OM.Orthonormal_Matrix) return Matrix is
+       (From_Skew_Symmetric (Left) * From_Orthonormal (Right));
+
+   function "*"
+     (Left : OM.Orthonormal_Matrix;
+      Right : KM.Skew_Symmetric_Matrix) return Matrix is
+       (From_Orthonormal (Left) * From_Skew_Symmetric (Right));
 
 end Tiny_Tensors.Float_Matrices;

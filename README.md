@@ -11,7 +11,7 @@ and linear algebra computations while prioritizing simplicity and performance.
 - Simple and efficient linear algebra operations for:
   - 3D Vectors with dot and cross products
   - 3x3 Matrices with multiplication and transpose
-  - Specialized matrix types (Diagonal, Orthonormal, Symmetric)
+  - Specialized matrix types (Diagonal, Orthonormal, Symmetric, Skew-symmetric)
   - Vector length calculations and normalization
   - Triple products (scalar and vector)
 - Pure Ada implementation with no external dependencies
@@ -113,10 +113,11 @@ The library includes specialized matrix types for specific use cases:
 | `Tiny_Tensors.Float_Diagonal_Matrices` | `Diagonal_Matrix` | Three diagonal elements |
 | `Tiny_Tensors.Float_Symmetric_Matrices` | `Symmetric_Matrix` | Six independent elements |
 | `Tiny_Tensors.Float_Orthonormal_Matrices` | `Orthonormal_Matrix` | 3x3 array with elements in [-1, 1] |
+| `Tiny_Tensors.Float_Skew_Symmetric_Matrices` | `Skew_Symmetric_Matrix` | Three upper-triangle elements; zero diagonal and negated lower triangle |
 
 Conversions and mixed matrix operations returning `Matrix` are in
 `Float_Matrices`. Operations returning a specialized matrix are in that
-type's package; for example, `MT_x_M`, `LT_x_L`, and `Q_A_QT` are in
+type's package; for example, `Gramian`, `LT_x_L`, and `Q_A_QT` are in
 `Float_Symmetric_Matrices`. Matrix-vector products are in the matrix type's
 package. Package specifications use `limited with` for cross-package type
 references, while bodies import the full views needed for calculations.
@@ -156,11 +157,49 @@ procedure Specialized_Matrices is
    Full_Diag : constant Matrix := From_Diagonal (Diag);
    Full_Sym  : constant Matrix := From_Symmetric (Sym);
    Rotated   : constant Matrix := Ortho * Diag;
-   Gram      : constant Symmetric_Matrix := MT_x_M (Full_Sym);
+   Gram      : constant Symmetric_Matrix := Gramian (Full_Sym);
 begin
    null;
 end Specialized_Matrices;
 ```
+
+Skew-symmetric matrices store `a_12`, `a_13`, and `a_23`. Their transpose
+equals their negation, and their determinant is always zero. `Skew` builds
+the matrix of a vector's cross product; `To_Vector` recovers that vector.
+Use a qualified name to distinguish it from `Float_Matrices.Skew`:
+
+```ada
+with Tiny_Tensors.Float_Matrices;
+with Tiny_Tensors.Float_Skew_Symmetric_Matrices;
+with Tiny_Tensors.Float_Symmetric_Matrices;
+with Tiny_Tensors.Float_Vectors;
+
+procedure Skew_Example is
+   package KM renames Tiny_Tensors.Float_Skew_Symmetric_Matrices;
+   package SM renames Tiny_Tensors.Float_Symmetric_Matrices;
+   use Tiny_Tensors.Float_Matrices;
+   use type KM.Skew_Symmetric_Matrix;
+
+   V : constant Tiny_Tensors.Float_Vectors.Vector := (1.0, 2.0, 3.0);
+   K : constant KM.Skew_Symmetric_Matrix := KM.Skew (V);
+   Full : constant Matrix := From_Skew_Symmetric (K);
+   Product : constant Matrix := K * K;
+   Adj : constant SM.Symmetric_Matrix := SM.Adjugate (K);
+   Gram : constant SM.Symmetric_Matrix := SM.Gramian (K);
+   Squared : constant SM.Symmetric_Matrix := SM.Square (K);
+begin
+   null;
+end Skew_Example;
+```
+
+Skew-matrix products and mixed arithmetic with the other matrix types return
+`Matrix` through `Float_Matrices`. `Adjugate`, `Gramian`, and `Square` return
+`Symmetric_Matrix` through `Float_Symmetric_Matrices`. Skew-symmetric
+matrices have no inverse in three dimensions.
+
+`Square (K)` computes `K * K` directly in compact form and equals
+`-Gramian (K)`. For a unit axis with `K = Skew (axis)`, Rodrigues' formula is
+`Identity + sin (angle) * K + (1.0 - cos (angle)) * Square (K)`.
 
 ### Triple Products
 
@@ -194,7 +233,7 @@ The library supports standard mathematical operations:
 - **Matrix Operations**: Addition, subtraction, scalar multiplication, transpose, matrix-vector multiplication
 - **Length Calculations**: Vector magnitude and squared magnitude
 - **Triple Products**: Both scalar (A·(B×C)) and vector (A×(B×C)) forms
-- **Specialized Types**: Diagonal, orthonormal, and symmetric matrix representations
+- **Specialized Types**: Diagonal, orthonormal, symmetric, and skew-symmetric matrix representations
 
 ## Performance Notes
 

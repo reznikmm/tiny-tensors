@@ -1,7 +1,7 @@
---  SPDX-FileCopyrightText: 2025 Max Reznik <reznikmm@gmail.com>
+--  SPDX-FileCopyrightText: 2025-2026 Max Reznik <reznikmm@gmail.com>
 --
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
-----------------------------------------------------------------
+---------------------------------------------------------------------
 
 with Trendy_Test.Reports;
 with Testsuite.Vectors;
@@ -9,6 +9,7 @@ with Testsuite.Matrices;
 with Testsuite.Diagonal_Matrices;
 with Testsuite.Symmetric_Matrices;
 with Testsuite.Orthonormal_Matrices;
+with Testsuite.Skew_Symmetric_Matrices;
 with Testsuite.Eigen_Systems;
 with Testsuite.SVD;
 procedure Testsuite.Driver is
@@ -19,6 +20,7 @@ procedure Testsuite.Driver is
      Testsuite.Diagonal_Matrices.All_Tests &
      Testsuite.Symmetric_Matrices.All_Tests &
      Testsuite.Orthonormal_Matrices.All_Tests &
+     Testsuite.Skew_Symmetric_Matrices.All_Tests &
      Testsuite.Eigen_Systems.All_Tests & Testsuite.SVD.All_Tests;
 begin
    Trendy_Test.Register (All_Tests);
