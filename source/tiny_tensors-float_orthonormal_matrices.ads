@@ -5,7 +5,6 @@
 
 pragma Ada_2022;
 
-limited with Tiny_Tensors.Float_Diagonal_Matrices;
 with Tiny_Tensors.Float_Sqrt;
 with Tiny_Tensors.Float_Vectors;
 
@@ -33,11 +32,6 @@ package Tiny_Tensors.Float_Orthonormal_Matrices is
 
    function Frobenius_Norm_2 (Operand : Orthonormal_Matrix) return Float;
    --  Return Frobenius_Norm (Operand)**2
-
-   function From_Diagonal
-     (M : Float_Diagonal_Matrices.Diagonal_Matrix)
-      return Orthonormal_Matrix;
-   --  Convert Diagonal_Matrix to Orthonormal_Matrix
 
    function "-" (Right : Orthonormal_Matrix) return Orthonormal_Matrix;
    --  Return -M. It changes sign of det (M).

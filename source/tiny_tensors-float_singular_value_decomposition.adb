@@ -85,7 +85,7 @@ package body Tiny_Tensors.Float_Singular_Value_Decomposition is
       V     : out Float_Orthonormal_Matrices.Orthonormal_Matrix)
    is
       BT_B : constant Float_Symmetric_Matrices.Symmetric_Matrix :=
-        Float_Symmetric_Matrices.MT_x_M (Input);
+        Float_Symmetric_Matrices.Gramian (Input);
    begin
       Real_SVD (BT_B => BT_B, S => S, V => V);
 
@@ -116,7 +116,7 @@ package body Tiny_Tensors.Float_Singular_Value_Decomposition is
       V     : out Float_Orthonormal_Matrices.Orthonormal_Matrix)
    is
       BT_B : constant Float_Symmetric_Matrices.Symmetric_Matrix :=
-        Float_Symmetric_Matrices.MT_x_M (Input);
+        Float_Symmetric_Matrices.Gramian (Input);
    begin
       Real_SVD (BT_B => BT_B, S => S, V => V);
 

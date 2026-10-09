@@ -98,10 +98,10 @@ package Tiny_Tensors.Float_Symmetric_Matrices is
    --
    --  Return Left times Left transpose: L x Lᵀ
 
-   function MT_x_M (M : Float_Matrices.Matrix) return Symmetric_Matrix;
+   function Gramian (M : Float_Matrices.Matrix) return Symmetric_Matrix;
    --  Return Mᵀ x M in compact form
 
-   function MT_x_M (M : Symmetric_Matrix) return Symmetric_Matrix;
+   function Gramian (M : Symmetric_Matrix) return Symmetric_Matrix;
    --  Return Mᵀ x M in compact form
 
    function M_Plus_MT (M : Float_Matrices.Matrix) return Symmetric_Matrix;

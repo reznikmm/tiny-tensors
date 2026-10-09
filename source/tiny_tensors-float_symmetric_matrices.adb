@@ -113,7 +113,7 @@ package body Tiny_Tensors.Float_Symmetric_Matrices is
    --  function "*" (Left, Right : Symmetric_Matrix) return Symmetric_Matrix
    --    renames L_x_R;
 
-   function MT_x_M (M : Float_Matrices.Matrix) return Symmetric_Matrix is
+   function Gramian (M : Float_Matrices.Matrix) return Symmetric_Matrix is
      [a_11 => M (1, 1) * M (1, 1) + M (2, 1) * M (2, 1) + M (3, 1) * M (3, 1),
       a_12 => M (1, 1) * M (1, 2) + M (2, 1) * M (2, 2) + M (3, 1) * M (3, 2),
       a_13 => M (1, 1) * M (1, 3) + M (2, 1) * M (2, 3) + M (3, 1) * M (3, 3),
@@ -121,7 +121,7 @@ package body Tiny_Tensors.Float_Symmetric_Matrices is
       a_23 => M (1, 2) * M (1, 3) + M (2, 2) * M (2, 3) + M (3, 2) * M (3, 3),
       a_33 => M (1, 3) * M (1, 3) + M (2, 3) * M (2, 3) + M (3, 3) * M (3, 3)];
 
-   function MT_x_M (M : Symmetric_Matrix) return Symmetric_Matrix is
+   function Gramian (M : Symmetric_Matrix) return Symmetric_Matrix is
      [M (1 & 1) * M (1 & 1) + M (1 & 2) * M (1 & 2) + M (1 & 3) * M (1 & 3),
       M (1 & 1) * M (2 & 1) + M (1 & 2) * M (2 & 2) + M (1 & 3) * M (2 & 3),
       M (1 & 1) * M (3 & 1) + M (1 & 2) * M (3 & 2) + M (1 & 3) * M (3 & 3),

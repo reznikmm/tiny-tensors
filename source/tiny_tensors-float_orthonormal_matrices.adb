@@ -5,7 +5,6 @@
 
 pragma Ada_2022;
 
-with Tiny_Tensors.Float_Diagonal_Matrices;
 with Tiny_Tensors.Float_Matrices;
 
 package body Tiny_Tensors.Float_Orthonormal_Matrices is
@@ -18,16 +17,9 @@ package body Tiny_Tensors.Float_Orthonormal_Matrices is
    function Determinant (Operand : Orthonormal_Matrix) return Float is
      (Determinant (From_Orthonormal (Operand)));
 
-   function From_Diagonal
-     (M : Float_Diagonal_Matrices.Diagonal_Matrix)
-      return Orthonormal_Matrix is
-     [[M (1), 0.0, 0.0],
-      [0.0, M (2), 0.0],
-      [0.0, 0.0, M (3)]];
-
    function "*" (Left, Right : Orthonormal_Matrix) return Orthonormal_Matrix is
       Result : constant Float_Matrices.Matrix :=
-        From_Orthonormal (Left) * From_Orthonormal (Right);
+        From_Orthonormal (Left) * Right;
    begin
       return
         [for J in 1 .. 3 =>

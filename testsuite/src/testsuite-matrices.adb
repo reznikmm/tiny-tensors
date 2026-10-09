@@ -118,8 +118,8 @@ package body Testsuite.Matrices is
          S : Symmetric_Matrix;
          C : constant Matrix := Transpose (M) * M;  -- For verification
       begin
-         --  Test MT_x_M operation (M^T * M)
-         S := MT_x_M (M);
+         --  Test Gramian operation (M^T * M)
+         S := Gramian (M);
 
          --  Calculate expected values manually:
          --  M^T = [[1, 4, 7], [2, 5, 8], [3, 6, 9]]
@@ -168,7 +168,7 @@ package body Testsuite.Matrices is
                                         [0.0, 0.0, 4.0]];
          S : Symmetric_Matrix;
       begin
-         S := MT_x_M (Simple_M);
+         S := Gramian (Simple_M);
          T.Assert (S (a_11) = 4.0);   -- 2^2
          T.Assert (S (a_22) = 9.0);   -- 3^2
          T.Assert (S (a_33) = 16.0);  -- 4^2
@@ -392,7 +392,7 @@ package body Testsuite.Matrices is
       declare
          use Tiny_Tensors.Float_Vector_Arrays;
 
-         --  Test with three vectors to verify consistency with MT_x_M
+         --  Test with three vectors to verify consistency with Gramian
          V1 : constant Vector := [1.0, 2.0, 3.0];
          V2 : constant Vector := [4.0, 5.0, 6.0];
          V3 : constant Vector := [7.0, 8.0, 9.0];
@@ -402,9 +402,9 @@ package body Testsuite.Matrices is
          M : constant Matrix := From_Rows (Vector_Array_3 (Vecs));
          Expected : Symmetric_Matrix;
       begin
-         --  LT_x_R where Left = Right should be equivalent to MT_x_M
+         --  LT_x_R where Left = Right should be equivalent to Gramian
          Result := LT_x_L (Vecs);
-         Expected := MT_x_M (M);
+         Expected := Gramian (M);
 
          T.Assert (abs (Result (a_11) - Expected (a_11)) < 0.001);
          T.Assert (abs (Result (a_12) - Expected (a_12)) < 0.001);
@@ -467,7 +467,6 @@ package body Testsuite.Matrices is
                                              [1.0,  0.0, 0.0],
                                              [0.0,  0.0, 1.0]];
          D : constant Diagonal_Matrix := [2.0, 3.0, 4.0];
-         Signs : constant Diagonal_Matrix := [1.0, -1.0, 1.0];
          M : constant Matrix := [[1.0, 2.0, 3.0],
                                  [4.0, 5.0, 6.0],
                                  [7.0, 8.0, 9.0]];
@@ -476,7 +475,8 @@ package body Testsuite.Matrices is
             a_22 => 4.0, a_23 => 5.0, a_33 => 6.0];
          V : constant Vector := [1.0, 2.0, 3.0];
          Expanded : constant Matrix := From_Orthonormal (Q);
-         Reflection : constant Orthonormal_Matrix := From_Diagonal (Signs);
+         Reflection : constant Orthonormal_Matrix :=
+           [[1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]];
          Unit : constant Orthonormal_Matrix := Identity;
          Empty : constant Orthonormal_Matrix := [others => [others => 0.0]];
          Full_Unit : constant Matrix := Identity;

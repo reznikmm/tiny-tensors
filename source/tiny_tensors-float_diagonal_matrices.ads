@@ -31,6 +31,9 @@ package Tiny_Tensors.Float_Diagonal_Matrices is
    function Frobenius_Norm_2 (Operand : Diagonal_Matrix) return Float;
    --  Return Frobenius_Norm (Operand)**2
 
+   function Gramian (Operand : Diagonal_Matrix) return Diagonal_Matrix;
+   --  Return Mᵀ x M in compact form
+
    function "+" (Left, Right : Diagonal_Matrix) return Diagonal_Matrix;
 
    function "-" (Left, Right : Diagonal_Matrix) return Diagonal_Matrix;
@@ -61,6 +64,9 @@ private
 
    function Frobenius_Norm (Operand : Diagonal_Matrix) return Float is
      (Tiny_Tensors.Float_Sqrt (Frobenius_Norm_2 (Operand)));
+
+   function Gramian (Operand : Diagonal_Matrix) return Diagonal_Matrix is
+     [for Item of Operand => Item**2];
 
    function "+" (Left, Right : Diagonal_Matrix) return Diagonal_Matrix is
      [for J in 1 .. 3 => Left (J) + Right (J)];
