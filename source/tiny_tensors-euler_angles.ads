@@ -5,14 +5,13 @@
 
 pragma Ada_2022;
 
+with Tiny_Tensors.Float_Orthonormal_Matrices;
 with Ada.Numerics.Elementary_Functions;
-
-with Tiny_Tensors.Float_Matrices;
 
 package Tiny_Tensors.Euler_Angles is
 
-   subtype Unit_Interval is Float_Matrices.Unit_Interval;
-   subtype Orthonormal_Matrix is Float_Matrices.Orthonormal_Matrix;
+   subtype Unit_Interval is Float_Orthonormal_Matrices.Unit_Interval;
+   subtype Orthonormal_Matrix is Float_Orthonormal_Matrices.Orthonormal_Matrix;
 
    function Euler_Angles_To_Matrix (Roll, Pitch, Yaw : Radian)
      return Orthonormal_Matrix;

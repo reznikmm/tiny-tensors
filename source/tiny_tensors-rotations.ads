@@ -4,15 +4,15 @@
 ----------------------------------------------------------------
 pragma Ada_2022;
 
+with Tiny_Tensors.Float_Orthonormal_Matrices;
 with Ada.Numerics.Elementary_Functions;
 
-with Tiny_Tensors.Float_Matrices;
 with Tiny_Tensors.Float_Vectors;
 
 package Tiny_Tensors.Rotations is
 
    subtype Orthonormal_Matrix is
-     Tiny_Tensors.Float_Matrices.Orthonormal_Matrix;
+     Float_Orthonormal_Matrices.Orthonormal_Matrix;
 
    subtype Vector is Tiny_Tensors.Float_Vectors.Vector;
 

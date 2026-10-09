@@ -12,11 +12,11 @@ package body Tiny_Tensors.Float_Eigen_System is
    ----------------------
 
    procedure Get_Eigen_System
-     (Matrix  : Tiny_Tensors.Float_Matrices.Symmetric_Matrix;
-      Values  : out Tiny_Tensors.Float_Matrices.Diagonal_Matrix;
-      Vectors : out Tiny_Tensors.Float_Matrices.Vector_Array_3)
+     (Matrix  : Float_Symmetric_Matrices.Symmetric_Matrix;
+      Values  : out Float_Diagonal_Matrices.Diagonal_Matrix;
+      Vectors : out Float_Matrices.Vector_Array_3)
    is
-      use type Tiny_Tensors.Float_Matrices.Symmetric_Matrix_Index;
+      use type Float_Symmetric_Matrices.Symmetric_Matrix_Index;
 
       Input : constant Ada.Numerics.Real_Arrays.Real_Matrix :=
         [[Matrix (1 & 1), Matrix (1 & 2), Matrix (1 & 3)],
@@ -28,7 +28,7 @@ package body Tiny_Tensors.Float_Eigen_System is
    begin
       Ada.Numerics.Real_Arrays.Eigensystem (Input, Value, Output);
 
-      Values := Tiny_Tensors.Float_Matrices.Diagonal_Matrix (Value);
+      Values := Float_Diagonal_Matrices.Diagonal_Matrix (Value);
 
       Vectors :=
         [[Output (1, 1), Output (2, 1), Output (3, 1)],

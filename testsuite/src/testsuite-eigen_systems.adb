@@ -3,6 +3,8 @@
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 ----------------------------------------------------------------
 
+with Tiny_Tensors.Float_Diagonal_Matrices;
+with Tiny_Tensors.Float_Symmetric_Matrices;
 with Tiny_Tensors.Float_Eigen_System;
 with Tiny_Tensors.Float_Matrices;
 with Tiny_Tensors.Float_Vectors;
@@ -10,6 +12,8 @@ with Tiny_Tensors.Float_Vectors;
 package body Testsuite.Eigen_Systems is
    use Tiny_Tensors.Float_Eigen_System;
    use Tiny_Tensors.Float_Matrices;
+   use Tiny_Tensors.Float_Diagonal_Matrices;
+   use Tiny_Tensors.Float_Symmetric_Matrices;
    use Tiny_Tensors.Float_Vectors;
 
    ----------------------------------

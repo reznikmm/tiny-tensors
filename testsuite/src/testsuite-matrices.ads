@@ -25,11 +25,19 @@ private
    procedure Test_LT_x_R_Operations
      (T : in out Trendy_Test.Operation'Class);
 
+   procedure Test_Diagonal_Matrix_Operations
+     (T : in out Trendy_Test.Operation'Class);
+
+   procedure Test_Orthonormal_Matrix_Operations
+     (T : in out Trendy_Test.Operation'Class);
+
    All_Tests : constant Trendy_Test.Test_Group :=
     [Basic_Matrix_Operations'Access,
      Test_Matrix_Vector_Multiplication'Access,
      Test_Symmetric_Matrix_Operations'Access,
      Test_Determinant'Access,
-     Test_LT_x_R_Operations'Access];
+     Test_LT_x_R_Operations'Access,
+     Test_Diagonal_Matrix_Operations'Access,
+     Test_Orthonormal_Matrix_Operations'Access];
 
 end Testsuite.Matrices;

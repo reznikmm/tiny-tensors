@@ -3,11 +3,15 @@
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 ----------------------------------------------------------------
 
+with Tiny_Tensors.Float_Diagonal_Matrices;
+with Tiny_Tensors.Float_Orthonormal_Matrices;
 with Tiny_Tensors.Float_Matrices;
 with Tiny_Tensors.Float_Singular_Value_Decomposition;
 
 package body Testsuite.SVD is
    use Tiny_Tensors.Float_Matrices;
+   use Tiny_Tensors.Float_Diagonal_Matrices;
+   use Tiny_Tensors.Float_Orthonormal_Matrices;
 
    procedure SVD
     (Input : Matrix;

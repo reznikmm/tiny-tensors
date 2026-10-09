@@ -107,11 +107,36 @@ end Matrix_Example;
 
 The library includes specialized matrix types for specific use cases:
 
+| Package | Type | Representation |
+| --- | --- | --- |
+| `Tiny_Tensors.Float_Matrices` | `Matrix` | 3x3 array |
+| `Tiny_Tensors.Float_Diagonal_Matrices` | `Diagonal_Matrix` | Three diagonal elements |
+| `Tiny_Tensors.Float_Symmetric_Matrices` | `Symmetric_Matrix` | Six independent elements |
+| `Tiny_Tensors.Float_Orthonormal_Matrices` | `Orthonormal_Matrix` | 3x3 array with elements in [-1, 1] |
+
+Conversions and mixed matrix operations returning `Matrix` are in
+`Float_Matrices`. Operations returning a specialized matrix are in that
+type's package; for example, `MT_x_M`, `LT_x_L`, and `Q_A_QT` are in
+`Float_Symmetric_Matrices`. Matrix-vector products are in the matrix type's
+package. Package specifications use `limited with` for cross-package type
+references, while bodies import the full views needed for calculations.
+
+When migrating from the combined package, add `with` and `use` clauses for
+the specialized packages you use, and update qualified type and function
+names accordingly. `Symmetric_Matrix_Index`, `To_Index`, and `&` are now in
+`Float_Symmetric_Matrices`; `Unit_Interval` is in `Float_Orthonormal_Matrices`.
+
 ```ada
+with Tiny_Tensors.Float_Diagonal_Matrices;
 with Tiny_Tensors.Float_Matrices;
+with Tiny_Tensors.Float_Orthonormal_Matrices;
+with Tiny_Tensors.Float_Symmetric_Matrices;
 
 procedure Specialized_Matrices is
+   use Tiny_Tensors.Float_Diagonal_Matrices;
    use Tiny_Tensors.Float_Matrices;
+   use Tiny_Tensors.Float_Orthonormal_Matrices;
+   use Tiny_Tensors.Float_Symmetric_Matrices;
    
    -- Diagonal matrix (represented as 3-element array)
    Diag : constant Diagonal_Matrix := (2.0, 3.0, 4.0);
@@ -124,9 +149,14 @@ procedure Specialized_Matrices is
    
    -- Symmetric matrix (compact representation)
    Sym : constant Symmetric_Matrix := 
-     (M_11 => 1.0, M_12 => 2.0, M_13 => 3.0,
-      M_22 => 4.0, M_23 => 5.0,
-      M_33 => 6.0);
+     (a_11 => 1.0, a_12 => 2.0, a_13 => 3.0,
+      a_22 => 4.0, a_23 => 5.0,
+      a_33 => 6.0);
+
+   Full_Diag : constant Matrix := From_Diagonal (Diag);
+   Full_Sym  : constant Matrix := From_Symmetric (Sym);
+   Rotated   : constant Matrix := Ortho * Diag;
+   Gram      : constant Symmetric_Matrix := MT_x_M (Full_Sym);
 begin
    null;
 end Specialized_Matrices;
@@ -176,6 +206,17 @@ The library supports standard mathematical operations:
 ## Maintainer
 
 [@MaximReznik](https://github.com/reznikmm)
+
+## Tests
+
+Build and run the testsuite with Alire (using an Ada 2022 compiler):
+
+```shell
+alr -C testsuite run
+```
+
+The suite covers vectors, general and specialized matrix operations,
+cross-package conversions and arithmetic, eigen systems, and SVD.
 
 ## Contribute
 

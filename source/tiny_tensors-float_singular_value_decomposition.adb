@@ -13,14 +13,14 @@ with Tiny_Tensors.Float_Sqrt;
 package body Tiny_Tensors.Float_Singular_Value_Decomposition is
 
    procedure Real_SVD
-     (BT_B  : Float_Matrices.Symmetric_Matrix;
-      S     : out Tiny_Tensors.Float_Matrices.Diagonal_Matrix;
-      V     : out Tiny_Tensors.Float_Matrices.Orthonormal_Matrix);
+     (BT_B  : Float_Symmetric_Matrices.Symmetric_Matrix;
+      S     : out Float_Diagonal_Matrices.Diagonal_Matrix;
+      V     : out Float_Orthonormal_Matrices.Orthonormal_Matrix);
    --  Perform singular value decomposition of 3x3 matrix B⟙*B.
 
    function To_Orthonormal
-     (Left : Tiny_Tensors.Float_Matrices.Matrix)
-       return Tiny_Tensors.Float_Matrices.Orthonormal_Matrix
+     (Left : Float_Matrices.Matrix)
+       return Float_Orthonormal_Matrices.Orthonormal_Matrix
          is [for J in 1 .. 3 => [for K in 1 .. 3 => Left (J, K)]];
 
    --------------
@@ -28,18 +28,19 @@ package body Tiny_Tensors.Float_Singular_Value_Decomposition is
    --------------
 
    procedure Real_SVD
-     (BT_B  : Float_Matrices.Symmetric_Matrix;
-      S     : out Tiny_Tensors.Float_Matrices.Diagonal_Matrix;
-      V     : out Tiny_Tensors.Float_Matrices.Orthonormal_Matrix)
+     (BT_B  : Float_Symmetric_Matrices.Symmetric_Matrix;
+      S     : out Float_Diagonal_Matrices.Diagonal_Matrix;
+      V     : out Float_Orthonormal_Matrices.Orthonormal_Matrix)
    is
       use Tiny_Tensors.Float_Matrices;
+      use Tiny_Tensors.Float_Diagonal_Matrices;
       use Tiny_Tensors.Float_Vector_Arrays;
 
       function SQRT (X : Float) return Float
       is (if X < 0.0 then 0.0 else Tiny_Tensors.Float_Sqrt (X));
 
-      Values  : Tiny_Tensors.Float_Matrices.Diagonal_Matrix;
-      Vectors : Tiny_Tensors.Float_Matrices.Vector_Array_3;
+      Values  : Float_Diagonal_Matrices.Diagonal_Matrix;
+      Vectors : Float_Matrices.Vector_Array_3;
 
       procedure Swap (Left, Right : Positive);
 
@@ -78,18 +79,19 @@ package body Tiny_Tensors.Float_Singular_Value_Decomposition is
    ---------
 
    procedure SVD
-     (Input : Tiny_Tensors.Float_Matrices.Matrix;
-      U     : out Tiny_Tensors.Float_Matrices.Orthonormal_Matrix;
-      S     : out Tiny_Tensors.Float_Matrices.Diagonal_Matrix;
-      V     : out Tiny_Tensors.Float_Matrices.Orthonormal_Matrix)
+     (Input : Float_Matrices.Matrix;
+      U     : out Float_Orthonormal_Matrices.Orthonormal_Matrix;
+      S     : out Float_Diagonal_Matrices.Diagonal_Matrix;
+      V     : out Float_Orthonormal_Matrices.Orthonormal_Matrix)
    is
-      BT_B : constant Float_Matrices.Symmetric_Matrix :=
-        Float_Matrices.MT_x_M (Input);
+      BT_B : constant Float_Symmetric_Matrices.Symmetric_Matrix :=
+        Float_Symmetric_Matrices.MT_x_M (Input);
    begin
       Real_SVD (BT_B => BT_B, S => S, V => V);
 
       declare
          use Tiny_Tensors.Float_Matrices;
+         use Tiny_Tensors.Float_Diagonal_Matrices;
          use Tiny_Tensors.Float_Vector_Arrays;
 
          Inv : constant Diagonal_Matrix :=
@@ -108,18 +110,19 @@ package body Tiny_Tensors.Float_Singular_Value_Decomposition is
    ---------
 
    procedure SVD
-     (Input : Tiny_Tensors.Float_Matrices.Symmetric_Matrix;
-      U     : out Tiny_Tensors.Float_Matrices.Orthonormal_Matrix;
-      S     : out Tiny_Tensors.Float_Matrices.Diagonal_Matrix;
-      V     : out Tiny_Tensors.Float_Matrices.Orthonormal_Matrix)
+     (Input : Float_Symmetric_Matrices.Symmetric_Matrix;
+      U     : out Float_Orthonormal_Matrices.Orthonormal_Matrix;
+      S     : out Float_Diagonal_Matrices.Diagonal_Matrix;
+      V     : out Float_Orthonormal_Matrices.Orthonormal_Matrix)
    is
-      BT_B : constant Float_Matrices.Symmetric_Matrix :=
-        Float_Matrices.MT_x_M (Input);
+      BT_B : constant Float_Symmetric_Matrices.Symmetric_Matrix :=
+        Float_Symmetric_Matrices.MT_x_M (Input);
    begin
       Real_SVD (BT_B => BT_B, S => S, V => V);
 
       declare
          use Tiny_Tensors.Float_Matrices;
+         use Tiny_Tensors.Float_Diagonal_Matrices;
          use Tiny_Tensors.Float_Vector_Arrays;
 
          Inv : constant Diagonal_Matrix :=
