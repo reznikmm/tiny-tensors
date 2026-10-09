@@ -51,11 +51,21 @@ package body Tiny_Tensors.Float_Matrices is
      [for J in 1 .. 3 =>
         [for K in 1 .. 3 => Left (J, K) * Right]];
 
+   function "*" (Left : Matrix; Right : DM.Diagonal_Matrix) return Matrix is
+     [for J in 1 .. 3 => [for K in 1 .. 3 => Left (J, K) * Right (K)]];
+
+   function "*" (Left : DM.Diagonal_Matrix; Right : Matrix) return Matrix is
+     [for J in 1 .. 3 => [for K in 1 .. 3 => Left (J) * Right (J, K)]];
+
    function "*"
-     (Left : Matrix;
-      Right : DM.Diagonal_Matrix) return Matrix is
-     [for J in 1 .. 3 =>
-        [for K in 1 .. 3 => Left (J, K) * Right (K)]];
+     (Left  : DM.Diagonal_Matrix; Right : SM.Symmetric_Matrix) return Matrix is
+       [for J in 1 .. 3 =>
+          [for K in 1 .. 3 => Left (J) * Right (J & K)]];
+
+   function "*"
+     (Left  : SM.Symmetric_Matrix; Right : DM.Diagonal_Matrix) return Matrix is
+       [for J in 1 .. 3 =>
+          [for K in 1 .. 3 => Left (J & K) * Right (K)]];
 
    function "*" (Left, Right : Matrix) return Matrix is
      [for J in 1 .. 3 =>
@@ -64,29 +74,44 @@ package body Tiny_Tensors.Float_Matrices is
            (Left (J, 2) * Right (2, K)) +
            (Left (J, 3) * Right (3, K))]];
 
-   function "*"
-     (Left : Matrix;
-      Right : Float_Orthonormal_Matrices.Orthonormal_Matrix) return Matrix is
+   function "*" (Left : Matrix; Right : OM.Orthonormal_Matrix) return Matrix is
      (Left * From_Orthonormal (Right));
 
-   function "*"
-     (Left : Float_Orthonormal_Matrices.Orthonormal_Matrix;
-      Right : Matrix) return Matrix is
+   function "*" (Left : OM.Orthonormal_Matrix; Right : Matrix) return Matrix is
      (From_Orthonormal (Left) * Right);
 
    function "*"
-     (Left : Float_Orthonormal_Matrices.Orthonormal_Matrix;
-      Right : DM.Diagonal_Matrix) return Matrix is
-      (From_Orthonormal (Left) * Right);
+     (Left : OM.Orthonormal_Matrix; Right : DM.Diagonal_Matrix) return Matrix
+       is (From_Orthonormal (Left) * Right);
 
    function "*"
-     (Left : Symmetric_Matrix;
-      Right : Float_Orthonormal_Matrices.Orthonormal_Matrix) return Matrix is
+     (Left : DM.Diagonal_Matrix; Right : OM.Orthonormal_Matrix) return Matrix
+       is (Left * From_Orthonormal (Right));
+
+   function "*" (Left, Right : SM.Symmetric_Matrix) return Matrix is
+     [for I in 1 .. 3 =>
+        [for J in 1 .. 3 =>
+           Left (I & 1) * Right (1 & J) +
+           Left (I & 2) * Right (2 & J) +
+           Left (I & 3) * Right (3 & J)]];
+
+   function "*"
+     (Left  : Symmetric_Matrix;
+      Right : OM.Orthonormal_Matrix) return Matrix is
        [for I in 1 .. 3 =>
           [for J in 1 .. 3 =>
              Left (I & 1) * Right (1, J) +
              Left (I & 2) * Right (2, J) +
              Left (I & 3) * Right (3, J)]];
+
+   function "*"
+     (Left  : OM.Orthonormal_Matrix;
+      Right : SM.Symmetric_Matrix) return Matrix is
+       [for I in 1 .. 3 =>
+          [for J in 1 .. 3 =>
+             Left (I, 1) * Right (1 & J) +
+             Left (I, 2) * Right (2 & J) +
+             Left (I, 3) * Right (3 & J)]];
 
    function "+" (Left, Right : Matrix) return Matrix is
      [for J in 1 .. 3 =>
@@ -148,7 +173,7 @@ package body Tiny_Tensors.Float_Matrices is
       [0.0, 0.0, M (3)]];
 
    function From_Orthonormal
-     (M : Float_Orthonormal_Matrices.Orthonormal_Matrix) return Matrix is
+     (M : OM.Orthonormal_Matrix) return Matrix is
      [for J in 1 .. 3 =>
         [for K in 1 .. 3 => M (J, K)]];
 

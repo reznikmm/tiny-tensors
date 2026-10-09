@@ -81,6 +81,37 @@ package Tiny_Tensors.Float_Matrices is
    function "-" (Right : Matrix) return Matrix;
 
    function "*" (Left, Right : Matrix) return Matrix;
+   function "*" (Left, Right : SM.Symmetric_Matrix) return Matrix;
+   function "*" (Left : Matrix; Right : DM.Diagonal_Matrix) return Matrix;
+   function "*" (Left : DM.Diagonal_Matrix; Right : Matrix) return Matrix;
+   function "*" (Left : Matrix; Right : OM.Orthonormal_Matrix) return Matrix;
+   function "*" (Left : OM.Orthonormal_Matrix; Right : Matrix) return Matrix;
+   function "*" (Left : Matrix; Right : SM.Symmetric_Matrix) return Matrix;
+   function "*" (Left : SM.Symmetric_Matrix; Right : Matrix) return Matrix;
+   --  Return matrix multiplication
+
+   function "*"
+     (Left : OM.Orthonormal_Matrix; Right : DM.Diagonal_Matrix) return Matrix;
+   --  Return matrix multiplication
+
+   function "*"
+     (Left : DM.Diagonal_Matrix; Right : OM.Orthonormal_Matrix) return Matrix;
+   --  Return matrix multiplication
+
+   function "*"
+     (Left : SM.Symmetric_Matrix; Right : OM.Orthonormal_Matrix) return Matrix;
+   --  Return matrix multiplication
+
+   function "*"
+     (Left : OM.Orthonormal_Matrix; Right : SM.Symmetric_Matrix) return Matrix;
+   --  Return matrix multiplication
+
+   function "*"
+     (Left  : SM.Symmetric_Matrix; Right : DM.Diagonal_Matrix) return Matrix;
+   --  Return matrix multiplication
+
+   function "*"
+     (Left  : DM.Diagonal_Matrix; Right : SM.Symmetric_Matrix) return Matrix;
    --  Return matrix multiplication
 
    function "*" (Left, Right : FV.Vector) return Matrix;
@@ -99,16 +130,8 @@ package Tiny_Tensors.Float_Matrices is
    function From_Diagonal (M : DM.Diagonal_Matrix) return Matrix;
    --  Convert Diagonal_Matrix to Matrix
 
-   function "*" (Left : Matrix; Right : DM.Diagonal_Matrix) return Matrix;
-   --  Return matrix multiplication
-
    function From_Symmetric (M : SM.Symmetric_Matrix) return Matrix;
    --  Convert Symmetric_Matrix to Matrix
-
-   function "*" (Left : Matrix; Right : SM.Symmetric_Matrix) return Matrix;
-
-   function "*" (Left : SM.Symmetric_Matrix; Right : Matrix) return Matrix;
-   --  Return matrix multiplication
 
    function LT_x_R
      (Left, Right : Float_Vector_Arrays.Vector_Array) return Matrix
@@ -118,19 +141,5 @@ package Tiny_Tensors.Float_Matrices is
 
    function From_Orthonormal (M : OM.Orthonormal_Matrix) return Matrix;
    --  Convert Orthonormal_Matrix to Matrix
-
-   function "*" (Left : OM.Orthonormal_Matrix; Right : Matrix) return Matrix;
-   --  Return matrix multiplication
-
-   function "*"
-     (Left : OM.Orthonormal_Matrix; Right : DM.Diagonal_Matrix) return Matrix;
-   --  Return matrix multiplication
-
-   function "*" (Left : Matrix; Right : OM.Orthonormal_Matrix) return Matrix;
-   --  Return matrix multiplication
-
-   function "*"
-     (Left : SM.Symmetric_Matrix; Right : OM.Orthonormal_Matrix) return Matrix;
-   --  Return matrix multiplication
 
 end Tiny_Tensors.Float_Matrices;
