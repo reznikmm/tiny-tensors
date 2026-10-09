@@ -87,12 +87,21 @@ package body Tiny_Tensors.Float_Symmetric_Matrices is
       a_23 => Left (2 & 3) - Right (2 & 3),
       a_33 => Left (3 & 3) - Right (3 & 3)];
 
-   function Det (M : Symmetric_Matrix) return Float is
-     (M (1 & 1) * (M (2 & 2) * M (3 & 3) - M (2 & 3) * M (3 & 2)) -
-      M (1 & 2) * (M (2 & 1) * M (3 & 3) - M (2 & 3) * M (3 & 1)) +
-      M (1 & 3) * (M (2 & 1) * M (3 & 2) - M (2 & 2) * M (3 & 1)));
+   function Adjugate (Operand : Symmetric_Matrix) return Symmetric_Matrix is
+      [Operand (2 & 2) * Operand (3 & 3) - Operand (2 & 3) * Operand (3 & 2),
+       Operand (1 & 3) * Operand (3 & 2) - Operand (1 & 2) * Operand (3 & 3),
+       Operand (1 & 2) * Operand (2 & 3) - Operand (1 & 3) * Operand (2 & 2),
+       Operand (1 & 1) * Operand (3 & 3) - Operand (1 & 3) * Operand (3 & 1),
+       Operand (1 & 3) * Operand (2 & 1) - Operand (1 & 1) * Operand (2 & 3),
+       Operand (1 & 1) * Operand (2 & 2) - Operand (1 & 2) * Operand (2 & 1)];
 
-   function Determinant (Operand : Symmetric_Matrix) return Float renames Det;
+   function Determinant (Operand : Symmetric_Matrix) return Float is
+     (declare
+        Cofactor : constant Symmetric_Matrix := Adjugate (Operand);
+      begin
+        Operand (1 & 1) * Cofactor (1 & 1)
+        + Operand (2 & 1) * Cofactor (1 & 2)
+        + Operand (3 & 1) * Cofactor (1 & 3));
 
    function V_x_VT (Left : FV.Vector) return Symmetric_Matrix is
      [a_11 => Left (1) * Left (1),
@@ -183,6 +192,12 @@ package body Tiny_Tensors.Float_Symmetric_Matrices is
       a_22 => Q_A_QT_Cell (A, Q, J => 1, K => 1),
       a_23 => Q_A_QT_Cell (A, Q, J => 1, K => 1),
       a_33 => Q_A_QT_Cell (A, Q, J => 1, K => 1)];
+
+   function Inverse (Operand : Symmetric_Matrix) return Symmetric_Matrix is
+      Determinant_1 : constant Float := 1.0 / Determinant (Operand);
+   begin
+      return Determinant_1 * Adjugate (Operand);
+   end Inverse;
 
    function LT_x_L
      (Left : Float_Vector_Arrays.Vector_Array) return Symmetric_Matrix is

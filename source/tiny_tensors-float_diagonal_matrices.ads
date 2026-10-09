@@ -26,6 +26,14 @@ package Tiny_Tensors.Float_Diagonal_Matrices is
    function Determinant (Operand : Diagonal_Matrix) return Float;
    --  Return determinant of diagonal matrix
 
+   function Adjugate (Operand : Diagonal_Matrix) return Diagonal_Matrix
+     with Inline;
+   --  Return the adjugate (classical adjoint) of Operand, the transposed
+   --  matrix of cofactors.
+
+   function Inverse (Operand : Diagonal_Matrix) return Diagonal_Matrix
+     with Pre => (for all Item of Operand => Item /= 0.0);
+
    function Frobenius_Norm (Operand : Diagonal_Matrix) return Float;
 
    function Frobenius_Norm_2 (Operand : Diagonal_Matrix) return Float;
@@ -52,7 +60,15 @@ package Tiny_Tensors.Float_Diagonal_Matrices is
 
 private
 
+   function Adjugate (Operand : Diagonal_Matrix) return Diagonal_Matrix is
+     [Operand (2) * Operand (3),
+      Operand (1) * Operand (3),
+      Operand (1) * Operand (2)];
+
    function Identity return Diagonal_Matrix is [1 .. 3 => 1.0];
+
+   function Inverse (Operand : Diagonal_Matrix) return Diagonal_Matrix is
+     [for J in 1 .. 3 => 1.0 / Operand (J)];
 
    function Zero return Diagonal_Matrix is [1 .. 3 => 0.0];
 

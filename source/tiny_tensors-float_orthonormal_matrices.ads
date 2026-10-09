@@ -28,6 +28,9 @@ package Tiny_Tensors.Float_Orthonormal_Matrices is
    function Determinant (Operand : Orthonormal_Matrix) return Float;
    --  Return determinant of orthonormal matrix. Return -1 or 1
 
+   function Inverse (Operand : Orthonormal_Matrix) return Orthonormal_Matrix
+     renames Transpose;
+
    function Frobenius_Norm (Operand : Orthonormal_Matrix) return Float;
 
    function Frobenius_Norm_2 (Operand : Orthonormal_Matrix) return Float;

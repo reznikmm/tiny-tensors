@@ -6,6 +6,9 @@
 with Trendy_Test.Reports;
 with Testsuite.Vectors;
 with Testsuite.Matrices;
+with Testsuite.Diagonal_Matrices;
+with Testsuite.Symmetric_Matrices;
+with Testsuite.Orthonormal_Matrices;
 with Testsuite.Eigen_Systems;
 with Testsuite.SVD;
 procedure Testsuite.Driver is
@@ -13,6 +16,9 @@ procedure Testsuite.Driver is
 
    All_Tests : constant Trendy_Test.Test_Group :=
      Testsuite.Vectors.All_Tests & Testsuite.Matrices.All_Tests &
+     Testsuite.Diagonal_Matrices.All_Tests &
+     Testsuite.Symmetric_Matrices.All_Tests &
+     Testsuite.Orthonormal_Matrices.All_Tests &
      Testsuite.Eigen_Systems.All_Tests & Testsuite.SVD.All_Tests;
 begin
    Trendy_Test.Register (All_Tests);

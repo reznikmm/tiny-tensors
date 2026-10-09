@@ -14,16 +14,6 @@ package body Tiny_Tensors.Float_Matrices is
    use Tiny_Tensors.Float_Diagonal_Matrices;
    use Tiny_Tensors.Float_Symmetric_Matrices;
 
-   function Zero return Matrix is
-     (From_Diagonal (
-        DM.Diagonal_Matrix'
-          ([1 .. 3 => 0.0])));
-
-   function Identity return Matrix is
-     (From_Diagonal (
-        DM.Diagonal_Matrix'
-          ([1 .. 3 => 1.0])));
-
    function "*" (L : Matrix; R : FV.Vector) return FV.Vector is
      [L (1, 1) * R (1) + L (1, 2) * R (2) + L (1, 3) * R (3),
       L (2, 1) * R (1) + L (2, 2) * R (2) + L (2, 3) * R (3),
@@ -159,12 +149,25 @@ package body Tiny_Tensors.Float_Matrices is
    function "-" (Left : OM.Orthonormal_Matrix; Right : Matrix) return Matrix is
      (Float_Matrices.From_Orthonormal (Left) - Right);
 
-   function Det (M : Matrix) return Float is
-     (M (1, 1) * (M (2, 2) * M (3, 3) - M (2, 3) * M (3, 2)) -
-      M (1, 2) * (M (2, 1) * M (3, 3) - M (2, 3) * M (3, 1)) +
-      M (1, 3) * (M (2, 1) * M (3, 2) - M (2, 2) * M (3, 1)));
+   function Adjugate (Operand : Matrix) return Matrix is
+     [
+      [Operand (2, 2) * Operand (3, 3) - Operand (2, 3) * Operand (3, 2),
+       Operand (1, 3) * Operand (3, 2) - Operand (1, 2) * Operand (3, 3),
+       Operand (1, 2) * Operand (2, 3) - Operand (1, 3) * Operand (2, 2)],
+      [Operand (2, 3) * Operand (3, 1) - Operand (2, 1) * Operand (3, 3),
+       Operand (1, 1) * Operand (3, 3) - Operand (1, 3) * Operand (3, 1),
+       Operand (1, 3) * Operand (2, 1) - Operand (1, 1) * Operand (2, 3)],
+      [Operand (2, 1) * Operand (3, 2) - Operand (2, 2) * Operand (3, 1),
+       Operand (1, 2) * Operand (3, 1) - Operand (1, 1) * Operand (3, 2),
+       Operand (1, 1) * Operand (2, 2) - Operand (1, 2) * Operand (2, 1)]];
 
-   function Determinant (Operand : Matrix) return Float renames Det;
+   function Determinant (Operand : Matrix) return Float is
+     (declare
+        Cofactor : constant Matrix := Adjugate (Operand);
+      begin
+        Operand (1, 1) * Cofactor (1, 1)
+        + Operand (2, 1) * Cofactor (1, 2)
+        + Operand (3, 1) * Cofactor (1, 3));
 
    function From_Diagonal
      (M : DM.Diagonal_Matrix) return Matrix is
@@ -183,20 +186,22 @@ package body Tiny_Tensors.Float_Matrices is
       [M (a_12), M (a_22), M (a_23)],
       [M (a_13), M (a_23), M (a_33)]];
 
-   function Skew (Vector : FV.Vector) return Matrix is
-     [[0.0,         -Vector (3), +Vector (2)],
-      [+Vector (3), 0.0,         -Vector (1)],
-      [-Vector (2), +Vector (1), 0.0]];
-
-   function Transpose (Operand : Matrix) return Matrix is
-     [for J in 1 .. 3 =>
-        [for K in 1 .. 3 => Operand (K, J)]];
-
    function Frobenius_Norm_2 (Operand : Matrix) return Float is
      ([for Item of Operand => Item**2]'Reduce ("+", 0.0));
 
    function Frobenius_Norm (Operand : Matrix) return Float is
      (Tiny_Tensors.Float_Sqrt (Frobenius_Norm_2 (Operand)));
+
+   function Identity return Matrix is
+     (From_Diagonal (
+        DM.Diagonal_Matrix'
+          ([1 .. 3 => 1.0])));
+
+   function Inverse (Operand : Matrix) return Matrix is
+      Determinant_1 : constant Float := 1.0 / Determinant (Operand);
+   begin
+      return Determinant_1 * Adjugate (Operand);
+   end Inverse;
 
    function LT_x_R
      (Left, Right : Float_Vector_Arrays.Vector_Array) return Matrix is
@@ -211,5 +216,19 @@ package body Tiny_Tensors.Float_Matrices is
          end loop;
       end return;
    end LT_x_R;
+
+   function Skew (Vector : FV.Vector) return Matrix is
+     [[0.0,         -Vector (3), +Vector (2)],
+      [+Vector (3), 0.0,         -Vector (1)],
+      [-Vector (2), +Vector (1), 0.0]];
+
+   function Transpose (Operand : Matrix) return Matrix is
+     [for J in 1 .. 3 =>
+        [for K in 1 .. 3 => Operand (K, J)]];
+
+   function Zero return Matrix is
+     (From_Diagonal (
+        DM.Diagonal_Matrix'
+          ([1 .. 3 => 0.0])));
 
 end Tiny_Tensors.Float_Matrices;

@@ -48,8 +48,14 @@ package Tiny_Tensors.Float_Symmetric_Matrices is
    --  Return an identity matrix or unit matrix. It has ones on the main
    --  diagonal and zeros elsewhere.
 
-   function Determinant (Operand : Symmetric_Matrix) return Float;
+   function Determinant (Operand : Symmetric_Matrix) return Float
+     with Inline;
    --  Return determinant of symmetric matrix
+
+   function Adjugate (Operand : Symmetric_Matrix) return Symmetric_Matrix
+     with Inline;
+   --  Return the adjugate (classical adjoint) of Operand, the transposed
+   --  matrix of cofactors.
 
    function Frobenius_Norm (Operand : Symmetric_Matrix) return Float;
 
@@ -122,6 +128,9 @@ package Tiny_Tensors.Float_Symmetric_Matrices is
      (A : DM.Diagonal_Matrix;
       Q : Float_Matrices.Matrix) return Symmetric_Matrix;
    --  Return QAQᵀ in compact form
+
+   function Inverse (Operand : Symmetric_Matrix) return Symmetric_Matrix
+     with Pre => Determinant (Operand) /= 0.0;
 
 private
 

@@ -5,30 +5,32 @@
 
 with Trendy_Test;
 
-package Testsuite.Matrices is
+package Testsuite.Symmetric_Matrices is
 
    All_Tests : constant Trendy_Test.Test_Group;
 
 private
 
-   procedure Basic_Matrix_Operations (T : in out Trendy_Test.Operation'Class);
-   procedure Test_Adj (T : in out Trendy_Test.Operation'Class);
-
-   procedure Test_Matrix_Vector_Multiplication
+   procedure Test_Symmetric_Matrix_Operations
      (T : in out Trendy_Test.Operation'Class);
+
+   procedure Test_Symmetric_Adj (T : in out Trendy_Test.Operation'Class);
 
    procedure Test_Determinant (T : in out Trendy_Test.Operation'Class);
 
-   procedure Test_LT_x_R_Operations (T : in out Trendy_Test.Operation'Class);
+   procedure Test_LT_x_L_Operations (T : in out Trendy_Test.Operation'Class);
+
+   procedure Test_Scalar_And_Mixed_Operations
+     (T : in out Trendy_Test.Operation'Class);
 
    procedure Test_Inverse (T : in out Trendy_Test.Operation'Class);
 
    All_Tests : constant Trendy_Test.Test_Group :=
-    [Basic_Matrix_Operations'Access,
-     Test_Adj'Access,
-     Test_Matrix_Vector_Multiplication'Access,
+    [Test_Symmetric_Matrix_Operations'Access,
+     Test_Symmetric_Adj'Access,
      Test_Determinant'Access,
-     Test_LT_x_R_Operations'Access,
+     Test_LT_x_L_Operations'Access,
+     Test_Scalar_And_Mixed_Operations'Access,
      Test_Inverse'Access];
 
-end Testsuite.Matrices;
+end Testsuite.Symmetric_Matrices;

@@ -31,8 +31,17 @@ package Tiny_Tensors.Float_Matrices is
    function Transpose (Operand : Matrix) return Matrix;
    --  Return transpose of M
 
-   function Determinant (Operand : Matrix) return Float;
+   function Determinant (Operand : Matrix) return Float
+     with Inline;
    --  Return determinant of matrix
+
+   function Adjugate (Operand : Matrix) return Matrix
+     with Inline;
+   --  Return the adjugate (classical adjoint) of Operand, the transposed
+   --  matrix of cofactors.
+
+   function Inverse (Operand : Matrix) return Matrix
+     with Pre => Determinant (Operand) /= 0.0;
 
    function Frobenius_Norm (Operand : Matrix) return Float;
 
