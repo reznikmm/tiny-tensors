@@ -163,11 +163,11 @@ package body Tiny_Tensors.Float_Symmetric_Matrices is
      (A : Symmetric_Matrix;
       Q : Float_Matrices.Matrix) return Symmetric_Matrix is
      [a_11 => Q_A_QT_Cell (A, Q, J => 1, K => 1),
-      a_12 => Q_A_QT_Cell (A, Q, J => 1, K => 1),
-      a_13 => Q_A_QT_Cell (A, Q, J => 1, K => 1),
-      a_22 => Q_A_QT_Cell (A, Q, J => 1, K => 1),
-      a_23 => Q_A_QT_Cell (A, Q, J => 1, K => 1),
-      a_33 => Q_A_QT_Cell (A, Q, J => 1, K => 1)];
+      a_12 => Q_A_QT_Cell (A, Q, J => 1, K => 2),
+      a_13 => Q_A_QT_Cell (A, Q, J => 1, K => 3),
+      a_22 => Q_A_QT_Cell (A, Q, J => 2, K => 2),
+      a_23 => Q_A_QT_Cell (A, Q, J => 2, K => 3),
+      a_33 => Q_A_QT_Cell (A, Q, J => 3, K => 3)];
 
    function Q_A_QT
      (A : Symmetric_Matrix;
@@ -188,11 +188,11 @@ package body Tiny_Tensors.Float_Symmetric_Matrices is
      (A : DM.Diagonal_Matrix;
       Q : Float_Matrices.Matrix) return Symmetric_Matrix is
      [a_11 => Q_A_QT_Cell (A, Q, J => 1, K => 1),
-      a_12 => Q_A_QT_Cell (A, Q, J => 1, K => 1),
-      a_13 => Q_A_QT_Cell (A, Q, J => 1, K => 1),
-      a_22 => Q_A_QT_Cell (A, Q, J => 1, K => 1),
-      a_23 => Q_A_QT_Cell (A, Q, J => 1, K => 1),
-      a_33 => Q_A_QT_Cell (A, Q, J => 1, K => 1)];
+      a_12 => Q_A_QT_Cell (A, Q, J => 1, K => 2),
+      a_13 => Q_A_QT_Cell (A, Q, J => 1, K => 3),
+      a_22 => Q_A_QT_Cell (A, Q, J => 2, K => 2),
+      a_23 => Q_A_QT_Cell (A, Q, J => 2, K => 3),
+      a_33 => Q_A_QT_Cell (A, Q, J => 3, K => 3)];
 
    function Inverse (Operand : Symmetric_Matrix) return Symmetric_Matrix is
       Determinant_1 : constant Float := 1.0 / Determinant (Operand);

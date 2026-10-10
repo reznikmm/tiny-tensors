@@ -25,12 +25,15 @@ private
 
    procedure Test_Inverse (T : in out Trendy_Test.Operation'Class);
 
+   procedure Test_Q_A_QT (T : in out Trendy_Test.Operation'Class);
+
    All_Tests : constant Trendy_Test.Test_Group :=
     [Test_Symmetric_Matrix_Operations'Access,
      Test_Symmetric_Adj'Access,
      Test_Determinant'Access,
      Test_LT_x_L_Operations'Access,
      Test_Scalar_And_Mixed_Operations'Access,
-     Test_Inverse'Access];
+     Test_Inverse'Access,
+     Test_Q_A_QT'Access];
 
 end Testsuite.Symmetric_Matrices;

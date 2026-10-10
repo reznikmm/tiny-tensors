@@ -5,6 +5,7 @@
 
 with Tiny_Tensors.Float_Diagonal_Matrices;
 with Tiny_Tensors.Float_Matrices;
+with Tiny_Tensors.Float_Orthonormal_Matrices;
 with Tiny_Tensors.Float_Symmetric_Matrices;
 with Tiny_Tensors.Float_Vectors;
 with Tiny_Tensors.Float_Vector_Arrays;
@@ -14,6 +15,49 @@ package body Testsuite.Symmetric_Matrices is
    use Tiny_Tensors.Float_Diagonal_Matrices;
    use Tiny_Tensors.Float_Symmetric_Matrices;
    use Tiny_Tensors.Float_Vectors;
+
+   procedure Test_Q_A_QT (T : in out Trendy_Test.Operation'Class) is
+      A : constant Symmetric_Matrix := [4.0, 1.0, -2.0, 3.0, 5.0, 6.0];
+      D : constant Diagonal_Matrix := [4.0, 3.0, 6.0];
+      Q : constant Matrix :=
+        [[1.0, 2.0, 0.0], [0.0, -1.0, 3.0], [2.0, 0.0, 1.0]];
+      O : constant
+        Tiny_Tensors.Float_Orthonormal_Matrices.Orthonormal_Matrix :=
+        [[0.0, 1.0, 0.0], [0.0, 0.0, -1.0], [1.0, 0.0, 0.0]];
+
+      Expected : Matrix;
+      Result : Symmetric_Matrix;
+   begin
+      T.Register;
+
+      Expected := Q * From_Symmetric (A) * Transpose (Q);
+      Result := Q_A_QT (A, Q);
+
+      for J in 1 .. 3 loop
+         for K in J .. 3 loop
+            T.Assert (abs (Result (J & K) - Expected (J, K)) < 0.001);
+         end loop;
+      end loop;
+
+      Expected := Q * From_Diagonal (D) * Transpose (Q);
+      Result := Q_A_QT (D, Q);
+
+      for J in 1 .. 3 loop
+         for K in J .. 3 loop
+            T.Assert (abs (Result (J & K) - Expected (J, K)) < 0.001);
+         end loop;
+      end loop;
+
+      Expected := From_Orthonormal (O) * From_Symmetric (A)
+        * Transpose (From_Orthonormal (O));
+      Result := Q_A_QT (A, O);
+
+      for J in 1 .. 3 loop
+         for K in J .. 3 loop
+            T.Assert (abs (Result (J & K) - Expected (J, K)) < 0.001);
+         end loop;
+      end loop;
+   end Test_Q_A_QT;
 
    procedure Test_Symmetric_Adj (T : in out Trendy_Test.Operation'Class) is
    begin
