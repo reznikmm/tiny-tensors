@@ -14,6 +14,7 @@ package Tiny_Tensors.Float_Eigen_System is
      (Matrix  : Float_Symmetric_Matrices.Symmetric_Matrix;
       Values  : out Float_Diagonal_Matrices.Diagonal_Matrix;
       Vectors : out Float_Matrices.Vector_Array_3);
-   --  Compute eigen values and eigen vectors of symmetric matrix M
+   --  Compute eigen values and eigen vectors of symmetric matrix M.
+   --  Return eigen values in descent order.
 
 end Tiny_Tensors.Float_Eigen_System;
