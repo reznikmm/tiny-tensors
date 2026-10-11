@@ -10,6 +10,7 @@ with Tiny_Tensors.Float_Matrices;
 with Tiny_Tensors.Float_Vectors;
 
 package body Testsuite.Eigen_Systems is
+   use Slim_Test.Results;
    use Tiny_Tensors.Float_Eigen_System;
    use Tiny_Tensors.Float_Matrices;
    use Tiny_Tensors.Float_Diagonal_Matrices;
@@ -21,10 +22,8 @@ package body Testsuite.Eigen_Systems is
    ----------------------------------
 
    procedure Basic_Eigen_System_Operations
-     (T : in out Trendy_Test.Operation'Class) is
+     (T : in out Slim_Test.Results.Result) is
    begin
-      T.Register;
-
       declare
          --  Simple symmetric matrix
          M : constant Symmetric_Matrix :=
@@ -38,19 +37,19 @@ package body Testsuite.Eigen_Systems is
          Get_Eigen_System (M, Values, Vectors);
 
          --  Basic checks: eigenvalues should be real numbers
-         T.Assert (Values (1) /= Float'First);
-         T.Assert (Values (2) /= Float'First);
-         T.Assert (Values (3) /= Float'First);
+         Assert (T, Values (1) /= Float'First);
+         Assert (T, Values (2) /= Float'First);
+         Assert (T, Values (3) /= Float'First);
 
          --  Eigenvectors should be unit vectors (length = 1)
-         T.Assert (abs (abs (Vectors (1)) - 1.0) < 0.001);
-         T.Assert (abs (abs (Vectors (2)) - 1.0) < 0.001);
-         T.Assert (abs (abs (Vectors (3)) - 1.0) < 0.001);
+         Assert (T, abs (abs (Vectors (1)) - 1.0) < 0.001);
+         Assert (T, abs (abs (Vectors (2)) - 1.0) < 0.001);
+         Assert (T, abs (abs (Vectors (3)) - 1.0) < 0.001);
 
          --  For symmetric matrices, eigenvalues should be sorted in descending
          --  order
-         T.Assert (Values (1) >= Values (2));
-         T.Assert (Values (2) >= Values (3));
+         Assert (T, Values (1) >= Values (2));
+         Assert (T, Values (2) >= Values (3));
 
          --  Verify that M * v = λ * v
          for J in 1 .. 3 loop
@@ -58,7 +57,7 @@ package body Testsuite.Eigen_Systems is
                Left  : constant Vector := M * Vectors (J);
                Right : constant Vector := Values (J) * Vectors (J);
             begin
-               T.Assert (Length (Left - Right) < 0.001);
+               Assert (T, Length (Left - Right) < 0.001);
             end;
          end loop;
       end;
@@ -69,13 +68,11 @@ package body Testsuite.Eigen_Systems is
    ------------------------------------
 
    procedure Test_Diagonal_Matrix_Eigen_System
-     (T : in out Trendy_Test.Operation'Class)
+     (T : in out Slim_Test.Results.Result)
    is
       function Abs_Max_Item (V : Vector) return Float is
         (Float'Max (Float'Max (abs V (1), abs V (2)), abs V (3)));
    begin
-      T.Register;
-
       declare
          --  Diagonal matrix: eigenvalues should be the diagonal elements
          M : constant Symmetric_Matrix :=
@@ -88,9 +85,9 @@ package body Testsuite.Eigen_Systems is
          Get_Eigen_System (M, Values, Vectors);
 
          --  For diagonal matrix, eigenvalues should be diagonal elements
-         T.Assert (abs (Values (1) - 5.0) < 0.001);  -- Largest eigenvalue
-         T.Assert (abs (Values (2) - 3.0) < 0.001);  -- Middle eigenvalue
-         T.Assert (abs (Values (3) - 1.0) < 0.001);  -- Smallest eigenvalue
+         Assert (T, abs (Values (1) - 5.0) < 0.001);  -- Largest eigenvalue
+         Assert (T, abs (Values (2) - 3.0) < 0.001);  -- Middle eigenvalue
+         Assert (T, abs (Values (3) - 1.0) < 0.001);  -- Smallest eigenvalue
 
          --  Eigenvectors should be standard basis vectors (up to sign)
          --  Check that each eigenvector has one dominant component
@@ -100,9 +97,9 @@ package body Testsuite.Eigen_Systems is
             V3_Max : constant Float := Abs_Max_Item (Vectors (3));
          begin
             --  Each eigenvector should have one component close to 1.0
-            T.Assert (abs (V1_Max - 1.0) < 0.001);
-            T.Assert (abs (V2_Max - 1.0) < 0.001);
-            T.Assert (abs (V3_Max - 1.0) < 0.001);
+            Assert (T, abs (V1_Max - 1.0) < 0.001);
+            Assert (T, abs (V2_Max - 1.0) < 0.001);
+            Assert (T, abs (V3_Max - 1.0) < 0.001);
          end;
 
          --  Verify that M * v = λ * v
@@ -111,7 +108,7 @@ package body Testsuite.Eigen_Systems is
                Left  : constant Vector := M * Vectors (J);
                Right : constant Vector := Values (J) * Vectors (J);
             begin
-               T.Assert (Length (Left - Right) < 0.001);
+               Assert (T, Length (Left - Right) < 0.001);
             end;
          end loop;
       end;
@@ -122,10 +119,8 @@ package body Testsuite.Eigen_Systems is
    ------------------------------------
 
    procedure Test_Identity_Matrix_Eigen_System
-     (T : in out Trendy_Test.Operation'Class) is
+     (T : in out Slim_Test.Results.Result) is
    begin
-      T.Register;
-
       declare
          --  Identity matrix: all eigenvalues should be 1.0
          M : constant Symmetric_Matrix :=
@@ -138,20 +133,20 @@ package body Testsuite.Eigen_Systems is
          Get_Eigen_System (M, Values, Vectors);
 
          --  All eigenvalues should be 1.0
-         T.Assert (abs (Values (1) - 1.0) < 0.001);
-         T.Assert (abs (Values (2) - 1.0) < 0.001);
-         T.Assert (abs (Values (3) - 1.0) < 0.001);
+         Assert (T, abs (Values (1) - 1.0) < 0.001);
+         Assert (T, abs (Values (2) - 1.0) < 0.001);
+         Assert (T, abs (Values (3) - 1.0) < 0.001);
 
          --  Eigenvectors should form an orthonormal basis
          --  Check orthogonality (dot products should be ~0)
-         T.Assert (abs Float'(Vectors (1) * Vectors (2)) < 0.001);
-         T.Assert (abs Float'(Vectors (1) * Vectors (3)) < 0.001);
-         T.Assert (abs Float'(Vectors (2) * Vectors (3)) < 0.001);
+         Assert (T, abs Float'(Vectors (1) * Vectors (2)) < 0.001);
+         Assert (T, abs Float'(Vectors (1) * Vectors (3)) < 0.001);
+         Assert (T, abs Float'(Vectors (2) * Vectors (3)) < 0.001);
 
          --  Check that each vector is unit length
-         T.Assert (abs (abs (Vectors (1)) - 1.0) < 0.001);
-         T.Assert (abs (abs (Vectors (2)) - 1.0) < 0.001);
-         T.Assert (abs (abs (Vectors (3)) - 1.0) < 0.001);
+         Assert (T, abs (abs (Vectors (1)) - 1.0) < 0.001);
+         Assert (T, abs (abs (Vectors (2)) - 1.0) < 0.001);
+         Assert (T, abs (abs (Vectors (3)) - 1.0) < 0.001);
       end;
    end Test_Identity_Matrix_Eigen_System;
 

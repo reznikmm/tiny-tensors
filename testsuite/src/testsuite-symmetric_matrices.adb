@@ -11,12 +11,13 @@ with Tiny_Tensors.Float_Vectors;
 with Tiny_Tensors.Float_Vector_Arrays;
 
 package body Testsuite.Symmetric_Matrices is
+   use Slim_Test.Results;
    use Tiny_Tensors.Float_Matrices;
    use Tiny_Tensors.Float_Diagonal_Matrices;
    use Tiny_Tensors.Float_Symmetric_Matrices;
    use Tiny_Tensors.Float_Vectors;
 
-   procedure Test_Q_A_QT (T : in out Trendy_Test.Operation'Class) is
+   procedure Test_Q_A_QT (T : in out Slim_Test.Results.Result) is
       A : constant Symmetric_Matrix := [4.0, 1.0, -2.0, 3.0, 5.0, 6.0];
       D : constant Diagonal_Matrix := [4.0, 3.0, 6.0];
       Q : constant Matrix :=
@@ -28,14 +29,12 @@ package body Testsuite.Symmetric_Matrices is
       Expected : Matrix;
       Result : Symmetric_Matrix;
    begin
-      T.Register;
-
       Expected := Q * From_Symmetric (A) * Transpose (Q);
       Result := Q_A_QT (A, Q);
 
       for J in 1 .. 3 loop
          for K in J .. 3 loop
-            T.Assert (abs (Result (J & K) - Expected (J, K)) < 0.001);
+            Assert (T, abs (Result (J & K) - Expected (J, K)) < 0.001);
          end loop;
       end loop;
 
@@ -44,7 +43,7 @@ package body Testsuite.Symmetric_Matrices is
 
       for J in 1 .. 3 loop
          for K in J .. 3 loop
-            T.Assert (abs (Result (J & K) - Expected (J, K)) < 0.001);
+            Assert (T, abs (Result (J & K) - Expected (J, K)) < 0.001);
          end loop;
       end loop;
 
@@ -54,15 +53,13 @@ package body Testsuite.Symmetric_Matrices is
 
       for J in 1 .. 3 loop
          for K in J .. 3 loop
-            T.Assert (abs (Result (J & K) - Expected (J, K)) < 0.001);
+            Assert (T, abs (Result (J & K) - Expected (J, K)) < 0.001);
          end loop;
       end loop;
    end Test_Q_A_QT;
 
-   procedure Test_Symmetric_Adj (T : in out Trendy_Test.Operation'Class) is
+   procedure Test_Symmetric_Adj (T : in out Slim_Test.Results.Result) is
    begin
-      T.Register;
-
       declare
          M : constant Symmetric_Matrix :=
            [-3.0, +2.0, -5.0,
@@ -78,15 +75,13 @@ package body Testsuite.Symmetric_Matrices is
       begin
          --  Test matrix-vector multiplication
          Result := Adjugate (M);
-         T.Assert (Result = Exp);
+         Assert (T, Result = Exp);
       end;
    end Test_Symmetric_Adj;
 
    procedure Test_Symmetric_Matrix_Operations
-     (T : in out Trendy_Test.Operation'Class) is
+     (T : in out Slim_Test.Results.Result) is
    begin
-      T.Register;
-
       declare
          M : constant Matrix := [[1.0, 2.0, 3.0],
                                  [4.0, 5.0, 6.0],
@@ -107,34 +102,34 @@ package body Testsuite.Symmetric_Matrices is
          --  a_23 = 2*3 + 5*6 + 8*9 = 6 + 30 + 72 = 108
          --  a_33 = 3*3 + 6*6 + 9*9 = 9 + 36 + 81 = 126
 
-         T.Assert (S (a_11) = 66.0);
-         T.Assert (S (a_12) = 78.0);
-         T.Assert (S (a_13) = 90.0);
-         T.Assert (S (a_22) = 93.0);
-         T.Assert (S (a_23) = 108.0);
-         T.Assert (S (a_33) = 126.0);
+         Assert (T, S (a_11) = 66.0);
+         Assert (T, S (a_12) = 78.0);
+         Assert (T, S (a_13) = 90.0);
+         Assert (T, S (a_22) = 93.0);
+         Assert (T, S (a_23) = 108.0);
+         Assert (T, S (a_33) = 126.0);
 
-         T.Assert (S (a_11) = C (1, 1));
-         T.Assert (S (a_12) = C (1, 2));
-         T.Assert (S (a_13) = C (1, 3));
-         T.Assert (S (a_22) = C (2, 2));
-         T.Assert (S (a_23) = C (2, 3));
-         T.Assert (S (a_33) = C (3, 3));
+         Assert (T, S (a_11) = C (1, 1));
+         Assert (T, S (a_12) = C (1, 2));
+         Assert (T, S (a_13) = C (1, 3));
+         Assert (T, S (a_22) = C (2, 2));
+         Assert (T, S (a_23) = C (2, 3));
+         Assert (T, S (a_33) = C (3, 3));
       end;
 
       declare
          --  Test To_Index function
          pragma Warnings (Off);
       begin
-         T.Assert (To_Index (1, 1) = a_11);
-         T.Assert (To_Index (1, 2) = a_12);
-         T.Assert (To_Index (2, 1) = a_12);  -- Symmetric
-         T.Assert (To_Index (3, 3) = a_33);
+         Assert (T, To_Index (1, 1) = a_11);
+         Assert (T, To_Index (1, 2) = a_12);
+         Assert (T, To_Index (2, 1) = a_12);  -- Symmetric
+         Assert (T, To_Index (3, 3) = a_33);
 
          --  Test "&" operator (alias for To_Index)
-         T.Assert ((1 & 2) = a_12);
-         T.Assert ((2 & 3) = a_23);
-         T.Assert ((3 & 1) = a_13);
+         Assert (T, (1 & 2) = a_12);
+         Assert (T, (2 & 3) = a_23);
+         Assert (T, (3 & 1) = a_13);
       end;
 
       declare
@@ -145,20 +140,18 @@ package body Testsuite.Symmetric_Matrices is
          S : Symmetric_Matrix;
       begin
          S := Gramian (Simple_M);
-         T.Assert (S (a_11) = 4.0);   -- 2^2
-         T.Assert (S (a_22) = 9.0);   -- 3^2
-         T.Assert (S (a_33) = 16.0);  -- 4^2
-         T.Assert (S (a_12) = 0.0);   -- Off-diagonal elements should be 0
-         T.Assert (S (a_13) = 0.0);
-         T.Assert (S (a_23) = 0.0);
+         Assert (T, S (a_11) = 4.0);   -- 2^2
+         Assert (T, S (a_22) = 9.0);   -- 3^2
+         Assert (T, S (a_33) = 16.0);  -- 4^2
+         Assert (T, S (a_12) = 0.0);   -- Off-diagonal elements should be 0
+         Assert (T, S (a_13) = 0.0);
+         Assert (T, S (a_23) = 0.0);
       end;
    end Test_Symmetric_Matrix_Operations;
 
    procedure Test_Determinant
-     (T : in out Trendy_Test.Operation'Class) is
+     (T : in out Slim_Test.Results.Result) is
    begin
-      T.Register;
-
       declare
          --  Test determinant of symmetric matrix
          S : constant Symmetric_Matrix :=
@@ -171,18 +164,16 @@ package body Testsuite.Symmetric_Matrices is
          Det := Determinant (S);
          Det_from_Matrix := Determinant (M_from_S);
          --  Both should give the same result
-         T.Assert (abs (Det - Det_from_Matrix) < 0.001);
+         Assert (T, abs (Det - Det_from_Matrix) < 0.001);
          --  Manual calculation: 4*(3*5 - 1*1) - 1*(1*5 - 1*2) + 2*(1*1 - 3*2)
          --  = 4*14 - 1*3 + 2*(-5) = 56 - 3 - 10 = 43
-         T.Assert (abs (Det - 43.0) < 0.001);
+         Assert (T, abs (Det - 43.0) < 0.001);
       end;
    end Test_Determinant;
 
    procedure Test_LT_x_L_Operations
-     (T : in out Trendy_Test.Operation'Class) is
+     (T : in out Slim_Test.Results.Result) is
    begin
-      T.Register;
-
       declare
          use Tiny_Tensors.Float_Vector_Arrays;
 
@@ -197,12 +188,12 @@ package body Testsuite.Symmetric_Matrices is
          Result := LT_x_L (Left);
 
          --  Left^T * Right should be identity (in symmetric form)
-         T.Assert (abs (Result (a_11) - 1.0) < 0.001);
-         T.Assert (abs (Result (a_22) - 1.0) < 0.001);
-         T.Assert (abs (Result (a_33) - 1.0) < 0.001);
-         T.Assert (abs (Result (a_12)) < 0.001);
-         T.Assert (abs (Result (a_13)) < 0.001);
-         T.Assert (abs (Result (a_23)) < 0.001);
+         Assert (T, abs (Result (a_11) - 1.0) < 0.001);
+         Assert (T, abs (Result (a_22) - 1.0) < 0.001);
+         Assert (T, abs (Result (a_33) - 1.0) < 0.001);
+         Assert (T, abs (Result (a_12)) < 0.001);
+         Assert (T, abs (Result (a_13)) < 0.001);
+         Assert (T, abs (Result (a_23)) < 0.001);
       end;
 
       declare
@@ -232,12 +223,12 @@ package body Testsuite.Symmetric_Matrices is
       begin
          Result := LT_x_L (Left);
 
-         T.Assert (abs (Result (a_11) - 17.0) < 0.001);
-         T.Assert (abs (Result (a_12) - 22.0) < 0.001);
-         T.Assert (abs (Result (a_13) - 27.0) < 0.001);
-         T.Assert (abs (Result (a_22) - 29.0) < 0.001);
-         T.Assert (abs (Result (a_23) - 36.0) < 0.001);
-         T.Assert (abs (Result (a_33) - 45.0) < 0.001);
+         Assert (T, abs (Result (a_11) - 17.0) < 0.001);
+         Assert (T, abs (Result (a_12) - 22.0) < 0.001);
+         Assert (T, abs (Result (a_13) - 27.0) < 0.001);
+         Assert (T, abs (Result (a_22) - 29.0) < 0.001);
+         Assert (T, abs (Result (a_23) - 36.0) < 0.001);
+         Assert (T, abs (Result (a_33) - 45.0) < 0.001);
       end;
 
       declare
@@ -255,12 +246,12 @@ package body Testsuite.Symmetric_Matrices is
       begin
          Result := LT_x_L (Left);
 
-         T.Assert (abs (Result (a_11) - 4.0) < 0.001);
-         T.Assert (abs (Result (a_12) - 6.0) < 0.001);
-         T.Assert (abs (Result (a_13) - 8.0) < 0.001);
-         T.Assert (abs (Result (a_22) - 9.0) < 0.001);
-         T.Assert (abs (Result (a_23) - 12.0) < 0.001);
-         T.Assert (abs (Result (a_33) - 16.0) < 0.001);
+         Assert (T, abs (Result (a_11) - 4.0) < 0.001);
+         Assert (T, abs (Result (a_12) - 6.0) < 0.001);
+         Assert (T, abs (Result (a_13) - 8.0) < 0.001);
+         Assert (T, abs (Result (a_22) - 9.0) < 0.001);
+         Assert (T, abs (Result (a_23) - 12.0) < 0.001);
+         Assert (T, abs (Result (a_33) - 16.0) < 0.001);
       end;
 
       declare
@@ -280,20 +271,18 @@ package body Testsuite.Symmetric_Matrices is
          Result := LT_x_L (Vecs);
          Expected := Gramian (M);
 
-         T.Assert (abs (Result (a_11) - Expected (a_11)) < 0.001);
-         T.Assert (abs (Result (a_12) - Expected (a_12)) < 0.001);
-         T.Assert (abs (Result (a_13) - Expected (a_13)) < 0.001);
-         T.Assert (abs (Result (a_22) - Expected (a_22)) < 0.001);
-         T.Assert (abs (Result (a_23) - Expected (a_23)) < 0.001);
-         T.Assert (abs (Result (a_33) - Expected (a_33)) < 0.001);
+         Assert (T, abs (Result (a_11) - Expected (a_11)) < 0.001);
+         Assert (T, abs (Result (a_12) - Expected (a_12)) < 0.001);
+         Assert (T, abs (Result (a_13) - Expected (a_13)) < 0.001);
+         Assert (T, abs (Result (a_22) - Expected (a_22)) < 0.001);
+         Assert (T, abs (Result (a_23) - Expected (a_23)) < 0.001);
+         Assert (T, abs (Result (a_33) - Expected (a_33)) < 0.001);
       end;
    end Test_LT_x_L_Operations;
 
    procedure Test_Scalar_And_Mixed_Operations
-     (T : in out Trendy_Test.Operation'Class) is
+     (T : in out Slim_Test.Results.Result) is
    begin
-      T.Register;
-
       declare
          D : constant Diagonal_Matrix := [2.0, 3.0, 4.0];
          M : constant Matrix := [[1.0, 2.0, 3.0],
@@ -308,18 +297,18 @@ package body Testsuite.Symmetric_Matrices is
            [a_11 => 2.0, a_12 => 4.0, a_13 => 6.0,
             a_22 => 8.0, a_23 => 10.0, a_33 => 12.0];
       begin
-         T.Assert (2.0 * S = Scaled);
-         T.Assert (S * 2.0 = Scaled);
-         T.Assert (From_Symmetric (S + D) = Full_S + Expanded);
-         T.Assert (From_Symmetric (S - D) = Full_S - Expanded);
-         T.Assert (M * S = M * Full_S);
-         T.Assert (S * M = Full_S * M);
-         T.Assert (M + S = M + Full_S);
-         T.Assert (M - S = M - Full_S);
+         Assert (T, 2.0 * S = Scaled);
+         Assert (T, S * 2.0 = Scaled);
+         Assert (T, From_Symmetric (S + D) = Full_S + Expanded);
+         Assert (T, From_Symmetric (S - D) = Full_S - Expanded);
+         Assert (T, M * S = M * Full_S);
+         Assert (T, S * M = Full_S * M);
+         Assert (T, M + S = M + Full_S);
+         Assert (T, M - S = M - Full_S);
       end;
    end Test_Scalar_And_Mixed_Operations;
 
-   procedure Test_Inverse (T : in out Trendy_Test.Operation'Class) is
+   procedure Test_Inverse (T : in out Slim_Test.Results.Result) is
       type Matrix_Array is array (Positive range <>) of Symmetric_Matrix;
 
       Unit : constant Symmetric_Matrix := Identity;
@@ -339,8 +328,6 @@ package body Testsuite.Symmetric_Matrices is
 
       Full_Unit : constant Matrix := Tiny_Tensors.Float_Matrices.Identity;
    begin
-      T.Register;
-
       for K in Operands'Range loop
          declare
             Result : constant Symmetric_Matrix := Inverse (Operands (K));
@@ -349,14 +336,15 @@ package body Testsuite.Symmetric_Matrices is
             Reference : constant Matrix := From_Symmetric (Expected (K));
          begin
             --  Check known values independently of the inverse algorithm.
-            T.Assert
-              (for all I in 1 .. 3 =>
+            Assert
+              (T,
+               (for all I in 1 .. 3 =>
                  (for all J in 1 .. 3 =>
                     abs (Actual (I, J) - Reference (I, J))
-                      <= 0.00001 * Float'Max (1.0, abs (Reference (I, J)))));
+                      <= 0.00001 * Float'Max (1.0, abs (Reference (I, J))))));
             --  An inverse must cancel the operand in both orders.
-            T.Assert (Frobenius_Norm (Operand * Actual - Full_Unit) < 0.0001);
-            T.Assert (Frobenius_Norm (Actual * Operand - Full_Unit) < 0.0001);
+            Assert (T, Frobenius_Norm (Operand * Actual - Full_Unit) < 0.0001);
+            Assert (T, Frobenius_Norm (Actual * Operand - Full_Unit) < 0.0001);
          end;
       end loop;
    end Test_Inverse;

@@ -3,23 +3,24 @@
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 ----------------------------------------------------------------
 
-with Trendy_Test;
+with Slim_Test.Results;
+with Slim_Test.Test_Groups;
 
 package Testsuite.SVD is
 
-   All_Tests : constant Trendy_Test.Test_Group;
+   All_Tests : constant Slim_Test.Test_Groups.Test_Group;
 
 private
 
-   procedure Identity_Matrix_SVD (T : in out Trendy_Test.Operation'Class);
-   procedure Diagonal_Matrix_SVD (T : in out Trendy_Test.Operation'Class);
-   procedure SVD_Reconstruction (T : in out Trendy_Test.Operation'Class);
-   procedure Simple_Matrix_SVD (T : in out Trendy_Test.Operation'Class);
+   procedure Identity_Matrix_SVD (T : in out Slim_Test.Results.Result);
+   procedure Diagonal_Matrix_SVD (T : in out Slim_Test.Results.Result);
+   procedure SVD_Reconstruction (T : in out Slim_Test.Results.Result);
+   procedure Simple_Matrix_SVD (T : in out Slim_Test.Results.Result);
 
-   All_Tests : constant Trendy_Test.Test_Group :=
-    [Identity_Matrix_SVD'Access,
-     Diagonal_Matrix_SVD'Access,
-     SVD_Reconstruction'Access,
-     Simple_Matrix_SVD'Access];
+   All_Tests : constant Slim_Test.Test_Groups.Test_Group :=
+    ["Identity_Matrix_SVD" => Identity_Matrix_SVD'Access,
+     "Diagonal_Matrix_SVD" => Diagonal_Matrix_SVD'Access,
+     "SVD_Reconstruction" => SVD_Reconstruction'Access,
+     "Simple_Matrix_SVD" => Simple_Matrix_SVD'Access];
 
 end Testsuite.SVD;

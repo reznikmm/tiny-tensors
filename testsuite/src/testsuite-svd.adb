@@ -9,6 +9,7 @@ with Tiny_Tensors.Float_Matrices;
 with Tiny_Tensors.Float_Singular_Value_Decomposition;
 
 package body Testsuite.SVD is
+   use Slim_Test.Results;
    use Tiny_Tensors.Float_Matrices;
    use Tiny_Tensors.Float_Diagonal_Matrices;
    use Tiny_Tensors.Float_Orthonormal_Matrices;
@@ -38,10 +39,8 @@ package body Testsuite.SVD is
    -- Identity_Matrix_SVD --
    -------------------------
 
-   procedure Identity_Matrix_SVD (T : in out Trendy_Test.Operation'Class) is
+   procedure Identity_Matrix_SVD (T : in out Slim_Test.Results.Result) is
    begin
-      T.Register;
-
       declare
          Identity : constant Matrix := [[1.0, 0.0, 0.0],
                                         [0.0, 1.0, 0.0],
@@ -54,13 +53,13 @@ package body Testsuite.SVD is
          SVD (Identity, U, S, VT);
 
          --  For identity matrix, singular values should be all 1.0
-         T.Assert (Close_Enough (S (1), 1.0));
-         T.Assert (Close_Enough (S (2), 1.0));
-         T.Assert (Close_Enough (S (3), 1.0));
+         Assert (T, Close_Enough (S (1), 1.0));
+         Assert (T, Close_Enough (S (2), 1.0));
+         Assert (T, Close_Enough (S (3), 1.0));
 
          --  Reconstruct and verify
          Reconstructed := Reconstruct_Matrix (U, S, VT);
-         T.Assert (Close_Enough (Reconstructed, Identity));
+         Assert (T, Close_Enough (Reconstructed, Identity));
       end;
    end Identity_Matrix_SVD;
 
@@ -68,10 +67,8 @@ package body Testsuite.SVD is
    -- Diagonal_Matrix_SVD --
    -------------------------
 
-   procedure Diagonal_Matrix_SVD (T : in out Trendy_Test.Operation'Class) is
+   procedure Diagonal_Matrix_SVD (T : in out Slim_Test.Results.Result) is
    begin
-      T.Register;
-
       declare
          Diagonal : constant Matrix := [[3.0, 0.0, 0.0],
                                         [0.0, 2.0, 0.0],
@@ -84,13 +81,13 @@ package body Testsuite.SVD is
          SVD (Diagonal, U, S, VT);
 
          --  Singular values should be sorted in descending order
-         T.Assert (S (1) >= S (2));
-         T.Assert (S (2) >= S (3));
-         T.Assert (S (3) >= 0.0);
+         Assert (T, S (1) >= S (2));
+         Assert (T, S (2) >= S (3));
+         Assert (T, S (3) >= 0.0);
 
          --  Reconstruct and verify
          Reconstructed := Reconstruct_Matrix (U, S, VT);
-         T.Assert (Close_Enough (Reconstructed, Diagonal));
+         Assert (T, Close_Enough (Reconstructed, Diagonal));
       end;
    end Diagonal_Matrix_SVD;
 
@@ -98,10 +95,8 @@ package body Testsuite.SVD is
    -- SVD_Reconstruction --
    ------------------------
 
-   procedure SVD_Reconstruction (T : in out Trendy_Test.Operation'Class) is
+   procedure SVD_Reconstruction (T : in out Slim_Test.Results.Result) is
    begin
-      T.Register;
-
       declare
          Original : constant Matrix := [[0.9, 0.2, 0.1],
                                         [0.3, 0.8, 0.4],
@@ -114,13 +109,13 @@ package body Testsuite.SVD is
          SVD (Original, U, S, VT);
 
          --  Singular values should be non-negative and sorted
-         T.Assert (S (1) >= S (2));
-         T.Assert (S (2) >= S (3));
-         T.Assert (S (3) >= 0.0);
+         Assert (T, S (1) >= S (2));
+         Assert (T, S (2) >= S (3));
+         Assert (T, S (3) >= 0.0);
 
          --  Reconstruct original matrix: A = U * S * VT
          Reconstructed := Reconstruct_Matrix (U, S, VT);
-         T.Assert (Close_Enough (Reconstructed, Original));
+         Assert (T, Close_Enough (Reconstructed, Original));
       end;
    end SVD_Reconstruction;
 
@@ -128,10 +123,8 @@ package body Testsuite.SVD is
    -- Simple_Matrix_SVD --
    -----------------------
 
-   procedure Simple_Matrix_SVD (T : in out Trendy_Test.Operation'Class) is
+   procedure Simple_Matrix_SVD (T : in out Slim_Test.Results.Result) is
    begin
-      T.Register;
-
       declare
          Simple : constant Matrix := [[2.0, 0.0, 0.0],
                                       [0.0, 3.0, 0.0],
@@ -144,13 +137,13 @@ package body Testsuite.SVD is
          SVD (Simple, U, S, VT);
 
          --  Check properties of SVD
-         T.Assert (S (1) >= 0.0);
-         T.Assert (S (2) >= 0.0);
-         T.Assert (S (3) >= 0.0);
+         Assert (T, S (1) >= 0.0);
+         Assert (T, S (2) >= 0.0);
+         Assert (T, S (3) >= 0.0);
 
          --  Reconstruct and verify
          Reconstructed := Reconstruct_Matrix (U, S, VT);
-         T.Assert (Close_Enough (Reconstructed, Simple));
+         Assert (T, Close_Enough (Reconstructed, Simple));
       end;
 
       declare
@@ -166,16 +159,16 @@ package body Testsuite.SVD is
          SVD (Rank_Deficient, U, S, VT);
 
          --  This matrix should have rank 1, so two singular values should be 0
-         T.Assert (S (1) > 1.0e-6);
+         Assert (T, S (1) > 1.0e-6);
          --  First singular value should be significant
-         T.Assert (abs (S (2)) < 1.0e-6);  -- Second should be ~0
-         T.Assert (abs (S (3)) < 1.0e-6);  -- Third should be ~0
+         Assert (T, abs (S (2)) < 1.0e-6);  -- Second should be ~0
+         Assert (T, abs (S (3)) < 1.0e-6);  -- Third should be ~0
 
          --  Reconstruct and verify
          Ignore := Reconstruct_Matrix (U, S, VT);
 
          --  FIXME: Make SVD work for rank-deficient matrices
-         --  T.Assert (Close_Enough (Reconstructed, Rank_Deficient));
+         --  Assert (T, Close_Enough (Reconstructed, Rank_Deficient));
       end;
    end Simple_Matrix_SVD;
 
