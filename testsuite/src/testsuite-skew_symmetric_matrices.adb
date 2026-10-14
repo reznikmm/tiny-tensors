@@ -167,8 +167,11 @@ package body Testsuite.Skew_Symmetric_Matrices is
       Rotation : constant Matrix :=
         Matrix'(Identity) + Axis + SM.Square (Axis);
    begin
-      Assert (T, From_Symmetric (SM.Square (K)) =
-           [[-13.0, 12.0, 8.0], [12.0, -20.0, 6.0], [8.0, 6.0, -25.0]]);
+      Assert
+        (T,
+         From_Symmetric (SM.Square (K))
+           = [[-13.0, 12.0, 8.0], [12.0, -20.0, 6.0], [8.0, 6.0, -25.0]]);
+
       Assert (T, SM.Square (KM.Zero) = SM.Zero);
 
       for Operand of Operands loop

@@ -13,59 +13,49 @@ package body Testsuite.Diagonal_Matrices is
 
    procedure Test_Diagonal_Matrix_Operations
      (T : in out Slim_Test.Results.Result) is
+      D : constant Diagonal_Matrix := [2.0, 3.0, 4.0];
+      M : constant Matrix := [[1.0, 2.0, 3.0],
+                              [4.0, 5.0, 6.0],
+                              [7.0, 8.0, 9.0]];
+      Expanded : constant Matrix := From_Diagonal (D);
    begin
-      declare
-         D : constant Diagonal_Matrix := [2.0, 3.0, 4.0];
-         M : constant Matrix := [[1.0, 2.0, 3.0],
-                                 [4.0, 5.0, 6.0],
-                                 [7.0, 8.0, 9.0]];
-         Expanded : constant Matrix := From_Diagonal (D);
-      begin
-         Assert (T, Expanded = [[2.0, 0.0, 0.0],
-                               [0.0, 3.0, 0.0],
-                               [0.0, 0.0, 4.0]]);
-         Assert (T, 2.0 * D = [4.0, 6.0, 8.0]);
-         Assert (T, D * 2.0 = [4.0, 6.0, 8.0]);
-         Assert (T, M * D = M * Expanded);
-         Assert (T, M + D = M + Expanded);
-         Assert (T, M - D = M - Expanded);
-         Assert (T, D - M = Expanded - M);
-      end;
+      Assert (T, Expanded = [[2.0, 0.0, 0.0],
+                             [0.0, 3.0, 0.0],
+                             [0.0, 0.0, 4.0]]);
+      Assert (T, 2.0 * D = [4.0, 6.0, 8.0]);
+      Assert (T, D * 2.0 = [4.0, 6.0, 8.0]);
+      Assert (T, M * D = M * Expanded);
+      Assert (T, M + D = M + Expanded);
+      Assert (T, M - D = M - Expanded);
+      Assert (T, D - M = Expanded - M);
    end Test_Diagonal_Matrix_Operations;
 
    procedure Test_Inverse (T : in out Slim_Test.Results.Result) is
       type Matrix_Array is array (Positive range <>) of Diagonal_Matrix;
 
       Unit : constant Diagonal_Matrix := Identity;
+
       Operands : constant Matrix_Array :=
         [
          Unit,
          [2.0, -4.0, 0.5],
          [0.0001, -10_000.0, 3.0]];
+
       Expected : constant Matrix_Array :=
         [
          Unit,
          [0.5, -0.25, 2.0],
          [10_000.0, -0.0001, 1.0 / 3.0]];
-      Full_Unit : constant Matrix := Tiny_Tensors.Float_Matrices.Identity;
    begin
       for K in Operands'Range loop
          declare
             Result : constant Diagonal_Matrix := Inverse (Operands (K));
-            Operand : constant Matrix := From_Diagonal (Operands (K));
-            Actual : constant Matrix := From_Diagonal (Result);
-            Reference : constant Matrix := From_Diagonal (Expected (K));
          begin
             --  Check known values independently of the inverse algorithm.
-            Assert
-              (T,
-               (for all I in 1 .. 3 =>
-                 (for all J in 1 .. 3 =>
-                    abs (Actual (I, J) - Reference (I, J))
-                      <= 0.00001 * Float'Max (1.0, abs (Reference (I, J))))));
+            Assert (T, Result rem Expected (K));
             --  An inverse must cancel the operand in both orders.
-            Assert (T, Frobenius_Norm (Operand * Actual - Full_Unit) < 0.0001);
-            Assert (T, Frobenius_Norm (Actual * Operand - Full_Unit) < 0.0001);
+            Assert (T, Operands (K) * Result rem Identity);
+            Assert (T, Result * Operands (K) rem Identity);
          end;
       end loop;
    end Test_Inverse;

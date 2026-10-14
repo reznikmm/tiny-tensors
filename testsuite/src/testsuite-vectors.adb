@@ -14,54 +14,50 @@ package body Testsuite.Vectors is
    -- Basic_Vector_Operations --
    -----------------------------
 
-   procedure Basic_Vector_Operations
-     (T : in out Slim_Test.Results.Result) is
+   procedure Basic_Vector_Operations (T : in out Slim_Test.Results.Result) is
+      V1 : constant Vector := [1.0, 2.0, 3.0];
+      V2 : constant Vector := [4.0, 5.0, 6.0];
+      V3 : Vector;
+      Dot_Result : Float;
    begin
+      --  Test addition
+      V3 := V1 + V2;
+      Assert (T, V3 = [5.0, 7.0, 9.0]);
+
+      --  Test subtraction
+      V3 := V2 - V1;
+      Assert (T, V3 = [3.0, 3.0, 3.0]);
+
+      --  Test scalar multiplication
+      V3 := 2.0 * V1;
+      Assert (T, V3 = [2.0, 4.0, 6.0]);
+
+      --  Test dot product
+      Dot_Result := V1 * V2;
+      Assert (T, Dot_Result = 32.0);
+
+      --  Test cross product
+      V3 := V1 * V2;
+      Assert (T, V3 = [-3.0, 6.0, -3.0]);
+
+      --  Test cross product using Skew symmetric matrix
       declare
-         V1 : constant Vector := [1.0, 2.0, 3.0];
-         V2 : constant Vector := [4.0, 5.0, 6.0];
-         V3 : Vector;
-         Dot_Result : Float;
+         use Tiny_Tensors.Float_Matrices;
       begin
-         --  Test addition
-         V3 := V1 + V2;
-         Assert (T, V3 = [5.0, 7.0, 9.0]);
-
-         --  Test subtraction
-         V3 := V2 - V1;
-         Assert (T, V3 = [3.0, 3.0, 3.0]);
-
-         --  Test scalar multiplication
-         V3 := 2.0 * V1;
-         Assert (T, V3 = [2.0, 4.0, 6.0]);
-
-         --  Test dot product
-         Dot_Result := V1 * V2;
-         Assert (T, Dot_Result = 32.0);
-
-         --  Test cross product
-         V3 := V1 * V2;
+         V3 := Skew (V1) * V2;
          Assert (T, V3 = [-3.0, 6.0, -3.0]);
-
-         --  Test cross product using Skew symmetric matrix
-         declare
-            use Tiny_Tensors.Float_Matrices;
-         begin
-            V3 := Skew (V1) * V2;
-            Assert (T, V3 = [-3.0, 6.0, -3.0]);
-         end;
-
-         --  Test magnitude
-         Assert (T, abs (Length (V1) - 3.74166) < 0.001);
-
-         --  Test Normalize
-         Assert (T, abs (Length (Normalize (V1)) - 1.0) < 0.001);
-
-         --  Test element access
-         Assert (T, V1 (1) = 1.0);
-         Assert (T, V1 (2) = 2.0);
-         Assert (T, V1 (3) = 3.0);
       end;
+
+      --  Test magnitude
+      Assert (T, Length (V1) rem 3.74166);
+
+      --  Test Normalize
+      Assert (T, Length (Normalize (V1)) rem 1.0);
+
+      --  Test element access
+      Assert (T, V1 (1) = 1.0);
+      Assert (T, V1 (2) = 2.0);
+      Assert (T, V1 (3) = 3.0);
    end Basic_Vector_Operations;
 
    -------------------------
@@ -85,7 +81,7 @@ package body Testsuite.Vectors is
          C : constant Vector := [3.0, 2.0, 1.0];
       begin
          Triple_Result := A * (B * C);  -- Should be -25.0
-         Assert (T, abs (Triple_Result + 25.0) < 0.001);
+         Assert (T, Triple_Result rem (-25.0));
       end;
 
       --  Test with coplanar vectors
@@ -95,7 +91,7 @@ package body Testsuite.Vectors is
          C : constant Vector := [5.0, 6.0, 8.0];  -- 2*A + B
       begin
          Triple_Result := A * (B * C);
-         Assert (T, abs (Triple_Result) < 0.001);
+         Assert (T, Triple_Result rem 0.0);
          --  Should be 0 for coplanar vectors
       end;
    end Test_Triple_Product;

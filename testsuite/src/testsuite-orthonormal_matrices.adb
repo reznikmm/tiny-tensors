@@ -18,42 +18,40 @@ package body Testsuite.Orthonormal_Matrices is
    use Tiny_Tensors.Float_Vectors;
 
    procedure Test_Orthonormal_Matrix_Operations
-     (T : in out Slim_Test.Results.Result) is
+     (T : in out Slim_Test.Results.Result)
+   is
+      Q : constant Orthonormal_Matrix := [[0.0, -1.0, 0.0],
+                                          [1.0,  0.0, 0.0],
+                                          [0.0,  0.0, 1.0]];
+      D : constant Diagonal_Matrix := [2.0, 3.0, 4.0];
+      M : constant Matrix := [[1.0, 2.0, 3.0],
+                              [4.0, 5.0, 6.0],
+                              [7.0, 8.0, 9.0]];
+      S : constant Symmetric_Matrix :=
+        [a_11 => 1.0, a_12 => 2.0, a_13 => 3.0,
+         a_22 => 4.0, a_23 => 5.0, a_33 => 6.0];
+      V : constant Vector := [1.0, 2.0, 3.0];
+      Expanded : constant Matrix := From_Orthonormal (Q);
+      Reflection : constant Orthonormal_Matrix :=
+        [[1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]];
+      Unit : constant Orthonormal_Matrix := Identity;
+      Empty : constant Orthonormal_Matrix := [others => [others => 0.0]];
+      Full_Unit : constant Matrix := Identity;
+      Full_Empty : constant Matrix := Zero;
    begin
-      declare
-         Q : constant Orthonormal_Matrix := [[0.0, -1.0, 0.0],
-                                             [1.0,  0.0, 0.0],
-                                             [0.0,  0.0, 1.0]];
-         D : constant Diagonal_Matrix := [2.0, 3.0, 4.0];
-         M : constant Matrix := [[1.0, 2.0, 3.0],
-                                 [4.0, 5.0, 6.0],
-                                 [7.0, 8.0, 9.0]];
-         S : constant Symmetric_Matrix :=
-           [a_11 => 1.0, a_12 => 2.0, a_13 => 3.0,
-            a_22 => 4.0, a_23 => 5.0, a_33 => 6.0];
-         V : constant Vector := [1.0, 2.0, 3.0];
-         Expanded : constant Matrix := From_Orthonormal (Q);
-         Reflection : constant Orthonormal_Matrix :=
-           [[1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]];
-         Unit : constant Orthonormal_Matrix := Identity;
-         Empty : constant Orthonormal_Matrix := [others => [others => 0.0]];
-         Full_Unit : constant Matrix := Identity;
-         Full_Empty : constant Matrix := Zero;
-      begin
-         Assert (T, Full_Unit = From_Orthonormal (Unit));
-         Assert (T, Full_Empty = From_Orthonormal (Empty));
-         Assert (T, Determinant (Q) = 1.0);
-         Assert (T, Determinant (Reflection) = -1.0);
-         Assert (T, Q * Transpose (Q) = Unit);
-         Assert (T, From_Orthonormal (Q * Q) = Expanded * Expanded);
-         Assert (T, Q * V = [-2.0, 1.0, 3.0]);
-         Assert (T, Q * M = Expanded * M);
-         Assert (T, M * Q = M * Expanded);
-         Assert
-           (T,
-            Q * D = Expanded * Tiny_Tensors.Float_Matrices.From_Diagonal (D));
-         Assert (T, S * Q = From_Symmetric (S) * Expanded);
-      end;
+      Assert (T, Full_Unit = From_Orthonormal (Unit));
+      Assert (T, Full_Empty = From_Orthonormal (Empty));
+      Assert (T, Determinant (Q) = 1.0);
+      Assert (T, Determinant (Reflection) = -1.0);
+      Assert (T, Q * Transpose (Q) = Unit);
+      Assert (T, From_Orthonormal (Q * Q) = Expanded * Expanded);
+      Assert (T, Q * V = [-2.0, 1.0, 3.0]);
+      Assert (T, Q * M = Expanded * M);
+      Assert (T, M * Q = M * Expanded);
+      Assert
+        (T,
+         Q * D = Expanded * Tiny_Tensors.Float_Matrices.From_Diagonal (D));
+      Assert (T, S * Q = From_Symmetric (S) * Expanded);
    end Test_Orthonormal_Matrix_Operations;
 
    procedure Test_Inverse (T : in out Slim_Test.Results.Result) is

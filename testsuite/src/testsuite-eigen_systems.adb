@@ -21,133 +21,135 @@ package body Testsuite.Eigen_Systems is
    -- Basic_Eigen_System_Operations --
    ----------------------------------
 
-   procedure Basic_Eigen_System_Operations
-     (T : in out Slim_Test.Results.Result) is
-   begin
-      declare
-         --  Simple symmetric matrix
-         M : constant Symmetric_Matrix :=
-           [a_11 => 4.0, a_12 => 1.0, a_13 => 0.0,
-            a_22 => 1.0, a_23 => 0.0,
-            a_33 => 1.0];
-         Values  : Diagonal_Matrix;
-         Vectors : Vector_Array_3;
-      begin
-         --  Compute eigen system
-         Get_Eigen_System (M, Values, Vectors);
-
-         --  Basic checks: eigenvalues should be real numbers
-         Assert (T, Values (1) /= Float'First);
-         Assert (T, Values (2) /= Float'First);
-         Assert (T, Values (3) /= Float'First);
-
-         --  Eigenvectors should be unit vectors (length = 1)
-         Assert (T, abs (abs (Vectors (1)) - 1.0) < 0.001);
-         Assert (T, abs (abs (Vectors (2)) - 1.0) < 0.001);
-         Assert (T, abs (abs (Vectors (3)) - 1.0) < 0.001);
-
-         --  For symmetric matrices, eigenvalues should be sorted in descending
-         --  order
-         Assert (T, Values (1) >= Values (2));
-         Assert (T, Values (2) >= Values (3));
-
-         --  Verify that M * v = λ * v
-         for J in 1 .. 3 loop
-            declare
-               Left  : constant Vector := M * Vectors (J);
-               Right : constant Vector := Values (J) * Vectors (J);
-            begin
-               Assert (T, Length (Left - Right) < 0.001);
-            end;
-         end loop;
-      end;
-   end Basic_Eigen_System_Operations;
-
-   ------------------------------------
-   -- Test_Diagonal_Matrix_Eigen_System --
-   ------------------------------------
-
-   procedure Test_Diagonal_Matrix_Eigen_System
+   procedure Basic_Eigen_System
      (T : in out Slim_Test.Results.Result)
    is
-      function Abs_Max_Item (V : Vector) return Float is
-        (Float'Max (Float'Max (abs V (1), abs V (2)), abs V (3)));
+      --  Simple symmetric matrix
+      M : constant Symmetric_Matrix :=
+        [1.0, 2.0, 3.0, 4.0, 5.0, 6.0];
+
+      Values  : Diagonal_Matrix;
+      Vectors : Vector_Array_3;
    begin
-      declare
-         --  Diagonal matrix: eigenvalues should be the diagonal elements
-         M : constant Symmetric_Matrix :=
-           [a_11 => 5.0, a_12 => 0.0, a_13 => 0.0,
-            a_22 => 3.0, a_23 => 0.0,
-            a_33 => 1.0];
-         Values  : Diagonal_Matrix;
-         Vectors : Vector_Array_3;
-      begin
-         Get_Eigen_System (M, Values, Vectors);
+      --  Compute eigen system
+      Get_Eigen_System (M, Values, Vectors);
 
-         --  For diagonal matrix, eigenvalues should be diagonal elements
-         Assert (T, abs (Values (1) - 5.0) < 0.001);  -- Largest eigenvalue
-         Assert (T, abs (Values (2) - 3.0) < 0.001);  -- Middle eigenvalue
-         Assert (T, abs (Values (3) - 1.0) < 0.001);  -- Smallest eigenvalue
+      --  Eigenvectors should be unit vectors (length = 1)
+      Assert (T, (for all Vector of Vectors => Length (Vector) rem 1.0));
 
-         --  Eigenvectors should be standard basis vectors (up to sign)
-         --  Check that each eigenvector has one dominant component
-         declare
-            V1_Max : constant Float := Abs_Max_Item (Vectors (1));
-            V2_Max : constant Float := Abs_Max_Item (Vectors (2));
-            V3_Max : constant Float := Abs_Max_Item (Vectors (3));
-         begin
-            --  Each eigenvector should have one component close to 1.0
-            Assert (T, abs (V1_Max - 1.0) < 0.001);
-            Assert (T, abs (V2_Max - 1.0) < 0.001);
-            Assert (T, abs (V3_Max - 1.0) < 0.001);
-         end;
+      --  Should be sorted in descending order
+      Assert (T, Values (1) >= Values (2));
+      Assert (T, Values (2) >= Values (3));
 
-         --  Verify that M * v = λ * v
-         for J in 1 .. 3 loop
-            declare
-               Left  : constant Vector := M * Vectors (J);
-               Right : constant Vector := Values (J) * Vectors (J);
-            begin
-               Assert (T, Length (Left - Right) < 0.001);
-            end;
-         end loop;
-      end;
-   end Test_Diagonal_Matrix_Eigen_System;
+      --  Verify that M * v = λ * v
+      for J in 1 .. 3 loop
+         Assert (T, (M * Vectors (J)) rem (Values (J) * Vectors (J)));
+      end loop;
+   end Basic_Eigen_System;
 
-   ------------------------------------
-   -- Test_Identity_Matrix_Eigen_System --
-   ------------------------------------
+   ----------------------------------
+   -- Diagonal_Matrix_Eigen_System --
+   ----------------------------------
 
-   procedure Test_Identity_Matrix_Eigen_System
-     (T : in out Slim_Test.Results.Result) is
+   procedure Diagonal_Matrix_Eigen_System
+     (T : in out Slim_Test.Results.Result)
+   is
+      M : constant Symmetric_Matrix :=
+        [a_11 => 5.0,
+         a_22 => 3.0,
+         a_33 => 1.0,
+         others => 0.0];
+
+      Values  : Diagonal_Matrix;
+      Vectors : Vector_Array_3;
    begin
-      declare
-         --  Identity matrix: all eigenvalues should be 1.0
-         M : constant Symmetric_Matrix :=
-           [a_11 => 1.0, a_12 => 0.0, a_13 => 0.0,
-            a_22 => 1.0, a_23 => 0.0,
-            a_33 => 1.0];
-         Values  : Diagonal_Matrix;
-         Vectors : Vector_Array_3;
-      begin
-         Get_Eigen_System (M, Values, Vectors);
+      Get_Eigen_System (M, Values, Vectors);
 
-         --  All eigenvalues should be 1.0
-         Assert (T, abs (Values (1) - 1.0) < 0.001);
-         Assert (T, abs (Values (2) - 1.0) < 0.001);
-         Assert (T, abs (Values (3) - 1.0) < 0.001);
+      Assert (T, Values rem [5.0, 3.0, 1.0]);
 
-         --  Eigenvectors should form an orthonormal basis
-         --  Check orthogonality (dot products should be ~0)
-         Assert (T, abs Float'(Vectors (1) * Vectors (2)) < 0.001);
-         Assert (T, abs Float'(Vectors (1) * Vectors (3)) < 0.001);
-         Assert (T, abs Float'(Vectors (2) * Vectors (3)) < 0.001);
+      Assert
+        (T, Vectors rem [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]);
 
-         --  Check that each vector is unit length
-         Assert (T, abs (abs (Vectors (1)) - 1.0) < 0.001);
-         Assert (T, abs (abs (Vectors (2)) - 1.0) < 0.001);
-         Assert (T, abs (abs (Vectors (3)) - 1.0) < 0.001);
-      end;
-   end Test_Identity_Matrix_Eigen_System;
+      --  Verify that M * v = λ * v
+      for J in 1 .. 3 loop
+         Assert (T, (M * Vectors (J)) rem (Values (J) * Vectors (J)));
+      end loop;
+   end Diagonal_Matrix_Eigen_System;
+
+   ----------------------------------
+   -- Identity_Matrix_Eigen_System --
+   ----------------------------------
+
+   procedure Identity_Matrix_Eigen_System
+     (T : in out Slim_Test.Results.Result)
+   is
+      --  Identity matrix: all eigenvalues should be 1.0
+      M : constant Symmetric_Matrix := Identity;
+      Values  : Diagonal_Matrix;
+      Vectors : Vector_Array_3;
+   begin
+      Get_Eigen_System (M, Values, Vectors);
+
+      --  All eigenvalues should be 1.0
+      Assert (T, (for all Value of Values => Value rem 1.0));
+
+      --  Eigenvectors should form an orthonormal basis
+      --  Check orthogonality (dot products should be ~0)
+      Assert (T, Vectors (1) * Vectors (2) rem 0.0);
+      Assert (T, Vectors (1) * Vectors (3) rem 0.0);
+      Assert (T, Vectors (2) * Vectors (3) rem 0.0);
+
+      --  Check that each vector is unit length
+      Assert (T, (for all Vector of Vectors => Length (Vector) rem 1.0));
+   end Identity_Matrix_Eigen_System;
+
+   ---------------------------
+   -- Sample_Eigen_System_1 --
+   ---------------------------
+
+   procedure Sample_Eigen_System_1 (T : in out Slim_Test.Results.Result) is
+      --  Simple symmetric matrix
+      M : constant Symmetric_Matrix :=
+        [1.0, 2.0, 3.0, 4.0, 5.0, 6.0];
+
+      Values  : Diagonal_Matrix;
+      Vectors : Vector_Array_3;
+   begin
+      --  Compute eigen system
+      Get_Eigen_System (M, Values, Vectors);
+
+      Assert (T, Values rem [11.3448, 0.1709, -0.5157]);
+
+      Assert
+        (T,
+         Vectors rem
+           [[0.3279, 0.5910, 0.7369],
+            [0.5910, -0.7370, 0.3280],
+            [0.7370, 0.3280, -0.5910]]);
+   end Sample_Eigen_System_1;
+
+   ---------------------------
+   -- Sample_Eigen_System_2 --
+   ---------------------------
+
+   procedure Sample_Eigen_System_2 (T : in out Slim_Test.Results.Result) is
+      M : constant Symmetric_Matrix :=
+        [2.0, 0.0, 0.0,
+              3.0, 4.0,
+                   9.0];
+
+      Values  : Diagonal_Matrix;
+      Vectors : Vector_Array_3;
+   begin
+      --  Compute eigen system
+      Get_Eigen_System (M, Values, Vectors);
+
+      Assert (T, Values rem [11.0, 2.0, 1.0]);
+
+      Assert
+        (T,
+         Vectors rem
+           [[0.0, 0.4472, 0.8944], [1.0, 0.0, 0.0], [0.0, 0.8944, -0.4472]]);
+   end Sample_Eigen_System_2;
 
 end Testsuite.Eigen_Systems;

@@ -13,112 +13,121 @@ package body Testsuite.Matrices is
    use Tiny_Tensors.Float_Vectors;
 
    procedure Basic_Matrix_Operations
-     (T : in out Slim_Test.Results.Result) is
+     (T : in out Slim_Test.Results.Result)
+   is
+      M1 : constant Matrix := [[1.0, 2.0, 3.0],
+                               [4.0, 5.0, 6.0],
+                               [7.0, 8.0, 9.0]];
+      M2 : constant Matrix := [[9.0, 8.0, 7.0],
+                               [6.0, 5.0, 4.0],
+                               [3.0, 2.0, 1.0]];
+      M3 : Matrix;
    begin
-      declare
-         M1 : constant Matrix := [[1.0, 2.0, 3.0],
-                                  [4.0, 5.0, 6.0],
-                                  [7.0, 8.0, 9.0]];
-         --  M2 : constant Matrix := [[9.0, 8.0, 7.0],
-         --                           [6.0, 5.0, 4.0],
-         --                           [3.0, 2.0, 1.0]];
-         M3 : Matrix;
-      begin
-         --  Test matrix addition
-         --  M3 := M1 + M2;
-         --  Assert (T, M3 = [[10.0, 10.0, 10.0],
-         --                  [10.0, 10.0, 10.0],
-         --                  [10.0, 10.0, 10.0]]);
+      --  Test matrix addition
+      M3 := M1 + M2;
+      Assert (T, M3 = [[10.0, 10.0, 10.0],
+                      [10.0, 10.0, 10.0],
+                      [10.0, 10.0, 10.0]]);
 
-         --  Test matrix subtraction
-         --  M3 := M1 - M2;
-         --  Assert (T, M3 = [[-8.0, -6.0, -4.0],
-         --                  [-2.0,  0.0,  2.0],
-         --                  [+4.0,  6.0,  8.0]]);
+      --  Test matrix subtraction
+      M3 := M1 - M2;
+      Assert (T, M3 = [[-8.0, -6.0, -4.0],
+                      [-2.0,  0.0,  2.0],
+                      [+4.0,  6.0,  8.0]]);
 
-         --  Test scalar multiplication
-         M3 := 2.0 * M1;
-         Assert (T, M3 = [[+2.0,  4.0,  6.0],
-                         [+8.0, 10.0, 12.0],
-                         [14.0, 16.0, 18.0]]);
+      --  Test scalar multiplication
+      M3 := 2.0 * M1;
+      Assert (T, M3 = [[+2.0,  4.0,  6.0],
+                      [+8.0, 10.0, 12.0],
+                      [14.0, 16.0, 18.0]]);
 
-         --  Test transpose
-         M3 := Transpose (M1);
-         Assert (T, M3 = [[1.0, 4.0, 7.0],
-                         [2.0, 5.0, 8.0],
-                         [3.0, 6.0, 9.0]]);
+      --  Test transpose
+      M3 := Transpose (M1);
+      Assert (T, M3 = [[1.0, 4.0, 7.0],
+                      [2.0, 5.0, 8.0],
+                      [3.0, 6.0, 9.0]]);
 
-         --  Test element access
-         Assert (T, M1 (1, 1) = 1.0);
-         Assert (T, M1 (2, 3) = 6.0);
-         Assert (T, M1 (3, 2) = 8.0);
-      end;
+      --  Test element access
+      Assert (T, M1 (1, 1) = 1.0);
+      Assert (T, M1 (2, 3) = 6.0);
+      Assert (T, M1 (3, 2) = 8.0);
    end Basic_Matrix_Operations;
 
-   procedure Test_Adj (T : in out Slim_Test.Results.Result) is
+   procedure Test_A_x_B (T : in out Slim_Test.Results.Result) is
+      A : constant Matrix :=
+        [[1.0, 2.0, 3.0],
+         [4.0, 5.0, 6.0],
+         [7.0, 8.0, 9.0]];
+      B : constant Matrix :=
+        [[-8.0, -6.0, -4.0],
+         [-2.0,  1.0,  3.0],
+         [+4.0,  5.0,  7.0]];
+
+      Result : constant Matrix := A * B;
+
+      Expected : constant Matrix :=
+        [[0.0, 11.0, 23.0],
+         [-18.0, 11.0, 41.0],
+         [-36.0, 11.0, 59.0]];
    begin
-      declare
-         M : constant Matrix :=
-           [[-3.0, 2.0, -5.0], [-1.0, 0.0, -2.0], [3.0, -4.0, 1.0]];
+      Assert (T, Result rem Expected);
+   end Test_A_x_B;
 
-         Exp : constant Matrix :=
-              [[-8.0, 18.0, -4.0], [-5.0, 12.0, -1.0], [4.0, -6.0, 2.0] ];
+   procedure Test_Adj_1 (T : in out Slim_Test.Results.Result) is
+      M : constant Matrix :=
+        [[-3.0, 2.0, -5.0], [-1.0, 0.0, -2.0], [3.0, -4.0, 1.0]];
 
-         Result : Matrix;
-      begin
-         --  Test matrix-vector multiplication
-         Result := Adjugate (M);
-         Assert (T, Result = Exp);
-      end;
+      Exp : constant Matrix :=
+        [[-8.0, 18.0, -4.0], [-5.0, 12.0, -1.0], [4.0, -6.0, 2.0] ];
 
-      declare
-         M : constant Matrix :=
-           [[-3.0, +2.0, -5.0],
-            [+2.0, +0.0, -2.0],
-            [-5.0, -2.0, +1.0]];
-
-         Exp : constant Matrix :=
-           [[-4.0, +8.0,  -4.0],
-            [+8.0, -28.0, -16.0],
-            [-4.0, -16.0, -4.0]];
-
-         Result : Matrix;
-      begin
-         --  Test matrix-vector multiplication
-         Result := Adjugate (M);
-         Assert (T, Result = Exp);
-      end;
-   end Test_Adj;
-
-   procedure Test_Matrix_Vector_Multiplication
-     (T : in out Slim_Test.Results.Result) is
+      Result : Matrix;
    begin
-      declare
-         M : constant Matrix := [[1.0, 2.0, 3.0],
-                                 [4.0, 5.0, 6.0],
-                                 [7.0, 8.0, 9.0]];
-         V : constant Vector := [1.0, 2.0, 3.0];
-         Result : Vector;
-      begin
-         --  Test matrix-vector multiplication
-         Result := M * V;
-         Assert (T, Result = [14.0, 32.0, 50.0]);
-         --  [1*1 + 2*2 + 3*3, 4*1 + 5*2 + 6*3, 7*1 + 8*2 + 9*3]
-         --  [1 + 4 + 9, 4 + 10 + 18, 7 + 16 + 27] = [14, 32, 50]
-      end;
+      Result := Adjugate (M);
+      Assert (T, Result = Exp);
+   end Test_Adj_1;
 
-      declare
-         --  Test with identity matrix
-         Identity : constant Matrix := [[1.0, 0.0, 0.0],
-                                        [0.0, 1.0, 0.0],
-                                        [0.0, 0.0, 1.0]];
-         V : constant Vector := [5.0, 3.0, 7.0];
-         Result : Vector;
-      begin
-         Result := Identity * V;
-         Assert (T, Result = V);  -- Identity matrix should preserve vector
-      end;
-   end Test_Matrix_Vector_Multiplication;
+   procedure Test_Adj_2 (T : in out Slim_Test.Results.Result) is
+      M : constant Matrix :=
+        [[-3.0, +2.0, -5.0],
+         [+2.0, +0.0, -2.0],
+         [-5.0, -2.0, +1.0]];
+
+      Exp : constant Matrix :=
+        [[-4.0, +8.0,  -4.0],
+         [+8.0, -28.0, -16.0],
+         [-4.0, -16.0, -4.0]];
+
+      Result : Matrix;
+   begin
+      Result := Adjugate (M);
+      Assert (T, Result = Exp);
+   end Test_Adj_2;
+
+   procedure Test_Matrix_x_Vector_1 (T : in out Slim_Test.Results.Result) is
+      M : constant Matrix := [[1.0, 2.0, 3.0],
+                              [4.0, 5.0, 6.0],
+                              [7.0, 8.0, 9.0]];
+      V : constant Vector := [1.0, 2.0, 3.0];
+      Result : Vector;
+   begin
+      --  Test matrix-vector multiplication
+      Result := M * V;
+      Assert (T, Result = [14.0, 32.0, 50.0]);
+      --  [1*1 + 2*2 + 3*3, 4*1 + 5*2 + 6*3, 7*1 + 8*2 + 9*3]
+      --  [1 + 4 + 9, 4 + 10 + 18, 7 + 16 + 27] = [14, 32, 50]
+   end Test_Matrix_x_Vector_1;
+
+   procedure Test_Matrix_x_Vector_2 (T : in out Slim_Test.Results.Result) is
+      --  Test with identity matrix
+      Identity : constant Matrix := [[1.0, 0.0, 0.0],
+                                     [0.0, 1.0, 0.0],
+                                     [0.0, 0.0, 1.0]];
+      V : constant Vector := [5.0, 3.0, 7.0];
+      Result : Vector;
+   begin
+      Result := Identity * V;
+      Assert (T, Result = V);  -- Identity matrix should preserve vector
+   end Test_Matrix_x_Vector_2;
 
    procedure Test_Determinant
      (T : in out Slim_Test.Results.Result) is
@@ -192,71 +201,58 @@ package body Testsuite.Matrices is
       end;
    end Test_Determinant;
 
-   procedure Test_LT_x_R_Operations
+   procedure Test_LT_x_R
      (T : in out Slim_Test.Results.Result) is
+      use Tiny_Tensors.Float_Vector_Arrays;
+
+      --  Test with different Left and Right
+      V1 : constant Vector := [1.0, 2.0, 3.0];
+      V2 : constant Vector := [4.0, 5.0, 6.0];
+      V3 : constant Vector := [7.0, 8.0, 9.0];
+
+      Left : constant Vector_Array := [V1, V2];
+      Right : constant Vector_Array := [V2, V3];
+
+      Result : Matrix;
+
+      Expected : constant Matrix :=
+         [[32.0, 37.0, 42.0], [43.0, 50.0, 57.0], [54.0, 63.0, 72.0]];
+
    begin
-      declare
-         use Tiny_Tensors.Float_Vector_Arrays;
+      Result := LT_x_R (Left, Right);
 
-         --  Test with different Left and Right
-         V1 : constant Vector := [1.0, 2.0, 3.0];
-         V2 : constant Vector := [4.0, 5.0, 6.0];
-         V3 : constant Vector := [7.0, 8.0, 9.0];
+      Assert (T, Result rem Expected);
+   end Test_LT_x_R;
 
-         Left : constant Vector_Array := [V1, V2];
-         Right : constant Vector_Array := [V2, V3];
-         Result : Matrix;
-
-      begin
-         Result := LT_x_R (Left, Right);
-
-         Assert (T, abs (Result (1, 1) - 32.0) < 0.001);
-         Assert (T, abs (Result (1, 2) - 37.0) < 0.001);
-         Assert (T, abs (Result (1, 3) - 42.0) < 0.001);
-         Assert (T, abs (Result (2, 1) - 43.0) < 0.001);
-         Assert (T, abs (Result (2, 2) - 50.0) < 0.001);
-         Assert (T, abs (Result (2, 3) - 57.0) < 0.001);
-         Assert (T, abs (Result (3, 1) - 54.0) < 0.001);
-         Assert (T, abs (Result (3, 2) - 63.0) < 0.001);
-         Assert (T, abs (Result (3, 3) - 72.0) < 0.001);
-      end;
-   end Test_LT_x_R_Operations;
-
-   procedure Test_Inverse (T : in out Slim_Test.Results.Result) is
-      type Matrix_Array is array (Positive range <>) of Matrix;
-
+   procedure Test_Inverse_1 (T : in out Slim_Test.Results.Result) is
       Unit : constant Matrix := Identity;
-      Operands : constant Matrix_Array :=
-        [
-         Unit,
-         [[1.0, 2.0, 3.0], [0.0, 1.0, 4.0], [5.0, 6.0, 0.0]],
-         [[2.0, 1.0, 0.0], [0.0, -4.0, 2.0], [0.0, 0.0, 0.5]]];
-      Expected : constant Matrix_Array :=
-        [
-         Unit,
-         [[-24.0, 18.0, 5.0], [20.0, -15.0, -4.0], [-5.0, 4.0, 1.0]],
-         [[0.5, 0.125, -0.5], [0.0, -0.25, 1.0], [0.0, 0.0, 2.0]]];
-      Full_Unit : constant Matrix := Tiny_Tensors.Float_Matrices.Identity;
+      Result : constant Matrix := Inverse (Unit);
    begin
-      for K in Operands'Range loop
-         declare
-            Result : constant Matrix := Inverse (Operands (K));
-            Operand : constant Matrix := Operands (K);
-            Actual : constant Matrix := Result;
-            Reference : constant Matrix := Expected (K);
-         begin
-            --  Check known values independently of the inverse algorithm.
-            Assert
-              (T,
-               (for all I in 1 .. 3 =>
-                 (for all J in 1 .. 3 =>
-                    abs (Actual (I, J) - Reference (I, J))
-                      <= 0.00001 * Float'Max (1.0, abs (Reference (I, J))))));
-            --  An inverse must cancel the operand in both orders.
-            Assert (T, Frobenius_Norm (Operand * Actual - Full_Unit) < 0.0001);
-            Assert (T, Frobenius_Norm (Actual * Operand - Full_Unit) < 0.0001);
-         end;
-      end loop;
-   end Test_Inverse;
+      Assert (T, Result rem Unit);
+   end Test_Inverse_1;
+
+   procedure Test_Inverse_2 (T : in out Slim_Test.Results.Result) is
+      Input  : constant Matrix :=
+        [[1.0, 2.0, 3.0], [0.0, 1.0, 4.0], [5.0, 6.0, 0.0]];
+
+      Expected : constant Matrix :=
+        [[-24.0, 18.0, 5.0], [20.0, -15.0, -4.0], [-5.0, 4.0, 1.0]];
+
+      Result : constant Matrix := Inverse (Input);
+   begin
+      Assert (T, Result rem Expected);
+   end Test_Inverse_2;
+
+   procedure Test_Inverse_3 (T : in out Slim_Test.Results.Result) is
+      Input  : constant Matrix :=
+        [[2.0, 1.0, 0.0], [0.0, -4.0, 2.0], [0.0, 0.0, 0.5]];
+
+      Expected : constant Matrix :=
+        [[0.5, 0.125, -0.5], [0.0, -0.25, 1.0], [0.0, 0.0, 2.0]];
+
+      Result : constant Matrix := Inverse (Input);
+   begin
+      Assert (T, Result rem Expected);
+   end Test_Inverse_3;
 
 end Testsuite.Matrices;

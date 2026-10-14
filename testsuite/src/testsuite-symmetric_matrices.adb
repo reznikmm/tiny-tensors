@@ -59,24 +59,20 @@ package body Testsuite.Symmetric_Matrices is
    end Test_Q_A_QT;
 
    procedure Test_Symmetric_Adj (T : in out Slim_Test.Results.Result) is
+      M : constant Symmetric_Matrix :=
+        [-3.0, +2.0, -5.0,
+         +0.0, -2.0,
+         +1.0];
+
+      Exp : constant Symmetric_Matrix :=
+        [-4.0, +8.0,  -4.0,
+         -28.0, -16.0,
+         -4.0];
+
+      Result : Symmetric_Matrix;
    begin
-      declare
-         M : constant Symmetric_Matrix :=
-           [-3.0, +2.0, -5.0,
-                  +0.0, -2.0,
-                        +1.0];
-
-         Exp : constant Symmetric_Matrix :=
-           [-4.0, +8.0,  -4.0,
-                  -28.0, -16.0,
-                         -4.0];
-
-         Result : Symmetric_Matrix;
-      begin
-         --  Test matrix-vector multiplication
-         Result := Adjugate (M);
-         Assert (T, Result = Exp);
-      end;
+      Result := Adjugate (M);
+      Assert (T, Result = Exp);
    end Test_Symmetric_Adj;
 
    procedure Test_Symmetric_Matrix_Operations
@@ -151,24 +147,21 @@ package body Testsuite.Symmetric_Matrices is
 
    procedure Test_Determinant
      (T : in out Slim_Test.Results.Result) is
+      --  Test determinant of symmetric matrix
+      S : constant Symmetric_Matrix :=
+        (a_11 => 4.0, a_12 => 1.0, a_13 => 2.0,
+         a_22 => 3.0, a_23 => 1.0, a_33 => 5.0);
+      Det : Float;
+      M_from_S : constant Matrix := From_Symmetric (S);
+      Det_from_Matrix : Float;
    begin
-      declare
-         --  Test determinant of symmetric matrix
-         S : constant Symmetric_Matrix :=
-           (a_11 => 4.0, a_12 => 1.0, a_13 => 2.0,
-            a_22 => 3.0, a_23 => 1.0, a_33 => 5.0);
-         Det : Float;
-         M_from_S : constant Matrix := From_Symmetric (S);
-         Det_from_Matrix : Float;
-      begin
-         Det := Determinant (S);
-         Det_from_Matrix := Determinant (M_from_S);
-         --  Both should give the same result
-         Assert (T, abs (Det - Det_from_Matrix) < 0.001);
-         --  Manual calculation: 4*(3*5 - 1*1) - 1*(1*5 - 1*2) + 2*(1*1 - 3*2)
-         --  = 4*14 - 1*3 + 2*(-5) = 56 - 3 - 10 = 43
-         Assert (T, abs (Det - 43.0) < 0.001);
-      end;
+      Det := Determinant (S);
+      Det_from_Matrix := Determinant (M_from_S);
+      --  Both should give the same result
+      Assert (T, Det rem Det_from_Matrix);
+      --  Manual calculation: 4*(3*5 - 1*1) - 1*(1*5 - 1*2) + 2*(1*1 - 3*2)
+      --  = 4*14 - 1*3 + 2*(-5) = 56 - 3 - 10 = 43
+      Assert (T, Det rem 43.0);
    end Test_Determinant;
 
    procedure Test_LT_x_L_Operations

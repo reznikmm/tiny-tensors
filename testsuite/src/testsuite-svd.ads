@@ -15,12 +15,14 @@ private
    procedure Identity_Matrix_SVD (T : in out Slim_Test.Results.Result);
    procedure Diagonal_Matrix_SVD (T : in out Slim_Test.Results.Result);
    procedure SVD_Reconstruction (T : in out Slim_Test.Results.Result);
-   procedure Simple_Matrix_SVD (T : in out Slim_Test.Results.Result);
+   procedure Simple_Matrix_SVD_1 (T : in out Slim_Test.Results.Result);
+   procedure Simple_Matrix_SVD_2 (T : in out Slim_Test.Results.Result);
 
    All_Tests : constant Slim_Test.Test_Groups.Test_Group :=
     ["Identity_Matrix_SVD" => Identity_Matrix_SVD'Access,
      "Diagonal_Matrix_SVD" => Diagonal_Matrix_SVD'Access,
      "SVD_Reconstruction" => SVD_Reconstruction'Access,
-     "Simple_Matrix_SVD" => Simple_Matrix_SVD'Access];
+     "Simple_Matrix_SVD_1" => Simple_Matrix_SVD_1'Access,
+     "Simple_Matrix_SVD_2" => Simple_Matrix_SVD_2'Access];
 
 end Testsuite.SVD;

@@ -21,15 +21,6 @@ package body Testsuite.SVD is
      VT    : out Orthonormal_Matrix)
        renames Tiny_Tensors.Float_Singular_Value_Decomposition.SVD;
 
-   Tolerance : constant := 1.0e-6;
-
-   function Close_Enough (A, B : Float) return Boolean is
-     (abs (A - B) < Tolerance);
-
-   function Close_Enough (A, B : Matrix) return Boolean is
-     (for all J in 1 .. 3 =>
-        (for all K in 1 .. 3 => Close_Enough (A (J, K), B (J, K))));
-
    function Reconstruct_Matrix
      (U  : Orthonormal_Matrix;
       S  : Diagonal_Matrix;
@@ -40,27 +31,22 @@ package body Testsuite.SVD is
    -------------------------
 
    procedure Identity_Matrix_SVD (T : in out Slim_Test.Results.Result) is
+      Identity : constant Matrix := [[1.0, 0.0, 0.0],
+                                     [0.0, 1.0, 0.0],
+                                     [0.0, 0.0, 1.0]];
+      U : Orthonormal_Matrix;
+      S : Diagonal_Matrix;
+      VT : Orthonormal_Matrix;
+      Reconstructed : Matrix;
    begin
-      declare
-         Identity : constant Matrix := [[1.0, 0.0, 0.0],
-                                        [0.0, 1.0, 0.0],
-                                        [0.0, 0.0, 1.0]];
-         U : Orthonormal_Matrix;
-         S : Diagonal_Matrix;
-         VT : Orthonormal_Matrix;
-         Reconstructed : Matrix;
-      begin
-         SVD (Identity, U, S, VT);
+      SVD (Identity, U, S, VT);
 
-         --  For identity matrix, singular values should be all 1.0
-         Assert (T, Close_Enough (S (1), 1.0));
-         Assert (T, Close_Enough (S (2), 1.0));
-         Assert (T, Close_Enough (S (3), 1.0));
+      --  For identity matrix, singular values should be all 1.0
+      Assert (T, S rem  [1.0, 1.0, 1.0]);
 
-         --  Reconstruct and verify
-         Reconstructed := Reconstruct_Matrix (U, S, VT);
-         Assert (T, Close_Enough (Reconstructed, Identity));
-      end;
+      --  Reconstruct and verify
+      Reconstructed := Reconstruct_Matrix (U, S, VT);
+      Assert (T, Reconstructed rem Identity);
    end Identity_Matrix_SVD;
 
    -------------------------
@@ -68,27 +54,24 @@ package body Testsuite.SVD is
    -------------------------
 
    procedure Diagonal_Matrix_SVD (T : in out Slim_Test.Results.Result) is
+      Diagonal : constant Matrix := [[3.0, 0.0, 0.0],
+                                     [0.0, 2.0, 0.0],
+                                     [0.0, 0.0, 1.0]];
+      U : Orthonormal_Matrix;
+      S : Diagonal_Matrix;
+      VT : Orthonormal_Matrix;
+      Reconstructed : Matrix;
    begin
-      declare
-         Diagonal : constant Matrix := [[3.0, 0.0, 0.0],
-                                        [0.0, 2.0, 0.0],
-                                        [0.0, 0.0, 1.0]];
-         U : Orthonormal_Matrix;
-         S : Diagonal_Matrix;
-         VT : Orthonormal_Matrix;
-         Reconstructed : Matrix;
-      begin
-         SVD (Diagonal, U, S, VT);
+      SVD (Diagonal, U, S, VT);
 
-         --  Singular values should be sorted in descending order
-         Assert (T, S (1) >= S (2));
-         Assert (T, S (2) >= S (3));
-         Assert (T, S (3) >= 0.0);
+      --  Singular values should be sorted in descending order
+      Assert (T, S (1) >= S (2));
+      Assert (T, S (2) >= S (3));
+      Assert (T, S (3) >= 0.0);
 
-         --  Reconstruct and verify
-         Reconstructed := Reconstruct_Matrix (U, S, VT);
-         Assert (T, Close_Enough (Reconstructed, Diagonal));
-      end;
+      --  Reconstruct and verify
+      Reconstructed := Reconstruct_Matrix (U, S, VT);
+      Assert (T, Reconstructed rem Diagonal);
    end Diagonal_Matrix_SVD;
 
    ------------------------
@@ -96,80 +79,78 @@ package body Testsuite.SVD is
    ------------------------
 
    procedure SVD_Reconstruction (T : in out Slim_Test.Results.Result) is
+      Original : constant Matrix := [[0.9, 0.2, 0.1],
+                                     [0.3, 0.8, 0.4],
+                                     [0.0, 0.2, 1.0]];
+      U : Orthonormal_Matrix;
+      S : Diagonal_Matrix;
+      VT : Orthonormal_Matrix;
+      Reconstructed : Matrix;
    begin
-      declare
-         Original : constant Matrix := [[0.9, 0.2, 0.1],
-                                        [0.3, 0.8, 0.4],
-                                        [0.0, 0.2, 1.0]];
-         U : Orthonormal_Matrix;
-         S : Diagonal_Matrix;
-         VT : Orthonormal_Matrix;
-         Reconstructed : Matrix;
-      begin
-         SVD (Original, U, S, VT);
+      SVD (Original, U, S, VT);
 
-         --  Singular values should be non-negative and sorted
-         Assert (T, S (1) >= S (2));
-         Assert (T, S (2) >= S (3));
-         Assert (T, S (3) >= 0.0);
+      --  Singular values should be non-negative and sorted
+      Assert (T, S (1) >= S (2));
+      Assert (T, S (2) >= S (3));
+      Assert (T, S (3) >= 0.0);
 
-         --  Reconstruct original matrix: A = U * S * VT
-         Reconstructed := Reconstruct_Matrix (U, S, VT);
-         Assert (T, Close_Enough (Reconstructed, Original));
-      end;
+      --  Reconstruct original matrix: A = U * S * VT
+      Reconstructed := Reconstruct_Matrix (U, S, VT);
+      Assert (T, Reconstructed rem Original);
    end SVD_Reconstruction;
 
-   -----------------------
-   -- Simple_Matrix_SVD --
-   -----------------------
+   -------------------------
+   -- Simple_Matrix_SVD_1 --
+   -------------------------
 
-   procedure Simple_Matrix_SVD (T : in out Slim_Test.Results.Result) is
+   procedure Simple_Matrix_SVD_1 (T : in out Slim_Test.Results.Result) is
+      Simple : constant Matrix := [[2.0, 0.0, 0.0],
+                                   [0.0, 3.0, 0.0],
+                                   [0.0, 0.0, 1.0]];
+      U : Orthonormal_Matrix;
+      S : Diagonal_Matrix;
+      VT : Orthonormal_Matrix;
+      Reconstructed : Matrix;
    begin
-      declare
-         Simple : constant Matrix := [[2.0, 0.0, 0.0],
-                                      [0.0, 3.0, 0.0],
-                                      [0.0, 0.0, 1.0]];
-         U : Orthonormal_Matrix;
-         S : Diagonal_Matrix;
-         VT : Orthonormal_Matrix;
-         Reconstructed : Matrix;
-      begin
-         SVD (Simple, U, S, VT);
+      SVD (Simple, U, S, VT);
 
-         --  Check properties of SVD
-         Assert (T, S (1) >= 0.0);
-         Assert (T, S (2) >= 0.0);
-         Assert (T, S (3) >= 0.0);
+      --  Check properties of SVD
+      Assert (T, S (1) >= 0.0);
+      Assert (T, S (2) >= 0.0);
+      Assert (T, S (3) >= 0.0);
 
-         --  Reconstruct and verify
-         Reconstructed := Reconstruct_Matrix (U, S, VT);
-         Assert (T, Close_Enough (Reconstructed, Simple));
-      end;
+      --  Reconstruct and verify
+      Reconstructed := Reconstruct_Matrix (U, S, VT);
+      Assert (T, Reconstructed rem Simple);
+   end Simple_Matrix_SVD_1;
 
-      declare
-         --  Test with a rank-deficient matrix
-         Rank_Deficient : constant Matrix := [[1.0, 2.0, 3.0],
-                                              [2.0, 4.0, 6.0],
-                                              [3.0, 6.0, 9.0]];
-         U : Orthonormal_Matrix;
-         S : Diagonal_Matrix;
-         VT : Orthonormal_Matrix;
-         Ignore : Matrix;
-      begin
-         SVD (Rank_Deficient, U, S, VT);
+   -------------------------
+   -- Simple_Matrix_SVD_2 --
+   -------------------------
 
-         --  This matrix should have rank 1, so two singular values should be 0
-         Assert (T, S (1) > 1.0e-6);
-         --  First singular value should be significant
-         Assert (T, abs (S (2)) < 1.0e-6);  -- Second should be ~0
-         Assert (T, abs (S (3)) < 1.0e-6);  -- Third should be ~0
+   procedure Simple_Matrix_SVD_2 (T : in out Slim_Test.Results.Result) is
+      --  Test with a rank-deficient matrix
+      Rank_Deficient : constant Matrix := [[1.0, 2.0, 3.0],
+                                           [2.0, 4.0, 6.0],
+                                           [3.0, 6.0, 9.0]];
+      U : Orthonormal_Matrix;
+      S : Diagonal_Matrix;
+      VT : Orthonormal_Matrix;
+      Ignore : Matrix;
+   begin
+      SVD (Rank_Deficient, U, S, VT);
 
-         --  Reconstruct and verify
-         Ignore := Reconstruct_Matrix (U, S, VT);
+      --  This matrix should have rank 1, so two singular values should be 0
+      Assert (T, S (1) > Epsilon);
+      --  First singular value should be significant
+      Assert (T, S (2) rem 0.0);  -- Second should be ~0
+      Assert (T, S (3) rem 0.0);  -- Third should be ~0
 
-         --  FIXME: Make SVD work for rank-deficient matrices
-         --  Assert (T, Close_Enough (Reconstructed, Rank_Deficient));
-      end;
-   end Simple_Matrix_SVD;
+      --  Reconstruct and verify
+      Ignore := Reconstruct_Matrix (U, S, VT);
+
+      --  FIXME: Make SVD work for rank-deficient matrices
+      --  Assert (T, Reconstructed rem Rank_Deficient));
+   end Simple_Matrix_SVD_2;
 
 end Testsuite.SVD;
