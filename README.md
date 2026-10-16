@@ -109,11 +109,11 @@ The library includes specialized matrix types for specific use cases:
 
 | Package | Type | Representation |
 | --- | --- | --- |
-| `Tiny_Tensors.Float_Matrices` | `Matrix` | 3x3 array |
-| `Tiny_Tensors.Float_Diagonal_Matrices` | `Diagonal_Matrix` | Three diagonal elements |
-| `Tiny_Tensors.Float_Symmetric_Matrices` | `Symmetric_Matrix` | Six independent elements |
-| `Tiny_Tensors.Float_Orthonormal_Matrices` | `Orthonormal_Matrix` | 3x3 array with elements in [-1, 1] |
-| `Tiny_Tensors.Float_Skew_Symmetric_Matrices` | `Skew_Symmetric_Matrix` | Three upper-triangle elements; zero diagonal and negated lower triangle |
+| `Float_Matrices` | `Matrix` | 3x3 array |
+| `Float_Diagonal_Matrices` | `Diagonal_Matrix` | Three diagonal elements |
+| `Float_Symmetric_Matrices` | `Symmetric_Matrix` | Six independent elements |
+| `Float_Orthonormal_Matrices` | `Orthonormal_Matrix` | 3x3 array with elements in [-1, 1] |
+| `Float_Skew_Symmetric_Matrices` | `Skew_Symmetric_Matrix` | Three upper-triangle elements; zero diagonal and negated lower triangle |
 
 Conversions and mixed matrix operations returning `Matrix` are in
 `Float_Matrices`. Operations returning a specialized matrix are in that
@@ -256,6 +256,9 @@ alr -C testsuite run
 
 The suite covers vectors, general and specialized matrix operations,
 cross-package conversions and arithmetic, eigen systems, and SVD.
+
+For STM32F407 build and run instructions and CPU cycle measurements, see the
+[embedded tests and benchmarks](testsuite/embedded/README.md).
 
 ## Contribute
 
