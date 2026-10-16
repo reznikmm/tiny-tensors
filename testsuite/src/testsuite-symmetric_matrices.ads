@@ -4,11 +4,16 @@
 ----------------------------------------------------------------
 
 with Slim_Test.Results;
-with Slim_Test.Test_Groups;
+with Slim_Test.Groups;
 
 package Testsuite.Symmetric_Matrices is
 
-   All_Tests : constant Slim_Test.Test_Groups.Test_Group;
+   All_Tests : aliased constant Slim_Test.Groups.Test_Group;
+
+   --  Time tests
+   procedure Test_Adj_1 (T : in out Slim_Test.Results.Result);
+   procedure Test_Det_1 (T : in out Slim_Test.Results.Result);
+   procedure Test_Q_A_QT_1 (T : in out Slim_Test.Results.Result);
 
 private
 
@@ -28,15 +33,15 @@ private
 
    procedure Test_Q_A_QT (T : in out Slim_Test.Results.Result);
 
-   All_Tests : constant Slim_Test.Test_Groups.Test_Group :=
-    ["Test_Symmetric_Matrix_Operations" =>
+   All_Tests : aliased constant Slim_Test.Groups.Test_Group :=
+    ["Symmetric_Matrix_Operations" =>
        Test_Symmetric_Matrix_Operations'Access,
-     "Test_Symmetric_Adj" => Test_Symmetric_Adj'Access,
-     "Test_Determinant" => Test_Determinant'Access,
-     "Test_LT_x_L_Operations" => Test_LT_x_L_Operations'Access,
-     "Test_Scalar_And_Mixed_Operations" =>
+     "Symmetric_Adj" => Test_Symmetric_Adj'Access,
+     "Determinant" => Test_Determinant'Access,
+     "LT_x_L_Operations" => Test_LT_x_L_Operations'Access,
+     "Scalar_And_Mixed_Operations" =>
        Test_Scalar_And_Mixed_Operations'Access,
-     "Test_Inverse" => Test_Inverse'Access,
-     "Test_Q_A_QT" => Test_Q_A_QT'Access];
+     "Inverse" => Test_Inverse'Access,
+     "Q_A_QT" => Test_Q_A_QT'Access];
 
 end Testsuite.Symmetric_Matrices;

@@ -4,25 +4,26 @@
 ----------------------------------------------------------------
 
 with Slim_Test.Results;
-with Slim_Test.Test_Groups;
+with Slim_Test.Groups;
 
 package Testsuite.SVD is
 
-   All_Tests : constant Slim_Test.Test_Groups.Test_Group;
+   All_Tests : aliased constant Slim_Test.Groups.Test_Group;
+
+   --  Time tests
+   procedure Simple_Matrix_SVD_1 (T : in out Slim_Test.Results.Result);
 
 private
 
    procedure Identity_Matrix_SVD (T : in out Slim_Test.Results.Result);
    procedure Diagonal_Matrix_SVD (T : in out Slim_Test.Results.Result);
    procedure SVD_Reconstruction (T : in out Slim_Test.Results.Result);
-   procedure Simple_Matrix_SVD_1 (T : in out Slim_Test.Results.Result);
-   procedure Simple_Matrix_SVD_2 (T : in out Slim_Test.Results.Result);
+   procedure Deficient_Matrix_SVD (T : in out Slim_Test.Results.Result);
 
-   All_Tests : constant Slim_Test.Test_Groups.Test_Group :=
-    ["Identity_Matrix_SVD" => Identity_Matrix_SVD'Access,
-     "Diagonal_Matrix_SVD" => Diagonal_Matrix_SVD'Access,
+   All_Tests : aliased constant Slim_Test.Groups.Test_Group :=
+    ["Identity_Matrix" => Identity_Matrix_SVD'Access,
+     "Diagonal_Matrix" => Diagonal_Matrix_SVD'Access,
      "SVD_Reconstruction" => SVD_Reconstruction'Access,
-     "Simple_Matrix_SVD_1" => Simple_Matrix_SVD_1'Access,
-     "Simple_Matrix_SVD_2" => Simple_Matrix_SVD_2'Access];
+     "Deficient_Matrix" => Deficient_Matrix_SVD'Access];
 
 end Testsuite.SVD;

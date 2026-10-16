@@ -4,41 +4,44 @@
 ----------------------------------------------------------------
 
 with Slim_Test.Results;
-with Slim_Test.Test_Groups;
+with Slim_Test.Groups;
 
 package Testsuite.Matrices is
 
-   All_Tests : constant Slim_Test.Test_Groups.Test_Group;
+   All_Tests : aliased constant Slim_Test.Groups.Test_Group;
+
+   --  Time tests
+   procedure Test_Adj_1 (T : in out Slim_Test.Results.Result);
+   procedure Test_Adj_2 (T : in out Slim_Test.Results.Result);
+   procedure Test_Matrix_x_Vector_1 (T : in out Slim_Test.Results.Result);
+   procedure Test_Det_1 (T : in out Slim_Test.Results.Result);
+   procedure Test_A_x_B_1 (T : in out Slim_Test.Results.Result);
+   procedure Test_Inverse_1 (T : in out Slim_Test.Results.Result);
+   procedure Test_Inverse_2 (T : in out Slim_Test.Results.Result);
 
 private
 
    procedure Basic_Matrix_Operations (T : in out Slim_Test.Results.Result);
-   procedure Test_Adj_1 (T : in out Slim_Test.Results.Result);
-   procedure Test_Adj_2 (T : in out Slim_Test.Results.Result);
+   procedure Test_Adj (T : in out Slim_Test.Results.Result);
 
-   procedure Test_Matrix_x_Vector_1 (T : in out Slim_Test.Results.Result);
-   procedure Test_Matrix_x_Vector_2 (T : in out Slim_Test.Results.Result);
+   procedure Test_Matrix_x_Vector (T : in out Slim_Test.Results.Result);
+   procedure Test_Identity_x_Vector (T : in out Slim_Test.Results.Result);
 
    procedure Test_Determinant (T : in out Slim_Test.Results.Result);
 
    procedure Test_LT_x_R (T : in out Slim_Test.Results.Result);
-   procedure Test_A_x_B (T : in out Slim_Test.Results.Result);
 
-   procedure Test_Inverse_1 (T : in out Slim_Test.Results.Result);
-   procedure Test_Inverse_2 (T : in out Slim_Test.Results.Result);
-   procedure Test_Inverse_3 (T : in out Slim_Test.Results.Result);
+   procedure Test_Inverse (T : in out Slim_Test.Results.Result);
+   procedure Test_Inverse_Identity (T : in out Slim_Test.Results.Result);
 
-   All_Tests : constant Slim_Test.Test_Groups.Test_Group :=
+   All_Tests : aliased constant Slim_Test.Groups.Test_Group :=
     ["Basic_Matrix_Operations" => Basic_Matrix_Operations'Access,
-     "Adj_1" => Test_Adj_1'Access,
-     "Adj_2" => Test_Adj_2'Access,
-     "M_x_V_1" => Test_Matrix_x_Vector_1'Access,
-     "M_x_V_2" => Test_Matrix_x_Vector_2'Access,
+     "Adj" => Test_Adj'Access,
+     "M_x_V" => Test_Matrix_x_Vector'Access,
+     "I_x_V" => Test_Identity_x_Vector'Access,
      "Determinant" => Test_Determinant'Access,
-     "A_x_B"  => Test_A_x_B'Access,
      "LT_x_R" => Test_LT_x_R'Access,
-     "Inverse_1" => Test_Inverse_1'Access,
-     "Inverse_2" => Test_Inverse_2'Access,
-     "Inverse_3" => Test_Inverse_3'Access];
+     "Inverse" => Test_Inverse'Access,
+     "Inverse_Identity" => Test_Inverse_Identity'Access];
 
 end Testsuite.Matrices;

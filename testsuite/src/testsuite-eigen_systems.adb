@@ -45,6 +45,25 @@ package body Testsuite.Eigen_Systems is
       for J in 1 .. 3 loop
          Assert (T, (M * Vectors (J)) rem (Values (J) * Vectors (J)));
       end loop;
+
+      Assert (T, Values rem [11.3448, 0.1709, -0.5157]);
+
+      Assert
+        (T,
+         Vectors rem
+           [[0.3279, 0.5910, 0.7369],
+            [0.5910, -0.7370, 0.3280],
+            [0.7370, 0.3280, -0.5910]]);
+
+      --  One more case
+      Get_Eigen_System ([2.0, 0.0, 0.0, 3.0, 4.0, 9.0], Values, Vectors);
+
+      Assert (T, Values rem [11.0, 2.0, 1.0]);
+
+      Assert
+        (T,
+         Vectors rem
+           [[0.0, 0.4472, 0.8944], [1.0, 0.0, 0.0], [0.0, 0.8944, -0.4472]]);
    end Basic_Eigen_System;
 
    ----------------------------------
@@ -103,11 +122,16 @@ package body Testsuite.Eigen_Systems is
       Assert (T, (for all Vector of Vectors => Length (Vector) rem 1.0));
    end Identity_Matrix_Eigen_System;
 
-   ---------------------------
-   -- Sample_Eigen_System_1 --
-   ---------------------------
+   --------------------
+   -- Eigen_System_1 --
+   --------------------
 
-   procedure Sample_Eigen_System_1 (T : in out Slim_Test.Results.Result) is
+   procedure Eigen_System_1 (T : in out Slim_Test.Results.Result) is
+      pragma Unreferenced (T);
+
+      procedure Sink_Value (Discard : System.Address)
+        with Import, External_Name => "sink_value";
+
       --  Simple symmetric matrix
       M : constant Symmetric_Matrix :=
         [1.0, 2.0, 3.0, 4.0, 5.0, 6.0];
@@ -117,22 +141,20 @@ package body Testsuite.Eigen_Systems is
    begin
       --  Compute eigen system
       Get_Eigen_System (M, Values, Vectors);
+      Sink_Value (Values'Address);
+      Sink_Value (Vectors'Address);
+   end Eigen_System_1;
 
-      Assert (T, Values rem [11.3448, 0.1709, -0.5157]);
+   --------------------
+   -- Eigen_System_2 --
+   --------------------
 
-      Assert
-        (T,
-         Vectors rem
-           [[0.3279, 0.5910, 0.7369],
-            [0.5910, -0.7370, 0.3280],
-            [0.7370, 0.3280, -0.5910]]);
-   end Sample_Eigen_System_1;
+   procedure Eigen_System_2 (T : in out Slim_Test.Results.Result) is
+      pragma Unreferenced (T);
 
-   ---------------------------
-   -- Sample_Eigen_System_2 --
-   ---------------------------
+      procedure Sink_Value (Discard : System.Address)
+        with Import, External_Name => "sink_value";
 
-   procedure Sample_Eigen_System_2 (T : in out Slim_Test.Results.Result) is
       M : constant Symmetric_Matrix :=
         [2.0, 0.0, 0.0,
               3.0, 4.0,
@@ -144,12 +166,8 @@ package body Testsuite.Eigen_Systems is
       --  Compute eigen system
       Get_Eigen_System (M, Values, Vectors);
 
-      Assert (T, Values rem [11.0, 2.0, 1.0]);
-
-      Assert
-        (T,
-         Vectors rem
-           [[0.0, 0.4472, 0.8944], [1.0, 0.0, 0.0], [0.0, 0.8944, -0.4472]]);
-   end Sample_Eigen_System_2;
+      Sink_Value (Values'Address);
+      Sink_Value (Vectors'Address);
+   end Eigen_System_2;
 
 end Testsuite.Eigen_Systems;

@@ -4,11 +4,11 @@
 ----------------------------------------------------------------
 
 with Slim_Test.Results;
-with Slim_Test.Test_Groups;
+with Slim_Test.Groups;
 
 package Testsuite.Orthonormal_Matrices is
 
-   All_Tests : constant Slim_Test.Test_Groups.Test_Group;
+   All_Tests : aliased constant Slim_Test.Groups.Test_Group;
 
 private
 
@@ -18,9 +18,9 @@ private
    procedure Test_Inverse
      (T : in out Slim_Test.Results.Result);
 
-   All_Tests : constant Slim_Test.Test_Groups.Test_Group :=
-    ["Test_Orthonormal_Matrix_Operations" =>
+   All_Tests : aliased constant Slim_Test.Groups.Test_Group :=
+    ["Orthonormal_Matrix_Operations" =>
        Test_Orthonormal_Matrix_Operations'Access,
-     "Test_Inverse" => Test_Inverse'Access];
+     "Inverse" => Test_Inverse'Access];
 
 end Testsuite.Orthonormal_Matrices;

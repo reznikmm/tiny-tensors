@@ -4,17 +4,19 @@
 ----------------------------------------------------------------
 
 with Slim_Test.Results;
-with Slim_Test.Test_Groups;
+with Slim_Test.Groups;
 
 package Testsuite.Eigen_Systems is
 
-   All_Tests : constant Slim_Test.Test_Groups.Test_Group;
+   All_Tests : aliased constant Slim_Test.Groups.Test_Group;
+
+   --  Time tests
+   procedure Eigen_System_1 (T : in out Slim_Test.Results.Result);
+   procedure Eigen_System_2 (T : in out Slim_Test.Results.Result);
 
 private
 
    procedure Basic_Eigen_System (T : in out Slim_Test.Results.Result);
-   procedure Sample_Eigen_System_1 (T : in out Slim_Test.Results.Result);
-   procedure Sample_Eigen_System_2 (T : in out Slim_Test.Results.Result);
 
    procedure Diagonal_Matrix_Eigen_System
      (T : in out Slim_Test.Results.Result);
@@ -22,10 +24,8 @@ private
    procedure Identity_Matrix_Eigen_System
      (T : in out Slim_Test.Results.Result);
 
-   All_Tests : constant Slim_Test.Test_Groups.Test_Group :=
+   All_Tests : aliased constant Slim_Test.Groups.Test_Group :=
     ["Basic_Eigen_System" => Basic_Eigen_System'Access,
-     "Sample_Eigen_System_1" => Sample_Eigen_System_1'Access,
-     "Sample_Eigen_System_2" => Sample_Eigen_System_2'Access,
      "Diagonal_Matrix_Eigen_System" => Diagonal_Matrix_Eigen_System'Access,
      "Identity_Matrix_Eigen_System" => Identity_Matrix_Eigen_System'Access];
 

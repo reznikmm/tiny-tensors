@@ -3,8 +3,12 @@
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 ----------------------------------------------------------------
 
+with System;
+
 with Tiny_Tensors.Float_Diagonal_Matrices;
 with Tiny_Tensors.Float_Matrices;
+with Tiny_Tensors.Float_Orthonormal_Matrices;
+with Tiny_Tensors.Float_Symmetric_Matrices;
 with Tiny_Tensors.Float_Vector_Arrays;
 with Tiny_Tensors.Float_Vectors;
 
@@ -28,14 +32,31 @@ package Testsuite is
          (for all K in 1 .. 3 => Left (J, K) rem Right (J, K)));
 
    function "rem"
+     (Left, Right : Tiny_Tensors.Float_Orthonormal_Matrices.Orthonormal_Matrix)
+       return Boolean is
+         (for all J in 1 .. 3 =>
+           (for all K in 1 .. 3 => Left (J, K) rem Right (J, K)));
+
+   function "rem"
      (Left, Right : Tiny_Tensors.Float_Diagonal_Matrices.Diagonal_Matrix)
        return Boolean is
          (for all J in 1 .. 3 => Left (J) rem Right (J));
+
+   function "rem"
+     (Left, Right : Tiny_Tensors.Float_Symmetric_Matrices.Symmetric_Matrix)
+       return Boolean is
+         (for all J in Left'Range => Left (J) rem Right (J));
 
    function "rem"
      (Left, Right : Tiny_Tensors.Float_Vector_Arrays.Vector_Array)
        return Boolean is
          (Left'Length = Right'Length
             and (for all J in Left'Range => Left (J) rem Right (J)));
+
+   procedure Sink (Discard : System.Address) is null
+     with Export, External_Name => "sink_value";
+   --  Some tests measure execution time without verifying the result.
+   --  Pass the result's address to Sink to prevent the compiler from
+   --  optimizing away its computation.
 
 end Testsuite;

@@ -4,18 +4,18 @@
 ----------------------------------------------------------------
 
 with Slim_Test.Results;
-with Slim_Test.Test_Groups;
+with Slim_Test.Groups;
 
 package Testsuite.Vectors is
 
-   All_Tests : constant Slim_Test.Test_Groups.Test_Group;
+   All_Tests : aliased constant Slim_Test.Groups.Test_Group;
 
 private
 
    procedure Basic_Vector_Operations (T : in out Slim_Test.Results.Result);
    procedure Test_Triple_Product (T : in out Slim_Test.Results.Result);
 
-   All_Tests : constant Slim_Test.Test_Groups.Test_Group :=
+   All_Tests : aliased constant Slim_Test.Groups.Test_Group :=
     ["Basic_Vector_Operations" => Basic_Vector_Operations'Access,
      "Test_Triple_Product" => Test_Triple_Product'Access];
 
